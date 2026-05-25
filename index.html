@@ -958,42 +958,43 @@ function reqFS(){
 ══════════════════════════════════════════ */
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 
-async function startExam(){
+function startExam(){
   ans={}; warns=[]; wCount=0; t0=Date.now(); timeLeft=EXAM_DURATION;
   active=true; done=false;
 
-  // Shuffle questions and shuffle each question's options
+  // Shuffle questions and options
   qs=shuffle(QB).map(q=>{
     const mapped=q.opts.map((o,i)=>({o,correct:i===q.ans}));
     return{...q,opts:shuffle(mapped)};
   });
 
-  // Restore any cached answers (offline recovery)
-  const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');
-  if(Object.keys(cached).length) ans={...cached};
+  // Restore cached answers if any
+  try{
+    const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');
+    if(Object.keys(cached).length) ans={...cached};
+  }catch(e){}
 
-  // Create Firestore session
-  if(window._dbOK){
-    try{
-      const ref=await window._addDoc(window._col(window._db,'exam_sessions'),{
-        studentId:sId, studentName:sName, course:'History of Medicine',
-        status:'active', startedAt:window._sTS(),
-        score:null, correct:null, total:QB.length,
-        timeTaken:null, timeLeft:EXAM_DURATION,
-        flagCount:0, flags:[], answers:{},
-        submitted:false, autoSubmit:false,
-        forceSubmitted:false
-      });
-      sessionId=ref.id;
-    }catch(e){console.warn('Session create:',e);}
-  }
-
+  // Start exam UI IMMEDIATELY — no waiting for anything
   setupAntiCheat();
   renderQ(0);
   renderGrid();
   runTimer();
   runAutoSave();
   goto('s-exam');
+
+  // Create Firestore session in background AFTER exam is already showing
+  // This never blocks the student
+  if(window._dbOK){
+    window._addDoc(window._col(window._db,'exam_sessions'),{
+      studentId:sId, studentName:sName, course:'History of Medicine',
+      status:'active', startedAt:window._sTS(),
+      score:null, correct:null, total:QB.length,
+      timeTaken:null, timeLeft:EXAM_DURATION,
+      flagCount:0, flags:[], answers:{},
+      submitted:false, autoSubmit:false, forceSubmitted:false
+    }).then(ref=>{ sessionId=ref.id; })
+      .catch(e=>{ console.warn('Session create failed:',e); });
+  }
 }
 
 /* ══════════════════════════════════════════
