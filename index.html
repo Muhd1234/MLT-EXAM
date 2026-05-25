@@ -324,7 +324,7 @@ img{user-select:none;-webkit-user-drag:none}
       </div>
       <div class="err-box" id="lerr"></div>
       <div class="field">
-        <label>Matric Number / ID</label>
+        <label id="lid-lbl">Matric Number / ID</label>
         <input id="lid" type="text" placeholder="e.g. MLT/2024/001" autocomplete="off" spellcheck="false">
       </div>
       <div class="field" id="lname-f">
@@ -803,7 +803,7 @@ const QB = [
 ══════════════════════════════════════════ */
 const EXAM_DURATION  = 20 * 60;
 const MAX_WARN       = 3;
-const LECTURER_PASS  = 'Proctor@Secure2024!'; // change this
+const LECTURER_PASS  = '64818991';
 const AUTOSAVE_MS    = 7000;
 const CACHE_KEY      = 'eg_answers_cache';
 
@@ -873,7 +873,16 @@ function setRole(r){
   document.getElementById('rtab-s').classList.toggle('on',r==='student');
   document.getElementById('rtab-a').classList.toggle('on',r==='admin');
   document.getElementById('lname-f').style.display=r==='student'?'':'none';
-  document.getElementById('lpw-lbl').textContent=r==='admin'?'Lecturer Password':'Password';
+  document.getElementById('lpw-lbl').textContent=r==='admin'?'Password':'Password';
+  const lidLbl=document.getElementById('lid-lbl');
+  const lidInp=document.getElementById('lid');
+  if(r==='admin'){
+    lidLbl.textContent='Username';
+    lidInp.placeholder='Enter your username';
+  } else {
+    lidLbl.textContent='Matric Number / ID';
+    lidInp.placeholder='e.g. MLT/2024/001';
+  }
 }
 
 function loginErr(m){
@@ -942,21 +951,34 @@ async function doLogin(){
 ══════════════════════════════════════════ */
 async function grantAndStart(){
   const btn=document.getElementById('start-btn');
-  btn.disabled=true; btn.textContent='Requesting…';
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-    document.getElementById('p-cam').className='chip chip-g';
-    document.getElementById('p-cam').textContent='✓ Granted';
-    document.getElementById('p-mic').className='chip chip-g';
-    document.getElementById('p-mic').textContent='✓ Granted';
-  }catch(e){
-    document.getElementById('p-cam').className='chip chip-r';
-    document.getElementById('p-cam').textContent='Denied';
-    document.getElementById('p-mic').className='chip chip-r';
-    document.getElementById('p-mic').textContent='Denied';
-  }
-  try{await reqFS();}catch(e){}
-  setTimeout(startExam,500);
+  btn.disabled=true; btn.textContent='Starting exam…';
+
+  // Try camera with a 6-second timeout — never block the exam
+  const camPromise = navigator.mediaDevices.getUserMedia({video:true,audio:true})
+    .then(s=>{
+      stream=s;
+      document.getElementById('p-cam').className='chip chip-g';
+      document.getElementById('p-cam').textContent='✓ Granted';
+      document.getElementById('p-mic').className='chip chip-g';
+      document.getElementById('p-mic').textContent='✓ Granted';
+    })
+    .catch(e=>{
+      document.getElementById('p-cam').className='chip chip-r';
+      document.getElementById('p-cam').textContent='Skipped';
+      document.getElementById('p-mic').className='chip chip-r';
+      document.getElementById('p-mic').textContent='Skipped';
+    });
+
+  const timeout = new Promise(resolve=>setTimeout(resolve, 6000));
+
+  // Wait for camera OR 6 seconds — whichever comes first
+  await Promise.race([camPromise, timeout]);
+
+  // Fullscreen — ignore errors
+  try{ reqFS(); }catch(e){}
+
+  // Always start the exam regardless of camera result
+  startExam();
 }
 
 function reqFS(){
