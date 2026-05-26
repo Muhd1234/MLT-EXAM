@@ -1026,38 +1026,6 @@ function setupCamera(){
   if(!stream) return;
   document.getElementById('cam-vid').srcObject=stream;
   document.getElementById('cam-pip').style.display='block';
-  // Start recording the camera stream
-  startVideoRecording(stream);
-}
-
-// Video recording
-var _mediaRecorder = null;
-var _videoChunks = [];
-window._lastVideoB64 = null;
-
-function startVideoRecording(mediaStream){
-  try{
-    _videoChunks = [];
-    var options = {mimeType:'video/webm;codecs=vp9'};
-    if(!MediaRecorder.isTypeSupported(options.mimeType)) options = {mimeType:'video/webm'};
-    _mediaRecorder = new MediaRecorder(mediaStream, options);
-    _mediaRecorder.ondataavailable = function(e){ if(e.data && e.data.size>0) _videoChunks.push(e.data); };
-    _mediaRecorder.onstop = function(){
-      try{
-        var blob = new Blob(_videoChunks, {type:'video/webm'});
-        var reader = new FileReader();
-        reader.onloadend = function(){ window._lastVideoB64 = reader.result; };
-        reader.readAsDataURL(blob);
-      }catch(e){ console.warn('Video encode failed:',e); }
-    };
-    _mediaRecorder.start(5000); // collect chunks every 5s
-  }catch(e){ console.warn('MediaRecorder not supported:',e); }
-}
-
-function stopVideoRecording(){
-  if(_mediaRecorder && _mediaRecorder.state!=='inactive'){
-    try{ _mediaRecorder.stop(); }catch(e){}
-  }
 }
 
 function showCameraBtn(){
@@ -1088,7 +1056,6 @@ function showCameraBtn(){
         var pip = document.getElementById('cam-pip');
         if(vid){ vid.srcObject = s; }
         if(pip){ pip.style.display = 'block'; }
-        startVideoRecording(s); // begin recording
         btn.remove(); // camera running — remove button
       })
       .catch(function(){
@@ -1204,7 +1171,6 @@ function disqualify(){
   active=false;
   clearInterval(timerInt); clearInterval(saveInt);
   rmListeners();
-  stopVideoRecording();
   if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
   persistBackground(true,'disqualified');
   document.getElementById('ov-disq').classList.add('on');
@@ -1242,9 +1208,8 @@ function updTimer(){
 
 function timeUp(){
   active=false; clearInterval(saveInt); rmListeners();
-  stopVideoRecording();
   if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-  setTimeout(function(){ persistBackground(true,'timeout'); }, 1200);
+  persistBackground(true,'timeout');
   document.getElementById('ov-lock').classList.add('on');
 }
 
@@ -1339,53 +1304,56 @@ function finalSubmit(auto){
   closeModal();
   clearInterval(timerInt); clearInterval(saveInt);
   rmListeners();
-  stopVideoRecording();
   if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-  // Show results IMMEDIATELY — never wait for Firebase
-  showResults(auto,'completed');
-  // Give MediaRecorder a moment to finish encoding, then persist
-  setTimeout(function(){ persistBackground(auto,'completed'); }, 1200);
+
+  // Show saving overlay immediately
+  showSavingOverlay();
+
+  // Save first, then show results
+  persistNow(auto,'completed').then(function(){
+    hideSavingOverlay();
+    showResults(auto,'completed');
+  }).catch(function(){
+    hideSavingOverlay();
+    showResults(auto,'completed');
+  });
 }
 
-/* ══════════════════════════════════════════
-   PERSIST — saves to localStorage always, Firebase if available
-══════════════════════════════════════════ */
-function persistBackground(auto, status){
+function showSavingOverlay(){
+  var ov = document.createElement('div');
+  ov.id = 'saving-ov';
+  ov.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:9999;'
+    +'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;';
+  ov.innerHTML = '<div style="font-size:40px">💾</div>'
+    +'<div style="font-family:var(--fh);font-size:18px;font-weight:800">Saving Results…</div>'
+    +'<div style="font-size:13px;color:var(--txt2)">Please wait, do not close this page.</div>'
+    +'<div style="width:48px;height:48px;border:3px solid var(--brd);border-top-color:var(--acc);'
+    +'border-radius:50%;animation:spin-a .7s linear infinite;margin-top:.5rem"></div>';
+  document.body.appendChild(ov);
+  // Safety timeout — show results after 5s even if Firebase is slow
+  window._saveTimeout = setTimeout(function(){
+    hideSavingOverlay();
+    showResults(auto,'completed');
+  }, 5000);
+}
+
+function hideSavingOverlay(){
+  clearTimeout(window._saveTimeout);
+  var ov = document.getElementById('saving-ov');
+  if(ov) ov.remove();
+}
+
+function persistNow(auto, status){
   var correct=0;
   qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
   var total=qs.length, pct=Math.round((correct/total)*100);
   var taken=Math.floor((Date.now()-t0)/1000);
   var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
-  var grade=pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':pct>=50?'E':'F';
 
-  // Always save to localStorage — works even without Firebase
-  var localRecord = {
-    studentId:sId, studentName:sName, course:'History of Medicine',
-    status:status, score:pct, correct:correct, total:total, grade:grade,
-    timeTaken:tm, takenSeconds:taken, passed:pct>=50,
-    flagCount:wCount, flags:warns, answers:ans,
-    autoSubmit:auto, submittedAt:new Date().toISOString(),
-    videoB64: window._lastVideoB64 || null
-  };
-  try{
-    var allRecords = JSON.parse(localStorage.getItem('eg_all_results')||'[]');
-    allRecords = allRecords.filter(function(r){ return r.studentId!==sId; });
-    allRecords.push(localRecord);
-    localStorage.setItem('eg_all_results', JSON.stringify(allRecords));
-    localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem('eg_warns_'+sId);
-    localStorage.removeItem('eg_warns_arr_'+sId);
-    var sr=document.getElementById('save-row');
-    if(sr){ sr.className='save-row ok'; sr.textContent='✓ Results saved successfully'; }
-  }catch(e){
-    var sr=document.getElementById('save-row');
-    if(sr){ sr.className='save-row fail'; sr.textContent='⚠️ Storage error: '+e.message; }
-  }
+  if(!window._dbOK) return Promise.resolve();
 
-  // Also try Firebase if connected
-  if(!window._dbOK) return;
   var data={
-    status:status, score:pct, correct:correct, total:total, grade:grade,
+    status:status, score:pct, correct:correct, total:total,
     timeTaken:tm, takenSeconds:taken, passed:pct>=50,
     flagCount:wCount, flags:warns, answers:ans,
     autoSubmit:auto, submittedAt:window._sTS(), endedAt:window._sTS()
@@ -1394,16 +1362,15 @@ function persistBackground(auto, status){
     ? window._setDoc(window._doc(window._db,'exam_sessions',sessionId),data,{merge:true})
     : window._addDoc(window._col(window._db,'exam_sessions'),
         Object.assign({studentId:sId,studentName:sName,course:'History of Medicine'},data));
-  savePromise
-    .then(function(){
-      var sr=document.getElementById('save-row');
-      if(sr){ sr.className='save-row ok'; sr.textContent='✓ Results saved to database'; }
-    })
-    .catch(function(){
-      var sr=document.getElementById('save-row');
-      if(sr){ sr.className='save-row ok'; sr.textContent='✓ Results saved locally (offline mode)'; }
-    });
+
+  return savePromise.then(function(){
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem('eg_warns_'+sId);
+    localStorage.removeItem('eg_warns_arr_'+sId);
+  });
 }
+
+/* persistBackground replaced by persistNow */
 
 /* ══════════════════════════════════════════
    RESULTS — computes score directly, shows instantly
@@ -1445,10 +1412,15 @@ function showResults(auto, status){
     fd.innerHTML='<div style="text-align:center;padding:1rem;font-size:12px;color:var(--grn)">✓ No suspicious activity detected</div>';
   }
 
-  // Save badge — starts as saving, persistBackground updates it
+  // Save already completed before showResults was called
   var sr=document.getElementById('save-row');
-  sr.className='save-row saving';
-  sr.textContent='💾 Saving results…';
+  if(window._dbOK){
+    sr.className='save-row ok';
+    sr.textContent='✓ Results saved to database successfully';
+  } else {
+    sr.className='save-row fail';
+    sr.textContent='⚠️ Database not connected — results not saved';
+  }
 
   goto('s-results');
 }
@@ -1558,84 +1530,86 @@ function stuCard(s){
 }
 
 function tabResults(body){
-  // Merge Firebase sessions with localStorage records
-  var localRecs = [];
-  try{ localRecs = JSON.parse(localStorage.getItem('eg_all_results')||'[]'); }catch(e){}
-  var comp=allSess.filter(s=>['completed','timeout'].includes(s.status));
-  // Add localStorage-only records not already in Firebase list
-  localRecs.forEach(function(r){
-    if(!comp.find(function(s){ return s.studentId===r.studentId && s.submittedAt; })){
-      comp.push(r);
-    }
-  });
-  // Also check purely local (no Firebase at all)
-  if(!comp.length){
-    comp = localRecs.filter(function(r){ return ['completed','timeout','disqualified'].includes(r.status); });
-  }
-  if(!comp.length){body.innerHTML='<div class="empty-st">No completed exams yet.</div>';return;}
-  const avg=Math.round(comp.reduce((a,s)=>a+(s.score||0),0)/comp.length);
+  const comp=allSess.filter(s=>['completed','timeout','disqualified'].includes(s.status));
+  if(!comp.length){body.innerHTML='<div class="empty-st">No completed exams yet.<br>Results appear here instantly after a student submits.</div>';return;}
+  const scoresOnly=comp.filter(s=>s.score!==null&&s.score!==undefined);
+  const avg=scoresOnly.length?Math.round(scoresOnly.reduce((a,s)=>a+(s.score||0),0)/scoresOnly.length):0;
   const passed=comp.filter(s=>s.passed).length;
+
   let h=`<div class="sg">
     <div class="sc"><div class="sc-v" style="color:var(--acc)">${avg}%</div><div class="sc-k">Avg Score</div></div>
     <div class="sc"><div class="sc-v" style="color:var(--grn)">${passed}/${comp.length}</div><div class="sc-k">Pass Rate</div></div>
   </div>`;
+
   h+=comp.sort((a,b)=>(b.score||0)-(a.score||0)).map(s=>{
-    const grade=s.grade||(s.score>=90?'A':s.score>=80?'B':s.score>=70?'C':s.score>=60?'D':s.score>=50?'E':'F');
-    const answered=s.correct!==undefined&&s.total!==undefined?s.correct+'/'+s.total:'—';
-    // Check localStorage for video
-    var localR = localRecs.find(function(r){ return r.studentId===s.studentId; });
-    var hasVideo = localR && localR.videoB64;
-    return `<div class="stu-card">
-      <div class="stu-top">
-        <div class="stu-ava">${(s.studentName||'?')[0].toUpperCase()}</div>
-        <div class="stu-info">
-          <div class="stu-name">${s.studentName}</div>
-          <div class="stu-meta">${s.studentId} · ⏱ ${s.timeTaken||'—'} · ${s.status}</div>
-        </div>
-        <span class="chip ${s.passed?'chip-g':'chip-r'}">${s.score}% · ${grade}</span>
-      </div>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.45rem 0;align-items:center">
-        <span class="chip chip-b">📝 Answered: ${answered}</span>
-        ${s.flagCount>0?`<span class="chip chip-a">⚠️ ${s.flagCount} flag${s.flagCount>1?'s':''}</span>`:''}
-        ${hasVideo?`<button class="btn btn-s btn-sm" onclick="viewStudentVideo('${s.studentId}')">📹 View Recording</button>`:'<span style="font-size:10px;color:var(--txt3)">No recording</span>'}
-      </div>
-    </div>`;
+    const sid=s.id;
+    const statusChip=s.status==='disqualified'
+      ?'<span class="chip chip-r">Disqualified</span>'
+      :`<span class="chip ${s.passed?'chip-g':'chip-r'}">${s.score??'?'}%  ${s.passed?'Pass':'Fail'}</span>`;
+
+    const letters=['a.','b.','c.','d.'];
+    let qRows='<div style="font-size:11px;color:var(--txt2);padding:.35rem 0">No answers recorded</div>';
+    if(s.answers&&Object.keys(s.answers).length){
+      qRows=Object.keys(s.answers).sort((a,b)=>+a-+b).map(qi=>{
+        const chosen=s.answers[qi];
+        return '<div style="display:flex;align-items:center;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--brd);font-size:11px">'
+          +'<span style="font-family:var(--fm);color:var(--txt2);width:24px;flex-shrink:0">Q'+(+qi+1)+'</span>'
+          +'<span style="color:var(--txt)">Chose option <strong>'+(letters[chosen]||chosen)+'</strong></span>'
+          +'</div>';
+      }).join('');
+    }
+
+    let flagRows='';
+    if(s.flags&&s.flags.length){
+      flagRows=s.flags.map(f=>
+        '<div style="display:flex;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--brd);font-size:11px">'
+        +'<span style="color:var(--amb)">⚠️</span>'
+        +'<div><div>'+f.msg+'</div><div style="color:var(--txt3);font-size:10px;font-family:var(--fm)">'+f.time+'</div></div>'
+        +'</div>'
+      ).join('');
+    }
+
+    return '<div class="stu-card" style="margin-bottom:.75rem">'
+      +'<div class="stu-top">'
+        +'<div class="stu-ava">'+(s.studentName||'?')[0].toUpperCase()+'</div>'
+        +'<div class="stu-info">'
+          +'<div class="stu-name">'+(s.studentName||'Unknown')+'</div>'
+          +'<div class="stu-meta">'+(s.studentId||'')+'&nbsp;·&nbsp;'+(s.timeTaken||'—')+'</div>'
+        +'</div>'
+        +statusChip
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin:.6rem 0">'
+        +'<div style="background:var(--surf2);border-radius:6px;padding:.5rem;text-align:center">'
+          +'<div style="font-family:var(--fm);font-size:17px;font-weight:700;color:'+(s.passed?'var(--grn)':'var(--red)')+'">'+( s.score??'—')+'%</div>'
+          +'<div style="font-size:9px;color:var(--txt2)">Score</div></div>'
+        +'<div style="background:var(--surf2);border-radius:6px;padding:.5rem;text-align:center">'
+          +'<div style="font-family:var(--fm);font-size:17px;font-weight:700;color:var(--acc)">'+(s.correct??'—')+'/'+(s.total||20)+'</div>'
+          +'<div style="font-size:9px;color:var(--txt2)">Correct</div></div>'
+        +'<div style="background:var(--surf2);border-radius:6px;padding:.5rem;text-align:center">'
+          +'<div style="font-family:var(--fm);font-size:17px;font-weight:700;color:var(--amb)">'+(s.flagCount||0)+'</div>'
+          +'<div style="font-size:9px;color:var(--txt2)">Flags</div></div>'
+      +'</div>'
+      +'<button data-sec="ans-'+sid+'" onclick="toggleSec(this)" style="width:100%;padding:.45rem .75rem;background:var(--surf2);border:1px solid var(--brd);border-radius:6px;font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:var(--f);text-align:left;margin-bottom:.35rem">'
+        +'📝 Answers ('+Object.keys(s.answers||{}).length+' answered) ▾'
+      +'</button>'
+      +'<div id="ans-'+sid+'" style="display:none;max-height:220px;overflow-y:auto;background:var(--surf2);border-radius:6px;padding:.5rem;margin-bottom:.35rem">'+qRows+'</div>'
+      +(flagRows
+        ?'<button data-sec="flg-'+sid+'" onclick="toggleSec(this)" style="width:100%;padding:.45rem .75rem;background:var(--ambD);border:1px solid rgba(255,214,10,.2);border-radius:6px;font-size:11px;font-weight:700;color:var(--amb);cursor:pointer;font-family:var(--f);text-align:left;margin-bottom:.35rem">'
+          +'⚠️ Flags ('+s.flagCount+') ▾</button>'
+          +'<div id="flg-'+sid+'" style="display:none;background:var(--redD);border-radius:6px;padding:.5rem">'+flagRows+'</div>'
+        :'<div style="font-size:11px;color:var(--grn);padding:.25rem 0">✓ No flags raised</div>')
+    +'</div>';
   }).join('');
+
   body.innerHTML=h;
 }
 
-function viewStudentVideo(studentId){
-  try{
-    var localRecs = JSON.parse(localStorage.getItem('eg_all_results')||'[]');
-    var rec = localRecs.find(function(r){ return r.studentId===studentId; });
-    if(!rec||!rec.videoB64){ alert('No video recording available for this student.'); return; }
-    // Open in a modal overlay
-    var existing = document.getElementById('vid-modal-overlay');
-    if(existing) existing.remove();
-    var overlay = document.createElement('div');
-    overlay.id = 'vid-modal-overlay';
-    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px)';
-    overlay.innerHTML=`
-      <div style="background:var(--surf);border:1px solid var(--brd);border-radius:18px;padding:1.25rem;max-width:480px;width:100%">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
-          <div>
-            <div style="font-size:14px;font-weight:800">${rec.studentName}</div>
-            <div style="font-size:10px;color:var(--txt2)">${rec.studentId} · Exam Recording</div>
-          </div>
-          <button onclick="document.getElementById('vid-modal-overlay').remove()" style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.4rem .75rem;font-size:12px;cursor:pointer;color:var(--txt)">✕ Close</button>
-        </div>
-        <video id="rec-vid-player" controls style="width:100%;border-radius:10px;background:#000;max-height:300px" src="${rec.videoB64}"></video>
-        <div style="margin-top:.75rem;font-size:11px;color:var(--txt2);line-height:1.6">
-          Score: <strong style="color:var(--acc)">${rec.score}% (${rec.grade||'—'})</strong> · 
-          Answered: <strong>${rec.correct}/${rec.total}</strong> · 
-          Time: <strong>${rec.timeTaken||'—'}</strong> · 
-          Flags: <strong style="color:${rec.flagCount>0?'var(--amb)':'var(--grn)'}">${rec.flagCount}</strong>
-        </div>
-        <a href="${rec.videoB64}" download="${rec.studentId}_exam_recording.webm" style="display:block;margin-top:.6rem;text-align:center;font-size:11px;color:var(--acc);text-decoration:none;border:1px solid var(--brd);border-radius:6px;padding:.4rem">⬇ Download Recording</a>
-      </div>`;
-    document.body.appendChild(overlay);
-  }catch(e){ alert('Could not load video: '+e.message); }
+function toggleSec(btn){
+  var id = btn.getAttribute('data-sec');
+  var el = document.getElementById(id);
+  if(el) el.style.display=el.style.display==='none'?'block':'none';
 }
+
 
 function tabFlags(body){
   document.getElementById('flag-badge').style.display='none';
