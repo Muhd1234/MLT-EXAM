@@ -1,71 +1,11 @@
-<!-- =========================================
-     ANDROID-STABLE EXAM START FLOW
-     REPLACE YOUR CURRENT FUNCTIONS WITH THIS
-========================================= -->
-
 <script>
 
-// =========================================
-// SAFE SYSTEM PRECHECK
-// =========================================
-async function precheckSystem(){
-
-  const issues = [];
-
-  // Camera support
-  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    issues.push("Camera is not supported on this device/browser.");
-  }
-
-  // Fullscreen support
-  if(
-    !document.documentElement.requestFullscreen &&
-    !document.documentElement.webkitRequestFullscreen
-  ){
-    issues.push("Fullscreen mode is not supported.");
-  }
-
-  return issues;
-}
-
-
-// =========================================
-// FULLSCREEN (ANDROID SAFE)
-// =========================================
-async function enableFullscreen(){
-
-  try{
-
-    const el = document.documentElement;
-
-    if(el.requestFullscreen){
-      await el.requestFullscreen();
-    }
-    else if(el.webkitRequestFullscreen){
-      el.webkitRequestFullscreen();
-    }
-
-  }catch(err){
-
-    console.warn("Fullscreen failed:", err);
-
-  }
-}
-
-
-// =========================================
-// CAMERA INITIALIZATION
-// =========================================
 async function startCamera(){
 
   try{
 
     stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "user",
-        width: { ideal: 640 },
-        height: { ideal: 480 }
-      },
+      video: true,
       audio: true
     });
 
@@ -77,140 +17,71 @@ async function startCamera(){
 
     document.getElementById("cam-pip").style.display = "block";
 
-    // Update permission chips
-    document.getElementById("p-cam").textContent = "Granted";
-    document.getElementById("p-cam").className = "chip chip-g";
-
-    document.getElementById("p-mic").textContent = "Granted";
-    document.getElementById("p-mic").className = "chip chip-g";
-
     return true;
 
-  }
-  catch(err){
+  }catch(err){
 
-    console.error("Camera error:", err);
+    console.error(err);
 
-    alert(
-      "Camera/Microphone permission denied.\n\n" +
-      "Please allow permissions and try again."
-    );
+    alert("Camera permission denied.");
 
     return false;
   }
 }
 
+async function reqFS(){
 
-// =========================================
-// SAFE EXAM START FLOW
-// =========================================
+  const el = document.documentElement;
+
+  if(el.requestFullscreen){
+    await el.requestFullscreen();
+  }
+  else if(el.webkitRequestFullscreen){
+    el.webkitRequestFullscreen();
+  }
+}
+
 async function grantAndStart(){
 
   const btn = document.getElementById("start-btn");
 
   btn.disabled = true;
+
   btn.textContent = "Preparing Exam...";
 
-  // STEP 1: CHECK DEVICE SUPPORT
-  const issues = await precheckSystem();
+  try{
 
-  if(issues.length){
+    await reqFS();
 
-    alert(issues.join("\n"));
+    const camOK = await startCamera();
+
+    if(!camOK){
+
+      btn.disabled = false;
+
+      btn.textContent = "🚀 Grant Permissions & Start Exam";
+
+      return;
+    }
+
+    goto("s-exam");
+
+    setTimeout(()=>{
+
+      startExam();
+
+    },100);
+
+  }catch(err){
+
+    console.error(err);
+
+    alert("Failed to start exam.");
 
     btn.disabled = false;
+
     btn.textContent = "🚀 Grant Permissions & Start Exam";
-
-    return;
   }
-
-  // STEP 2: ENABLE FULLSCREEN
-  await enableFullscreen();
-
-  // STEP 3: START CAMERA
-  const camOK = await startCamera();
-
-  if(!camOK){
-
-    btn.disabled = false;
-    btn.textContent = "🚀 Grant Permissions & Start Exam";
-
-    return;
-  }
-
-  // STEP 4: OPEN EXAM SCREEN
-  goto("s-exam");
-
-  // Small delay improves Android stability
-  setTimeout(() => {
-
-    startExam();
-
-  }, 100);
 }
-
-
-// =========================================
-// ANDROID TAB SWITCH DETECTION
-// =========================================
-document.addEventListener("visibilitychange", () => {
-
-  if(document.hidden && active && !done){
-
-    flag("Tab switch or app minimized detected");
-
-  }
-
-});
-
-
-// =========================================
-// FULLSCREEN EXIT DETECTION
-// =========================================
-document.addEventListener("fullscreenchange", () => {
-
-  if(
-    !document.fullscreenElement &&
-    active &&
-    !done
-  ){
-
-    flag("Fullscreen mode exited");
-
-  }
-
-});
-
-
-// =========================================
-// CLEANUP CAMERA ON EXIT
-// =========================================
-function cleanup(){
-
-  clearInterval(timerInt);
-  clearInterval(saveInt);
-
-  active = false;
-  done = false;
-
-  if(stream){
-
-    stream.getTracks().forEach(track => track.stop());
-
-    stream = null;
-  }
-
-  document.getElementById("cam-pip").style.display = "none";
-
-  rmListeners();
-}
-   // =========================================
-// FIX DUPLICATE CONSTANT BUG
-// REMOVE YOUR OLD DUPLICATE
-// KEEP ONLY THIS:
-// =========================================
-
-const LECTURER_USER = 'Amuhd';
-const LECTURER_PASS = '64818991';
 
 </script>
