@@ -919,9 +919,21 @@ function doLogin(){
   // Save to localStorage so browser remembers next time
   localStorage.setItem('eg_last_id',   id);
   localStorage.setItem('eg_last_name', name);
+  // Save password for this student ID so they must use same pw next time
+  var existingPw = localStorage.getItem('eg_pw_'+id);
+  if(!existingPw){
+    localStorage.setItem('eg_pw_'+id, pw);
+  } else if(existingPw !== pw){
+    loginErr('Incorrect password. Please use the same password you registered with.');
+    return;
+  }
 
   sId=id; sName=name;
-  const ini=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)||'S';
+  // Restore warning count for this student across sessions
+  var savedWarns = parseInt(localStorage.getItem('eg_warns_'+id)||'0');
+  wCount = savedWarns;
+
+  var ini=name.split(' ').map(function(n){return n[0];}).join('').toUpperCase().slice(0,2)||'S';
   document.getElementById('setup-ava').textContent  = ini;
   document.getElementById('setup-name').textContent = name;
   document.getElementById('setup-id').textContent   = id;
@@ -958,8 +970,16 @@ function reqFS(){
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 
 function startExam(){
-  ans={}; warns=[]; wCount=0; t0=Date.now(); timeLeft=EXAM_DURATION;
+  // Keep wCount from doLogin (already restored from localStorage)
+  // Only reset ans and warns array but reload warns from storage
+  ans={}; t0=Date.now(); timeLeft=EXAM_DURATION;
   active=true; done=false;
+  // Restore warns history for this student
+  try{
+    var savedWarnsArr = JSON.parse(localStorage.getItem('eg_warns_arr_'+sId)||'[]');
+    warns = savedWarnsArr;
+    wCount = warns.length;
+  }catch(e){ warns=[]; }
 
   // Shuffle questions and options
   qs=shuffle(QB).map(q=>{
@@ -973,7 +993,7 @@ function startExam(){
     if(Object.keys(cached).length) ans={...cached};
   }catch(e){}
 
-  // Start exam UI IMMEDIATELY — no waiting for anything
+  // Show exam UI immediately
   setupAntiCheat();
   renderQ(0);
   renderGrid();
@@ -981,8 +1001,7 @@ function startExam(){
   runAutoSave();
   goto('s-exam');
 
-  // Create Firestore session in background AFTER exam is already showing
-  // This never blocks the student
+  // Firebase session — background, never blocks
   if(window._dbOK){
     window._addDoc(window._col(window._db,'exam_sessions'),{
       studentId:sId, studentName:sName, course:'History of Medicine',
@@ -994,6 +1013,10 @@ function startExam(){
     }).then(ref=>{ sessionId=ref.id; })
       .catch(e=>{ console.warn('Session create failed:',e); });
   }
+
+  // Camera: show a tap-to-enable button in exam bar
+  // Android REQUIRES direct user tap for getUserMedia — no auto call ever
+  showCameraBtn();
 }
 
 /* ══════════════════════════════════════════
@@ -1003,6 +1026,50 @@ function setupCamera(){
   if(!stream) return;
   document.getElementById('cam-vid').srcObject=stream;
   document.getElementById('cam-pip').style.display='block';
+}
+
+function showCameraBtn(){
+  // Add a small camera button to exam topbar
+  // Only works on direct tap — required by Android Chrome
+  var bar = document.getElementById('warn-pill').parentElement;
+  var existing = document.getElementById('cam-start-btn');
+  if(existing) return;
+  var btn = document.createElement('button');
+  btn.id = 'cam-start-btn';
+  btn.title = 'Enable camera monitoring';
+  btn.style.cssText = 'background:var(--accG);border:1px solid rgba(67,97,238,.4);'
+    +'color:var(--acc);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;'
+    +'cursor:pointer;font-family:var(--f);white-space:nowrap;';
+  btn.textContent = '📷 Enable';
+  btn.onclick = function(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      flag('Camera not supported on this device');
+      btn.remove();
+      return;
+    }
+    btn.textContent = '📷…';
+    btn.disabled = true;
+    navigator.mediaDevices.getUserMedia({video:true, audio:false})
+      .then(function(s){
+        stream = s;
+        var vid = document.getElementById('cam-vid');
+        var pip = document.getElementById('cam-pip');
+        if(vid){ vid.srcObject = s; }
+        if(pip){ pip.style.display = 'block'; }
+        btn.remove(); // camera running — remove button
+      })
+      .catch(function(){
+        flag('Camera access blocked or denied by student');
+        btn.textContent = '📷 Blocked';
+        btn.style.background = 'var(--redD)';
+        btn.style.color = 'var(--red)';
+        btn.style.borderColor = 'rgba(239,35,60,.3)';
+        btn.disabled = true;
+      });
+  };
+  // Insert button into topbar before warn-pill
+  var pill = document.getElementById('warn-pill');
+  pill.parentElement.insertBefore(btn, pill);
 }
 
 /* ══════════════════════════════════════════
@@ -1065,7 +1132,7 @@ function rmListeners(){
 /* ══════════════════════════════════════════
    WARNING SYSTEM
 ══════════════════════════════════════════ */
-async function flag(msg){
+function flag(msg){
   if(!active||done) return;
   wCount++;
   const entry={msg, time:new Date().toLocaleTimeString(), ts:Date.now()};
@@ -1086,23 +1153,26 @@ async function flag(msg){
   clearTimeout(window._stripT);
   if(wCount<MAX_WARN) window._stripT=setTimeout(()=>strip.style.display='none', 7000);
 
-  // Save to Firestore
+  // Persist warning count AND full list across sessions
+  localStorage.setItem('eg_warns_'+sId, wCount);
+  localStorage.setItem('eg_warns_arr_'+sId, JSON.stringify(warns));
+
+  // Save to Firestore in background
   if(window._dbOK && sessionId){
-    try{
-      await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),
-        {flagCount:wCount, flags:warns, status:wCount>=MAX_WARN?'disqualified':'active'},{merge:true});
-    }catch(e){}
+    window._setDoc(window._doc(window._db,'exam_sessions',sessionId),
+      {flagCount:wCount, flags:warns, status:wCount>=MAX_WARN?'disqualified':'active'},{merge:true})
+    .catch(function(e){});
   }
 
   if(wCount>=MAX_WARN) disqualify();
 }
 
-async function disqualify(){
+function disqualify(){
   active=false;
   clearInterval(timerInt); clearInterval(saveInt);
   rmListeners();
-  await persist(true,'disqualified');
-  if(stream) stream.getTracks().forEach(t=>t.stop());
+  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+  persistBackground(true,'disqualified');
   document.getElementById('ov-disq').classList.add('on');
   let s=5;
   const t=setInterval(()=>{
@@ -1136,10 +1206,10 @@ function updTimer(){
   box.className='timer-box'+(timeLeft<=300?' ambar':'')+(timeLeft<=60?' fire':'');
 }
 
-async function timeUp(){
+function timeUp(){
   active=false; clearInterval(saveInt); rmListeners();
-  if(stream) stream.getTracks().forEach(t=>t.stop());
-  await persist(true,'timeout');
+  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+  persistBackground(true,'timeout');
   document.getElementById('ov-lock').classList.add('on');
 }
 
@@ -1227,76 +1297,104 @@ function openSubmit(){
 }
 function closeModal(){ document.getElementById('submit-modal').classList.remove('on'); }
 
-async function finalSubmit(auto=false){
+function finalSubmit(auto){
+  if(auto===undefined) auto=false;
   if(done) return;
   done=true; active=false;
   closeModal();
   clearInterval(timerInt); clearInterval(saveInt);
   rmListeners();
-  if(stream) stream.getTracks().forEach(t=>t.stop());
-  await persist(auto,'completed');
-  showResults();
+  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+  // Show results IMMEDIATELY — never wait for Firebase
+  showResults(auto,'completed');
+  // Save to Firebase in background
+  persistBackground(auto,'completed');
 }
 
 /* ══════════════════════════════════════════
-   PERSIST
+   PERSIST — background only, never blocks UI
 ══════════════════════════════════════════ */
-async function persist(auto, status){
-  let correct=0;
-  qs.forEach((q,i)=>{ if(ans[i]!==undefined && q.opts[ans[i]]?.correct) correct++; });
-  const total=qs.length, pct=Math.round((correct/total)*100);
-  const taken=Math.floor((Date.now()-t0)/1000);
-  const tm=`${String(Math.floor(taken/60)).padStart(2,'0')}:${String(taken%60).padStart(2,'0')}`;
-  window._lastRes={correct,total,pct,tm,taken,passed:pct>=50,status,auto};
+function persistBackground(auto, status){
+  var correct=0;
+  qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
+  var total=qs.length, pct=Math.round((correct/total)*100);
+  var taken=Math.floor((Date.now()-t0)/1000);
+  var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
 
-  if(window._dbOK){
-    try{
-      const data={
-        status, score:pct, correct, total,
-        timeTaken:tm, takenSeconds:taken, passed:pct>=50,
-        flagCount:wCount, flags:warns, answers:ans,
-        autoSubmit:auto, submittedAt:window._sTS(), endedAt:window._sTS()
-      };
-      if(sessionId) await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),data,{merge:true});
-      else await window._addDoc(window._col(window._db,'exam_sessions'),{studentId:sId,studentName:sName,course:'History of Medicine',...data});
-      window._lastRes.saved=true;
+  if(!window._dbOK) return;
+  var data={
+    status:status, score:pct, correct:correct, total:total,
+    timeTaken:tm, takenSeconds:taken, passed:pct>=50,
+    flagCount:wCount, flags:warns, answers:ans,
+    autoSubmit:auto, submittedAt:window._sTS(), endedAt:window._sTS()
+  };
+  var savePromise = sessionId
+    ? window._setDoc(window._doc(window._db,'exam_sessions',sessionId),data,{merge:true})
+    : window._addDoc(window._col(window._db,'exam_sessions'),
+        Object.assign({studentId:sId,studentName:sName,course:'History of Medicine'},data));
+  savePromise
+    .then(function(){
       localStorage.removeItem(CACHE_KEY);
-    }catch(e){ window._lastRes.saved=false; }
-  }
+      localStorage.removeItem('eg_warns_'+sId);
+      localStorage.removeItem('eg_warns_arr_'+sId);
+      var sr=document.getElementById('save-row');
+      if(sr){sr.className='save-row ok';sr.textContent='✓ Results saved to database';}
+    })
+    .catch(function(){
+      var sr=document.getElementById('save-row');
+      if(sr){sr.className='save-row fail';sr.textContent='⚠️ Could not save — check connection';}
+    });
 }
 
 /* ══════════════════════════════════════════
-   RESULTS
+   RESULTS — computes score directly, shows instantly
 ══════════════════════════════════════════ */
-function showResults(){
-  const r=window._lastRes; if(!r) return;
-  const ini=sName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)||'S';
+function showResults(auto, status){
+  // Compute score right here — no dependency on any async result
+  var correct=0;
+  qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
+  var total=qs.length;
+  var pct=Math.round((correct/total)*100);
+  var taken=Math.floor((Date.now()-t0)/1000);
+  var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
+  var passed=pct>=50;
+
+  var ini=sName.split(' ').map(function(n){return n[0];}).join('').toUpperCase().slice(0,2)||'S';
   document.getElementById('res-ava').textContent=ini;
   document.getElementById('res-name').textContent=sName;
-  document.getElementById('res-pct').textContent=r.pct+'%';
-  document.getElementById('res-correct').textContent=`${r.correct}/${r.total}`;
-  document.getElementById('res-time').textContent=r.tm;
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-correct').textContent=correct+'/'+total;
+  document.getElementById('res-time').textContent=tm;
   document.getElementById('res-flags').textContent=wCount;
-  const grade=r.pct>=90?'A':r.pct>=80?'B':r.pct>=70?'C':r.pct>=60?'D':r.pct>=50?'E':'F';
+  var grade=pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':pct>=50?'E':'F';
   document.getElementById('res-grade').textContent=grade;
-  document.getElementById('res-status').textContent=r.passed?'Pass':'Fail';
-  document.getElementById('res-status').style.color=r.passed?'var(--grn)':'var(--red)';
+  document.getElementById('res-status').textContent=passed?'Pass':'Fail';
+  document.getElementById('res-status').style.color=passed?'var(--grn)':'var(--red)';
 
-  const ring=document.getElementById('score-ring');
-  ring.style.strokeDashoffset=314.2*(1-r.pct/100);
-  ring.style.stroke=r.pct>=70?'var(--grn)':r.pct>=50?'var(--amb)':'var(--red)';
+  var ring=document.getElementById('score-ring');
+  ring.style.strokeDashoffset=314.2*(1-pct/100);
+  ring.style.stroke=pct>=70?'var(--grn)':pct>=50?'var(--amb)':'var(--red)';
 
-  const fd=document.getElementById('flag-detail');
-  fd.innerHTML=warns.length
-    ?`<div class="card"><div class="flag-hd">Activity Flags (${warns.length})</div>${warns.map(f=>`
-      <div class="flag-row"><div class="flag-dot" style="background:var(--amb)"></div>
-      <div class="flag-txt">${f.msg}<div class="flag-time">${f.time}</div></div></div>`).join('')}</div>`
-    :`<div style="text-align:center;padding:1rem;font-size:12px;color:var(--grn)">✓ No suspicious activity detected</div>`;
+  var fd=document.getElementById('flag-detail');
+  if(warns.length){
+    var rows=warns.map(function(f){
+      return '<div class="flag-row"><div class="flag-dot" style="background:var(--amb)"></div>'
+        +'<div class="flag-txt">'+f.msg+'<div class="flag-time">'+f.time+'</div></div></div>';
+    }).join('');
+    fd.innerHTML='<div class="card"><div class="flag-hd">Activity Flags ('+warns.length+')</div>'+rows+'</div>';
+  } else {
+    fd.innerHTML='<div style="text-align:center;padding:1rem;font-size:12px;color:var(--grn)">✓ No suspicious activity detected</div>';
+  }
 
-  const sr=document.getElementById('save-row');
-  if(r.saved===false){sr.className='save-row fail';sr.textContent='⚠️ Could not save — check connection';}
-  else if(window._dbOK){sr.className='save-row ok';sr.textContent='✓ Results saved to database';}
-  else{sr.className='save-row fail';sr.textContent='⚠️ Database not connected';}
+  // Save badge — starts as saving, background task updates it
+  var sr=document.getElementById('save-row');
+  if(window._dbOK){
+    sr.className='save-row saving';
+    sr.textContent='💾 Saving results…';
+  } else {
+    sr.className='save-row fail';
+    sr.textContent='⚠️ Database not connected';
+  }
 
   goto('s-results');
 }
@@ -1313,7 +1411,7 @@ function forceOut(){
 function cleanup(){
   clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer);
   rmListeners();
-  if(stream){stream.getTracks().forEach(t=>t.stop()); stream=null;}
+  if(stream){stream.getTracks().forEach(function(t){t.stop();}); stream=null;}
   active=false; done=false; sessionId=null;
   document.getElementById('warn-strip').style.display='none';
   document.getElementById('cam-pip').style.display='none';
@@ -1510,20 +1608,19 @@ setRole('student');
 
 // Pre-fill student login from localStorage
 (function(){
-  const savedId   = localStorage.getItem('eg_last_id');
-  const savedName = localStorage.getItem('eg_last_name');
-  if(savedId)   document.getElementById('lid').value   = savedId;
+  var savedId   = localStorage.getItem('eg_last_id');
+  var savedName = localStorage.getItem('eg_last_name');
+  if(savedId){
+    document.getElementById('lid').value = savedId;
+    // Also pre-fill password if we have it for this id
+    var savedPw = localStorage.getItem('eg_pw_'+savedId);
+    if(savedPw) document.getElementById('lpw').value = savedPw;
+  }
   if(savedName) document.getElementById('lname').value = savedName;
 })();
 
 
-// Remember last login info
-(function(){
-  const savedId   = localStorage.getItem('eg_last_id')   || '';
-  const savedName = localStorage.getItem('eg_last_name') || '';
-  if(savedId)   document.getElementById('lid').value   = savedId;
-  if(savedName) document.getElementById('lname').value = savedName;
-})();
+
 </script>
 </body>
 </html>
