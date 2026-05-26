@@ -1,87 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ExamGuard Pro</title>
+<style>/* System fonts only for performance */</style>
+<style>
+/* ══════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════ */
+:root{
+  --bg:#07090f;--bg2:#0c0f1a;--bg3:#111525;
+  --surf:#161c2e;--surf2:#1c2338;--surf3:#232b42;
+  --brd:#262f4a;--brd2:#313c58;
+  --txt:#dde4f5;--txt2:#7d8eb5;--txt3:#3d4a6b;
+  --acc:#4361ee;--acc2:#3251d4;--accG:rgba(67,97,238,0.18);
+  --grn:#06d6a0;--grnD:#0a2820;
+  --red:#ef233c;--redD:#280a10;
+  --amb:#ffd60a;--ambD:#2a2000;
+  --pur:#7209b7;--purL:#b5179e;
+  --r:12px;--rs:7px;--rl:18px;
+  --sh:0 8px 32px rgba(0,0,0,.5);
+  --f:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--fm:'Courier New',Courier,monospace;--fh:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+[data-theme=light]{
+  --bg:#f2f4fb;--bg2:#eaecf6;--bg3:#e2e5f2;
+  --surf:#fff;--surf2:#f5f6fe;--surf3:#edf0fb;
+  --brd:#d4d9f0;--brd2:#c2cae8;
+  --txt:#0d1229;--txt2:#4a5578;--txt3:#9aa4c4;
+  --sh:0 4px 20px rgba(67,97,238,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;touch-action:manipulation}
+body{font-family:var(--f);background:var(--bg);color:var(--txt);font-size:15px;line-height:1.5;transition:background .25s,color .25s;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accG);color:var(--acc)}
+input,button,select{font-family:var(--f)}
+img{user-select:none;-webkit-user-drag:none}
+
+/* ══════════════════════════════════════════
+   LAYOUT SYSTEM
+══════════════════════════════════════════ */
+.screen{display:none;height:100dvh;flex-direction:column;overflow:hidden;position:relative}
+.screen.on{display:flex}
+.scroller{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.scroller::-webkit-scrollbar{width:2px}
+.scroller::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:99px}
+.pad{padding:1.25rem;max-width:580px;margin:0 auto}
+
+/* ══════════════════════════════════════════
+   ATOMS
+══════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.8rem 1.4rem;border-radius:var(--rs);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--f);transition:all .16s;white-space:nowrap;width:100%;letter-spacing:.01em;position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .12s}
+.btn:active::after{opacity:.08}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn-p{background:var(--acc);color:#fff;box-shadow:0 0 24px rgba(67,97,238,.3)}
+.btn-p:not(:disabled):hover{background:var(--acc2);transform:translateY(-1px)}
+.btn-s{background:var(--surf2);color:var(--txt);border:1px solid var(--brd)}
+.btn-s:not(:disabled):hover{border-color:var(--brd2)}
+.btn-g{background:var(--grn);color:#000;box-shadow:0 0 20px rgba(6,214,160,.25)}
+.btn-r{background:var(--red);color:#fff}
+.btn-sm{padding:.45rem .9rem;font-size:12px;width:auto;border-radius:var(--rs)}
+
+.field{margin-bottom:.875rem}
+.field label{display:block;font-size:10px;font-weight:700;color:var(--txt2);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.1em}
+.field input{width:100%;background:var(--surf2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:.78rem 1rem;color:var(--txt);font-size:15px;outline:none;transition:border-color .18s,box-shadow .18s;-webkit-appearance:none}
+.field input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG)}
+.field input::placeholder{color:var(--txt3)}
+
+.chip{display:inline-flex;align-items:center;gap:.3rem;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.07em;border:1px solid transparent}
+.chip-g{background:var(--grnD);color:var(--grn);border-color:rgba(6,214,160,.2)}
+.chip-r{background:var(--redD);color:var(--red);border-color:rgba(239,35,60,.2)}
+.chip-a{background:var(--ambD);color:var(--amb);border-color:rgba(255,214,10,.2)}
+.chip-b{background:var(--accG);color:var(--acc);border-color:rgba(67,97,238,.2)}
+.chip-p{background:rgba(114,9,183,.12);color:var(--purL);border-color:rgba(181,23,158,.2)}
+
+.card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:1.2rem}
+.hr{height:1px;background:var(--brd);margin:.875rem 0}
+
+/* ══════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════ */
+#s-login{background:var(--bg);align-items:center;justify-content:center;padding:1.5rem}
+#s-login::before{content:'';position:fixed;top:-120px;left:50%;transform:translateX(-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(67,97,238,.15) 0%,transparent 70%);pointer-events:none}
+.login-wrap{width:100%;max-width:400px;position:relative}
+.login-logo-row{display:flex;align-items:center;gap:.875rem;margin-bottom:1.75rem;justify-content:center}
+.logo-box{width:52px;height:52px;background:linear-gradient(135deg,var(--acc),var(--purL));border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 28px rgba(67,97,238,.35);flex-shrink:0}
+.logo-text{font-family:var(--fh);font-size:22px;font-weight:800;letter-spacing:-.03em}
+.logo-sub{font-size:11px;color:var(--txt2);margin-top:1px;font-weight:500}
+.login-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:1.75rem;box-shadow:var(--sh)}
+.rtabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rs);padding:4px;margin-bottom:1.5rem}
+.rtab{padding:.48rem;border-radius:5px;border:none;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--txt2);transition:all .18s;font-family:var(--fh)}
+.rtab.on{background:var(--acc);color:#fff;box-shadow:0 2px 10px rgba(67,97,238,.4)}
+.err-box{background:var(--redD);border:1px solid rgba(239,35,60,.3);border-radius:var(--rs);padding:.6rem .875rem;font-size:12px;color:var(--red);margin-bottom:.875rem;display:none;line-height:1.5}
+.err-box.on{display:block}
+.login-note{text-align:center;font-size:11px;color:var(--txt3);margin-top:.875rem;line-height:1.5}
+.theme-btn{position:fixed;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:var(--surf);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;z-index:9000;transition:all .2s;box-shadow:var(--sh)}
+.theme-btn:hover{background:var(--surf2)}
+
+/* ══════════════════════════════════════════
+   SETUP SCREEN
+══════════════════════════════════════════ */
+#s-setup{background:var(--bg)}
+.topbar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.8rem 1.1rem;display:flex;align-items:center;gap:.7rem;flex-shrink:0}
+.ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
+.topbar-name{font-size:13px;font-weight:700}
+.topbar-sub{font-size:10px;color:var(--txt2)}
+.exam-hero{background:linear-gradient(135deg,var(--bg2),var(--surf));border:1px solid var(--brd);border-radius:var(--rl);padding:1.5rem;margin-bottom:1rem;position:relative;overflow:hidden}
+.exam-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,var(--accG),transparent 70%)}
+.exam-hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--accG);border:1px solid rgba(67,97,238,.3);border-radius:99px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;font-family:var(--fm)}
+.exam-hero-title{font-family:var(--fh);font-size:18px;font-weight:800;line-height:1.2;margin-bottom:.3rem}
+.exam-hero-sub{font-size:12px;color:var(--txt2);margin-bottom:1rem}
+.hero-pills{display:flex;flex-wrap:wrap;gap:.4rem}
+.h-pill{background:var(--surf3);border:1px solid var(--brd2);border-radius:99px;padding:4px 11px;font-size:11px;color:var(--txt2);font-weight:500}
+.perm-hd{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;margin-top:1.25rem}
+.perm-row{display:flex;align-items:center;gap:.75rem;padding:.72rem;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rs);margin-bottom:.45rem}
+.perm-ic{width:31px;height:31px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.perm-info{flex:1}
+.perm-name{font-size:13px;font-weight:600}
+.perm-desc{font-size:10px;color:var(--txt2)}
+.integ-box{background:var(--ambD);border:1px solid rgba(255,214,10,.2);border-radius:var(--rs);padding:.875rem 1rem;font-size:12px;color:var(--amb);line-height:1.6;margin-top:1rem}
+.sticky-btn{position:sticky;bottom:0;padding:1rem 1.25rem;background:linear-gradient(to top,var(--bg) 70%,transparent);flex-shrink:0}
+
+/* ══════════════════════════════════════════
+   EXAM SCREEN
+══════════════════════════════════════════ */
+#s-exam{background:var(--bg);position:relative}
+.exam-bar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.6rem .9rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0;position:relative;z-index:50}
+.exam-bar-left{flex:1;min-width:0}
+.eb-title{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--fh)}
+.eb-code{font-size:9px;color:var(--txt2);font-family:var(--fm);margin-top:1px}
+.warn-pill{display:flex;align-items:center;gap:.3rem;background:var(--ambD);border:1px solid rgba(255,214,10,.25);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--amb);transition:all .2s}
+.warn-pill.hot{background:var(--redD);border-color:rgba(239,35,60,.3);color:var(--red);animation:wp-pulse 1.2s infinite}
+@keyframes wp-pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,35,60,.4)}50%{box-shadow:0 0 0 6px rgba(239,35,60,0)}}
+.timer-box{display:flex;align-items:center;gap:.35rem;background:var(--surf2);border:1.5px solid var(--brd2);border-radius:var(--rs);padding:.32rem .65rem;flex-shrink:0}
+.timer-n{font-family:var(--fm);font-size:14px;font-weight:700;letter-spacing:.04em;line-height:1}
+.timer-box.ambar{border-color:var(--amb);background:var(--ambD)}
+.timer-box.ambar .timer-n{color:var(--amb)}
+.timer-box.fire{border-color:var(--red);background:var(--redD);animation:fire-blink 1s infinite}
+.timer-box.fire .timer-n{color:var(--red)}
+@keyframes fire-blink{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* Warn strip */
+.warn-strip{background:var(--redD);border-bottom:2px solid rgba(239,35,60,.5);padding:.7rem 1rem;flex-shrink:0;display:none;animation:strip-in .25s ease}
+@keyframes strip-in{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.ws-inner{display:flex;align-items:center;gap:.75rem}
+.ws-num{background:var(--red);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;flex-shrink:0;font-family:var(--fm)}
+.ws-msg{font-size:12px;color:var(--red);line-height:1.4}
+
+/* Progress */
+.prog-rail{height:2px;background:var(--brd);flex-shrink:0;position:relative}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--grn));transition:width .4s ease;position:absolute;top:0;left:0}
+
+/* Q body */
+.q-wrap{padding:1.1rem;max-width:620px;margin:0 auto}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem}
+.q-pos{font-family:var(--fm);font-size:11px;color:var(--txt2);font-weight:500}
+.q-dots{display:flex;gap:.25rem;overflow-x:auto;padding-bottom:1px}
+.q-dots::-webkit-scrollbar{display:none}
+.qdot{height:7px;border-radius:99px;background:var(--surf3);border:1px solid var(--brd);flex-shrink:0;cursor:pointer;transition:all .18s;width:18px}
+.qdot.ans{background:var(--acc);border-color:var(--acc);width:22px}
+.qdot.cur{background:var(--acc);border-color:var(--acc);width:28px;box-shadow:0 0 8px var(--accG)}
+.q-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:1.2rem;margin-bottom:.875rem;position:relative;overflow:hidden}
+.q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),var(--purL))}
+.q-num{font-family:var(--fm);font-size:10px;font-weight:500;color:var(--acc);margin-bottom:.6rem;letter-spacing:.08em}
+.q-scenario{background:var(--bg2);border-left:2px solid var(--acc);border-radius:0 var(--rs) var(--rs) 0;padding:.65rem .875rem;margin:.75rem 0;font-size:12px;color:var(--txt2);line-height:1.6;font-style:italic}
+.q-text{font-size:15px;font-weight:500;line-height:1.72;color:var(--txt)}
+.opts{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem}
+.opt{background:var(--surf);border:1.5px solid var(--brd);border-radius:var(--r);padding:.8rem .95rem;text-align:left;color:var(--txt);font-size:13.5px;cursor:pointer;font-family:var(--f);display:flex;align-items:center;gap:.8rem;transition:border-color .15s,background .15s;line-height:1.5;width:100%;position:relative;overflow:hidden;-webkit-appearance:none}
+.opt::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--accG),transparent 60%);opacity:0;transition:opacity .18s}
+.opt:active{transform:scale(.988)}
+.opt.picked{border-color:var(--acc);background:rgba(67,97,238,.06)}
+.opt.picked::before{opacity:1}
+.opt-key{width:32px;height:32px;border-radius:8px;background:var(--surf2);border:1.5px solid var(--brd2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:var(--fm);transition:all .15s;color:var(--txt2)}
+.opt.picked .opt-key{background:var(--acc);border-color:var(--acc);color:#fff}
+.opt-check{margin-left:auto;font-size:13px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.opt.picked .opt-check{opacity:1}
+.navrow{display:flex;gap:.65rem}
+.navbtn{flex:1;padding:.78rem;border-radius:var(--rs);border:1.5px solid var(--brd);background:var(--surf);color:var(--txt);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fh);transition:all .16s}
+.navbtn.fwd{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 2px 14px rgba(67,97,238,.3)}
+.navbtn.done{background:var(--grn);border-color:var(--grn);color:#000;box-shadow:0 2px 14px rgba(6,214,160,.3)}
+.navbtn:active{transform:scale(.97)}
+
+/* Grid bar */
+.grid-bar{display:flex;flex-wrap:wrap;gap:.28rem;padding:.75rem .9rem;border-top:1px solid var(--brd);flex-shrink:0}
+.gb-dot{width:26px;height:26px;border-radius:6px;background:var(--surf);border:1px solid var(--brd);font-size:9px;font-weight:700;color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--fm);transition:all .18s}
+.gb-dot.ans{background:var(--acc);border-color:var(--acc);color:#fff}
+.gb-dot.cur{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 2px var(--accG)}
+
+/* Camera pip */
+.cam-pip{position:absolute;bottom:68px;right:10px;width:78px;height:106px;border-radius:10px;overflow:hidden;border:2px solid var(--acc);background:#000;z-index:40;display:none;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+.cam-pip video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cam-rec{position:absolute;top:4px;left:4px;display:flex;align-items:center;gap:3px}
+.cam-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:fire-blink 2s infinite}
+.cam-lbl{font-size:7px;font-weight:700;color:#fff;font-family:var(--fm);background:rgba(0,0,0,.55);padding:1px 4px;border-radius:3px}
+
+/* Submit modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:800;display:none;align-items:flex-end;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.modal-bg.on{display:flex}
+.modal-sheet{background:var(--surf);border-radius:22px 22px 0 0;border-top:1px solid var(--brd);padding:1.75rem 1.4rem;width:100%;animation:sheet-up .2s ease}
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-ic{width:50px;height:50px;border-radius:14px;background:var(--accG);border:1px solid rgba(67,97,238,.3);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto .875rem}
+.modal-t{font-family:var(--fh);font-size:18px;font-weight:800;text-align:center;margin-bottom:.35rem}
+.modal-b{font-size:13px;color:var(--txt2);text-align:center;margin-bottom:1.5rem;line-height:1.6}
+.modal-acts{display:flex;flex-direction:column;gap:.45rem}
+
+/* ══════════════════════════════════════════
+   OVERLAYS
+══════════════════════════════════════════ */
+.overlay{position:fixed;inset:0;z-index:9500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
+.overlay.on{display:flex}
+#ov-disq{background:rgba(7,9,15,.97)}
+#ov-lock{background:var(--bg)}
+#ov-fs{background:var(--bg2)}
+.ov-icon{font-size:60px;margin-bottom:1.25rem}
+.ov-title{font-family:var(--fh);font-size:22px;font-weight:800;margin-bottom:.6rem}
+.ov-body{font-size:13px;color:var(--txt2);line-height:1.75;max-width:320px;margin-bottom:1.75rem}
+.ov-countdown{font-family:var(--fm);font-size:38px;font-weight:700;color:var(--red);line-height:1}
+.ov-countdown-lbl{font-size:10px;color:var(--txt3);margin-top:.3rem;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.1em}
+#ov-disq .ov-title{color:var(--red)}
+#ov-lock .ov-title{color:var(--red)}
+
+/* ══════════════════════════════════════════
+   RESULTS
+══════════════════════════════════════════ */
+#s-results{background:var(--bg)}
+.res-hero{background:linear-gradient(135deg,var(--bg2),var(--surf));border:1px solid var(--brd);border-radius:var(--rl);padding:1.75rem;text-align:center;margin-bottom:.875rem;position:relative;overflow:hidden}
+.res-hero::after{content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:250px;height:80px;background:radial-gradient(ellipse,var(--accG),transparent 70%)}
+.score-ring{width:118px;height:118px;margin:0 auto 1rem;position:relative}
+.score-ring svg{transform:rotate(-90deg)}
+.score-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-pct{font-family:var(--fm);font-size:28px;font-weight:700;line-height:1}
+.score-grade{font-size:11px;color:var(--txt2);font-weight:600;margin-top:2px}
+.stats-g{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin:1.1rem 0}
+.stat-b{background:var(--surf2);border:1px solid var(--brd);border-radius:var(--rs);padding:.8rem;text-align:center}
+.stat-v{font-family:var(--fm);font-size:19px;font-weight:700;margin-bottom:.15rem}
+.stat-k{font-size:10px;color:var(--txt2);font-weight:500}
+.flag-sec{margin-top:.875rem}
+.flag-hd{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.flag-row{display:flex;gap:.65rem;align-items:flex-start;padding:.5rem 0;border-bottom:1px solid var(--brd)}
+.flag-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.flag-txt{font-size:12px;flex:1;line-height:1.4}
+.flag-time{font-size:9px;color:var(--txt3);font-family:var(--fm);margin-top:2px}
+.save-row{display:flex;align-items:center;gap:.5rem;justify-content:center;font-size:12px;padding:.55rem;border-radius:var(--rs);margin-top:.875rem;border:1px solid var(--brd)}
+.save-row.ok{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
+.save-row.saving{background:var(--ambD);border-color:rgba(255,214,10,.2);color:var(--amb)}
+.save-row.fail{background:var(--redD);border-color:rgba(239,35,60,.25);color:var(--red)}
+
+/* ══════════════════════════════════════════
+   ADMIN SCREEN
+══════════════════════════════════════════ */
+#s-admin{background:var(--bg)}
+.admin-tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--brd);overflow-x:auto;flex-shrink:0}
+.admin-tabs::-webkit-scrollbar{display:none}
+.atab{flex-shrink:0;padding:.7rem .95rem;font-size:12px;font-weight:700;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;font-family:var(--fh)}
+.atab.on{color:var(--acc);border-bottom-color:var(--acc)}
+.a-pad{padding:.875rem;max-width:680px;margin:0 auto}
+
+/* Admin stat grid */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.875rem}
+.sc{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem}
+.sc-v{font-family:var(--fm);font-size:24px;font-weight:700;margin-bottom:.15rem}
+.sc-k{font-size:10px;color:var(--txt2);font-weight:500}
+
+/* Student cards */
+.stu-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.5rem}
+.stu-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
+.stu-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
+.stu-info{flex:1;min-width:0}
+.stu-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stu-meta{font-size:10px;color:var(--txt2)}
+.stu-prog{height:3px;background:var(--brd);border-radius:99px;overflow:hidden;margin:.4rem 0}
+.stu-fill{height:100%;border-radius:99px;transition:width .5s}
+.stu-btm{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+
+/* Alert cards */
+.al-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.85rem;margin-bottom:.45rem;display:flex;gap:.7rem}
+.al-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.al-name{font-size:13px;font-weight:700;margin-bottom:.15rem}
+.al-msg{font-size:11px;color:var(--txt2);line-height:1.4}
+.al-t{font-size:9px;color:var(--txt3);font-family:var(--fm);margin-top:.2rem}
+
+/* Chart */
+.chart-wrap{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.55rem}
+.ch-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem}
+.ch-lbl{font-size:11px;width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch-bg{flex:1;height:16px;background:var(--surf2);border-radius:99px;overflow:hidden}
+.ch-fill{height:100%;border-radius:99px;transition:width .8s ease}
+.ch-val{font-size:10px;font-family:var(--fm);font-weight:600;width:28px;text-align:right;flex-shrink:0}
+
+.empty-st{text-align:center;padding:3rem 1rem;color:var(--txt2);font-size:13px;line-height:1.6}
+.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin-a .7s linear infinite;margin-bottom:.65rem}
+@keyframes spin-a{to{transform:rotate(360deg)}}
+
+/* Network banner */
+.net-banner{background:var(--redD);border-bottom:1px solid rgba(239,35,60,.3);padding:.5rem 1rem;font-size:11px;color:var(--red);text-align:center;display:none;flex-shrink:0}
+.net-banner.on{display:block}
+.net-banner.back{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
+</style>
+</head>
+<body>
+
+<button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+
+<!-- ══════════════════════════════════════
+     LOGIN
+══════════════════════════════════════ -->
+<div id="s-login" class="screen on">
+  <div class="login-wrap">
+    <div class="login-logo-row">
+      <div class="logo-box">🎓</div>
+      <div>
+        <div class="logo-text">ExamGuard Pro</div>
+        <div class="logo-sub">Secure Examination Platform</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <div class="rtabs">
+        <button class="rtab on" id="rtab-s" onclick="setRole('student')">👨‍🎓 Student</button>
+        <button class="rtab" id="rtab-a" onclick="setRole('admin')">👨‍🏫 Lecturer</button>
+      </div>
+      <div class="err-box" id="lerr"></div>
+      <div class="field">
+        <label id="lid-lbl">Matric Number / ID</label>
+        <input id="lid" type="text" placeholder="e.g. MLT/2024/001" autocomplete="username" spellcheck="false">
+      </div>
+      <div class="field" id="lname-f">
+        <label>Full Name</label>
+        <input id="lname" type="text" placeholder="e.g. Amara Bello" autocomplete="name">
+      </div>
+      <div class="field">
+        <label id="lpw-lbl">Password</label>
+        <input id="lpw" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn btn-p" id="login-btn" onclick="doLogin()">
+        <span id="login-txt">Sign In →</span>
+      </button>
+      <div class="login-note">All activity is monitored &amp; recorded.<br>By signing in you agree to academic integrity terms.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SETUP
+══════════════════════════════════════ -->
+<div id="s-setup" class="screen">
+  <div class="topbar">
+    <div class="ava" id="setup-ava">A</div>
+    <div style="flex:1;min-width:0">
+      <div class="topbar-name" id="setup-name">Student Name</div>
+      <div class="topbar-sub" id="setup-id">ID</div>
+    </div>
+    <button class="btn btn-s btn-sm" onclick="goto('s-login')">Sign out</button>
+  </div>
+  <div class="scroller">
+    <div class="pad">
+      <div class="exam-hero">
+        <div class="exam-hero-badge">🔒 Proctored Examination</div>
+        <div class="exam-hero-title">History and Philosophy of Science</div>
+        <div class="exam-hero-sub">MLT 112 · Final Examination · Secure Proctored Session</div>
+        <div class="hero-pills">
+          <span class="h-pill">⏱ 20 minutes</span>
+          <span class="h-pill">📝 20 questions</span>
+          <span class="h-pill">📷 Camera required</span>
+          <span class="h-pill">⚠️ Max 3 warnings</span>
+          <span class="h-pill">🔒 Auto-terminates</span>
+        </div>
+      </div>
+      <div class="perm-hd">Required Permissions</div>
+      <div class="perm-row">
+        <div class="perm-ic" style="background:rgba(67,97,238,.12)">📷</div>
+        <div class="perm-info"><div class="perm-name">Camera</div><div class="perm-desc">Continuous identity monitoring</div></div>
+        <div class="chip chip-a" id="p-cam">Required</div>
+      </div>
+      <div class="perm-row">
+        <div class="perm-ic" style="background:rgba(6,214,160,.1)">🎙️</div>
+        <div class="perm-info"><div class="perm-name">Microphone</div><div class="perm-desc">Audio environment monitoring</div></div>
+        <div class="chip chip-a" id="p-mic">Required</div>
+      </div>
+      <div class="perm-row">
+        <div class="perm-ic" style="background:rgba(255,214,10,.1)">🖥️</div>
+        <div class="perm-info"><div class="perm-name">Fullscreen</div><div class="perm-desc">Prevents multitasking</div></div>
+        <div class="chip chip-b">Auto</div>
+      </div>
+      <div class="perm-row">
+        <div class="perm-ic" style="background:rgba(114,9,183,.1)">👁️</div>
+        <div class="perm-info"><div class="perm-name">Activity Monitor</div><div class="perm-desc">Tab switch, focus &amp; app detection</div></div>
+        <div class="chip chip-g">Enabled</div>
+      </div>
+      <div class="integ-box">
+        ⚠️ <strong>Academic Integrity Declaration:</strong> By starting you confirm you are working alone, in a private location, without any unauthorized materials. You understand that <strong>3 violations</strong> trigger automatic termination. All activity is logged and sent to your lecturer in real time.
+      </div>
+    </div>
+  </div>
+  <div class="sticky-btn">
+    <button class="btn btn-p" id="start-btn" onclick="grantAndStart()">🚀 Grant Permissions &amp; Start Exam</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EXAM
+══════════════════════════════════════ -->
+<div id="s-exam" class="screen">
+  <!-- Network banner -->
+  <div class="net-banner" id="net-banner">📡 Network lost — answers cached locally. Reconnecting…</div>
+  <!-- Top bar -->
+  <div class="exam-bar">
+    <div class="exam-bar-left">
+      <div class="eb-title" id="eb-title">History of Medicine</div>
+      <div class="eb-code">SECURE · PROCTORED</div>
+    </div>
+    <div class="warn-pill" id="warn-pill" style="display:none">⚠️ <span id="wc">0</span>/3</div>
+    <div class="timer-box" id="timer-box">
+      <span style="font-size:12px">⏱</span>
+      <span class="timer-n" id="timer-n">20:00</span>
+    </div>
+  </div>
+  <!-- Warning strip -->
+  <div class="warn-strip" id="warn-strip">
+    <div class="ws-inner">
+      <div class="ws-num" id="ws-num">1/3</div>
+      <div class="ws-msg" id="ws-msg">Suspicious activity detected.</div>
+    </div>
+  </div>
+  <!-- Progress -->
+  <div class="prog-rail"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <!-- Body -->
+  <div class="scroller" id="exam-scroll">
+    <div class="q-wrap" id="q-wrap"></div>
+  </div>
+  <!-- Grid -->
+  <div class="grid-bar" id="grid-bar"></div>
+  <!-- Camera PiP -->
+  <div class="cam-pip" id="cam-pip">
+    <video id="cam-vid" autoplay muted playsinline></video>
+    <div class="cam-rec"><div class="cam-dot"></div><div class="cam-lbl">LIVE</div></div>
+  </div>
+  <!-- Submit modal -->
+  <div class="modal-bg" id="submit-modal">
+    <div class="modal-sheet">
+      <div class="modal-ic">📋</div>
+      <div class="modal-t">Submit Examination?</div>
+      <div class="modal-b" id="modal-b">You are about to submit your exam.</div>
+      <div class="modal-acts">
+        <button class="btn btn-g" onclick="finalSubmit(false)">✓ Confirm Submission</button>
+        <button class="btn btn-s" onclick="closeModal()">← Review Answers</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     RESULTS
+══════════════════════════════════════ -->
+<div id="s-results" class="screen">
+  <div class="topbar">
+    <div class="ava" id="res-ava">A</div>
+    <div style="flex:1"><div class="topbar-name" id="res-name">Student</div><div class="topbar-sub">Exam Completed</div></div>
+    <button class="btn btn-s btn-sm" onclick="goto('s-login')">Done</button>
+  </div>
+  <div class="scroller">
+    <div class="pad">
+      <div class="res-hero">
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:.875rem">MLT 112 · History of Medicine</div>
+        <div class="score-ring">
+          <svg width="118" height="118" viewBox="0 0 118 118">
+            <circle cx="59" cy="59" r="50" fill="none" stroke="var(--brd)" stroke-width="9"/>
+            <circle id="score-ring" cx="59" cy="59" r="50" fill="none" stroke="var(--acc)" stroke-width="9"
+              stroke-dasharray="314.2" stroke-dashoffset="314.2" stroke-linecap="round"
+              style="transition:stroke-dashoffset 1.2s ease,stroke .4s"/>
+          </svg>
+          <div class="score-inner">
+            <div class="score-pct" id="res-pct">—</div>
+            <div class="score-grade" id="res-grade">—</div>
+          </div>
+        </div>
+        <div class="stats-g">
+          <div class="stat-b"><div class="stat-v" id="res-correct" style="color:var(--grn)">—</div><div class="stat-k">Correct</div></div>
+          <div class="stat-b"><div class="stat-v" id="res-time">—</div><div class="stat-k">Time Taken</div></div>
+          <div class="stat-b"><div class="stat-v" id="res-flags" style="color:var(--amb)">—</div><div class="stat-k">Flags</div></div>
+          <div class="stat-b"><div class="stat-v" id="res-status">—</div><div class="stat-k">Result</div></div>
+        </div>
+      </div>
+      <div class="flag-sec" id="flag-detail"></div>
+      <div class="save-row saving" id="save-row">💾 Saving to database…</div>
+      <div style="margin-top:.75rem"><button class="btn btn-s" onclick="goto('s-login')">← Return to Login</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN
+══════════════════════════════════════ -->
+<div id="s-admin" class="screen">
+  <div class="topbar">
+    <div class="ava" style="background:linear-gradient(135deg,var(--pur),var(--purL))">L</div>
+    <div style="flex:1"><div class="topbar-name">Lecturer Dashboard</div><div class="topbar-sub">Live · History of Medicine Exam</div></div>
+    <button class="btn btn-s btn-sm" onclick="goto('s-login')">Sign out</button>
+  </div>
+  <div class="admin-tabs">
+    <div class="atab on" onclick="aTab('live',this)">🟢 Live</div>
+    <div class="atab" onclick="aTab('results',this)">📊 Results</div>
+    <div class="atab" onclick="aTab('flags',this)">🚨 Flags <span id="flag-badge" style="background:var(--red);color:#fff;border-radius:99px;padding:1px 6px;font-size:9px;margin-left:2px;display:none"></span></div>
+    <div class="atab" onclick="aTab('analytics',this)">📈 Analytics</div>
+  </div>
+  <div class="scroller">
+    <div class="a-pad" id="admin-body">
+      <div class="empty-st"><div class="spin"></div><div>Connecting to database…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     OVERLAYS
+══════════════════════════════════════ -->
+<div class="overlay" id="ov-disq">
+  <div class="ov-icon">🚫</div>
+  <div class="ov-title">Examination Terminated</div>
+  <div class="ov-body">You received <strong style="color:var(--red)">3 warnings</strong> for suspicious activity. Your exam has been automatically submitted and all violation logs sent to your lecturer.</div>
+  <div class="ov-countdown" id="disq-cd">5</div>
+  <div class="ov-countdown-lbl">seconds until redirect</div>
+  <button class="btn btn-s" style="width:auto;padding:.6rem 1.5rem" onclick="forceOut()">Leave Now</button>
+</div>
+
+<div class="overlay" id="ov-lock">
+  <div class="ov-icon">⏰</div>
+  <div class="ov-title" style="color:var(--red)">Time Off</div>
+  <div style="font-family:var(--fh);font-size:17px;font-weight:800;margin-bottom:.5rem">Examination Closed</div>
+  <div class="ov-body">The examination period has ended. Your answers have been automatically submitted and recorded in the database.</div>
+  <button class="btn btn-s" style="width:auto;padding:.75rem 2rem" onclick="forceOut()">Return to Login</button>
+</div>
+
+<div class="overlay" id="ov-fs">
+  <div class="ov-icon">🖥️</div>
+  <div class="ov-title">Fullscreen Required</div>
+  <div class="ov-body">This exam requires fullscreen mode. Please re-enable it to continue your examination.</div>
+  <button class="btn btn-p" style="width:auto;padding:.75rem 2rem" onclick="reqFS()">Enable Fullscreen</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     FIREBASE SDK
+══════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs,
+         onSnapshot, serverTimestamp, query, orderBy, where, updateDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── PASTE YOUR FIREBASE CONFIG HERE ──
+const FC = {
+  apiKey:            "PASTE_YOUR_API_KEY",
+  authDomain:        "PASTE_YOUR_PROJECT.firebaseapp.com",
+  projectId:         "PASTE_YOUR_PROJECT_ID",
+  storageBucket:     "PASTE_YOUR_PROJECT.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId:             "PASTE_APP_ID"
+};
+
+try {
+  const app = initializeApp(FC);
+  const db  = getFirestore(app);
+  Object.assign(window, {
+    _db:db,_col:collection,_doc:doc,_setDoc:setDoc,_getDoc:getDoc,
+    _getDocs:getDocs,_addDoc:addDoc,_onSnap:onSnapshot,_sTS:serverTimestamp,
+    _q:query,_ob:orderBy,_wh:where,_upDoc:updateDoc,_dbOK:true
+  });
+  window.dispatchEvent(new Event('dbOK'));
+} catch(e){ window._dbOK=false; console.warn('Firebase:',e); }
+</script>
+
+<!-- ══════════════════════════════════════
+     QUESTION BANK  (20 hard critical-reasoning)
+══════════════════════════════════════ -->
 <script>
+const QB = [
+  {
+    q: "A medical historian defines 'Medicine' as purely a natural science focused only on biological processes. Based on the correct definition, what important dimension has this historian left out?",
+    sc: false,
+    opts: [
+      "Medicine's dependence on government policy and funding",
+      "The art dimension — including clinical skills, professional judgment, and the promotion of community health",
+      "Medicine's historical roots in supernatural belief systems",
+      "The role of pharmaceutical companies in drug development"
+    ],
+    ans: 1
+  },
+  {
+    q: "History of medicine is best described as the study of how medical knowledge and practices developed over time. What major conceptual transition does this history most clearly document?",
+    sc: false,
+    opts: [
+      "From surgical practice to pharmaceutical treatment as the dominant form of care",
+      "From community-based medicine to hospital-centred care",
+      "From supernatural beliefs about disease to modern scientific medicine",
+      "From individual patient care to population-level public health"
+    ],
+    ans: 2
+  },
+  {
+    q: "Scenario: An ancient Egyptian physician treats a patient with fever using herbal remedies while also performing a ritual prayer to the gods. Which characteristic of Egyptian medicine does this scenario illustrate?",
+    sc: true,
+    opts: [
+      "Exclusive reliance on surgical intervention",
+      "The combination of religion and practical treatment",
+      "The rejection of spiritual explanations in favour of herbal science",
+      "The use of acupuncture alongside herbal therapy"
+    ],
+    ans: 1
+  },
+  {
+    q: "The Ebers Papyrus is significant in the history of medicine primarily because it represents:",
+    sc: false,
+    opts: [
+      "The first documented use of vaccination to prevent infectious disease",
+      "An ancient Chinese text describing the concept of Qi energy balance",
+      "One of the earliest medical records, documenting Egyptian treatment practices",
+      "A medieval Islamic manuscript combining Greek and Arabic medical knowledge"
+    ],
+    ans: 2
+  },
+  {
+    q: "Ayurvedic medicine, the traditional medical system of ancient India, is fundamentally distinguished from Egyptian medicine by its primary emphasis on:",
+    sc: false,
+    opts: [
+      "Surgical procedures and anatomical dissection",
+      "The use of animal-derived substances exclusively for treatment",
+      "Balance of body, mind, and spirit through herbs, diet, and lifestyle control",
+      "Identifying microorganisms as the cause of disease"
+    ],
+    ans: 2
+  },
+  {
+    q: "Scenario: A practitioner trained in ancient Indian medicine advises a patient suffering from chronic fatigue to change their diet, adopt a regular sleep schedule, and use specific herbal preparations. Which Ayurvedic principle does this approach most directly reflect?",
+    sc: true,
+    opts: [
+      "Restoration of Qi through acupuncture and energy realignment",
+      "Surgical correction of an underlying anatomical defect",
+      "Promoting balance of body, mind, and spirit through lifestyle and herbal control",
+      "Application of sterilization techniques to prevent infection"
+    ],
+    ans: 2
+  },
+  {
+    q: "Traditional Chinese medicine explains disease as resulting from an imbalance of Qi (Chi). Which other ancient medical system shares a similar philosophical foundation — explaining health through the concept of internal balance?",
+    sc: false,
+    opts: [
+      "Egyptian medicine — which attributed disease to displeasure of the gods",
+      "Ayurvedic medicine — which also centres on balance of body, mind, and spirit",
+      "Modern medicine — which uses biochemical markers to measure physiological equilibrium",
+      "Medieval European medicine — which relied on religious prayer for restoration of health"
+    ],
+    ans: 1
+  },
+  {
+    q: "A student claims that acupuncture was developed in ancient India as part of Ayurvedic practice. Based on the history of medicine, why is this claim incorrect?",
+    sc: false,
+    opts: [
+      "Acupuncture originated in medieval Europe during the period of Islamic scholarship",
+      "Acupuncture was developed in ancient Egypt alongside herbal surgical procedures",
+      "Acupuncture is a practice of traditional Chinese medicine, not Indian Ayurvedic medicine",
+      "Acupuncture was introduced during the 18th century as part of modern scientific medicine"
+    ],
+    ans: 2
+  },
+  {
+    q: "Scenario: During the Middle Ages in Europe, a sick patient is told that their illness is a punishment from God and is taken to a monastery for prayer rather than medical treatment. Which feature of Medieval medicine does this scenario illustrate?",
+    sc: true,
+    opts: [
+      "The rapid scientific progress characteristic of the Medieval period",
+      "The influence of Islamic scholarship in preserving ancient medical knowledge",
+      "The domination of medicine by religious thinking, which slowed scientific progress",
+      "The widespread use of herbal remedies in European medical practice"
+    ],
+    ans: 2
+  },
+  {
+    q: "Avicenna's 'Canon of Medicine' is considered a landmark contribution to the history of medicine during the Medieval period. What made this work particularly important?",
+    sc: false,
+    opts: [
+      "It was the first document to identify microorganisms as the cause of disease",
+      "It introduced antiseptic surgery and the concept of sterilization in medical procedures",
+      "It combined and preserved earlier medical knowledge, advancing the field during a period of slow European progress",
+      "It described the use of X-rays for internal imaging of the human body"
+    ],
+    ans: 2
+  },
+  {
+    q: "During the Middle Ages, scientific progress in European medicine was slow. Which factor most directly counteracted this stagnation and helped preserve medical knowledge for future generations?",
+    sc: false,
+    opts: [
+      "The development of modern diagnostic tools such as the microscope",
+      "The contribution of Islamic scholars who preserved and improved existing medical knowledge",
+      "The introduction of vaccination programmes across European populations",
+      "The establishment of the germ theory of disease by European scientists"
+    ],
+    ans: 1
+  },
+  {
+    q: "Louis Pasteur's Germ Theory of Disease represented a revolution in the history of medicine. Before this discovery, what was the most widely accepted explanation for the cause of disease?",
+    sc: false,
+    opts: [
+      "Disease was caused by genetic mutations passed from parent to child",
+      "Disease resulted from imbalance of Qi energy within the body",
+      "Disease was caused by supernatural forces or miasma — bad air from rotting matter",
+      "Disease was caused by hormonal imbalances identified through blood testing"
+    ],
+    ans: 2
+  },
+  {
+    q: "Scenario: A 19th-century surgeon notices that patients who undergo operations in his ward have a much higher death rate from infection than those treated in another ward. He introduces a protocol requiring all surgical instruments and hands to be cleaned with carbolic acid before operations. Whose historical contribution does this scenario most closely reflect?",
+    sc: true,
+    opts: [
+      "Louis Pasteur — who proved microorganisms cause disease through the germ theory",
+      "Edward Jenner — who developed vaccination to prevent infectious disease",
+      "Joseph Lister — who introduced antiseptic sterilization techniques in surgery",
+      "Avicenna — who combined earlier medical knowledge in the Canon of Medicine"
+    ],
+    ans: 2
+  },
+  {
+    q: "Edward Jenner's contribution to the history of medicine involved observing that milkmaids who contracted cowpox did not develop smallpox. What broader principle in modern medicine did this observation establish?",
+    sc: false,
+    opts: [
+      "The principle of antiseptic surgery — that sterilization prevents post-operative infection",
+      "The germ theory — that specific microorganisms cause specific diseases",
+      "The principle of vaccination — that controlled exposure to a mild pathogen can prevent a deadly disease",
+      "The principle of personalized medicine — that treatment should be tailored to the individual"
+    ],
+    ans: 2
+  },
+  {
+    q: "The development of microscopes during the Modern period (18th–20th century) was critical to advances in medicine primarily because it:",
+    sc: false,
+    opts: [
+      "Allowed surgeons to perform more precise operations without open incisions",
+      "Enabled physicians to transmit medical images remotely via telemedicine",
+      "Allowed scientists to observe microorganisms and cells, directly supporting the germ theory",
+      "Provided real-time imaging of internal organs for diagnostic purposes"
+    ],
+    ans: 2
+  },
+  {
+    q: "Scenario: A medical team in 2023 sequences a cancer patient's tumour DNA, identifies specific mutations, and designs a drug that targets only those mutated cells while sparing healthy tissue. Which feature of 21st-century medicine does this scenario exemplify?",
+    sc: true,
+    opts: [
+      "Antiseptic surgery — applying sterilization principles to the operating theatre",
+      "Ayurvedic medicine — balancing the patient's body, mind, and spirit",
+      "Genetic engineering and personalized/precision medicine",
+      "Telemedicine — delivering healthcare remotely using digital technology"
+    ],
+    ans: 2
+  },
+  {
+    q: "21st-century medicine is described as 'highly advanced and technology-driven with a focus on precision and specialized care.' Which combination of features BEST supports this description?",
+    sc: false,
+    opts: [
+      "Use of herbs, diet, and lifestyle modification; acupuncture; and spiritual healing",
+      "Robotic surgery, AI-assisted diagnosis, advanced imaging (MRI/CT), and telemedicine",
+      "Antiseptic surgical techniques, microscope-based diagnosis, and vaccination programmes",
+      "The Canon of Medicine, preservation of Greek knowledge, and monastery-based care"
+    ],
+    ans: 1
+  },
+  {
+    q: "A healthcare provider consults a patient in a rural village via video call, reviews their symptoms, and prescribes treatment without the patient travelling to a hospital. Which contemporary medical development does this practice represent?",
+    sc: false,
+    opts: [
+      "Robotic surgery — using automated systems to perform precise surgical procedures",
+      "Targeted therapy — using drugs designed to attack specific cancer cell mutations",
+      "Telemedicine — the delivery of healthcare remotely using digital communication",
+      "Organ transplantation — the surgical transfer of a healthy organ to replace a diseased one"
+    ],
+    ans: 2
+  },
+  {
+    q: "Considering the full progression from Ancient to 21st-century medicine, which sequence correctly arranges the following developments in chronological order? (I) Germ theory by Pasteur, (II) Ebers Papyrus and Egyptian herbal practice, (III) Avicenna's Canon of Medicine, (IV) AI in diagnosis and robotic surgery",
+    sc: false,
+    opts: [
+      "I → II → III → IV",
+      "III → II → I → IV",
+      "II → III → I → IV",
+      "II → I → III → IV"
+    ],
+    ans: 2
+  },
+  {
+    q: "Scenario: A lecturer asks students: 'Which development in the history of medicine had the single greatest impact on reducing deaths during surgical procedures?' Based on the major developments covered in the history of medicine, which answer is best supported?",
+    sc: true,
+    opts: [
+      "Edward Jenner's development of the smallpox vaccine, which eliminated the leading surgical complication",
+      "Louis Pasteur's germ theory, which established that microorganisms cause disease in all settings",
+      "Joseph Lister's introduction of antiseptic surgery, which directly reduced post-operative infection and death",
+      "The development of the microscope, which allowed surgeons to see pathogens on instruments before operations"
+    ],
+    ans: 2
+  }
+];
 
-async function startCamera(){
+/* ══════════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════════ */
+const EXAM_DURATION  = 20 * 60;
+const MAX_WARN       = 3;
+const LECTURER_USER  = 'Amuhd';
+const LECTURER_PASS  = '64818991';
+const AUTOSAVE_MS    = 7000;
+const CACHE_KEY      = 'eg_answers_cache';
 
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let role='student', sId='', sName='', sessionId=null;
+let qs=[], ans={}, curQ=0, warns=[], wCount=0;
+let timerInt=null, saveInt=null, timeLeft=EXAM_DURATION;
+let t0=null, stream=null, active=false, done=false;
+let adminUnsub=null, allSess=[], curTab='live';
+let online=true;
+
+/* ══════════════════════════════════════════
+   THEME
+══════════════════════════════════════════ */
+function toggleTheme(){
+  const t = document.documentElement.dataset.theme==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=t;
+  document.getElementById('themeBtn').textContent=t==='dark'?'🌙':'☀️';
+}
+
+/* ══════════════════════════════════════════
+   NETWORK MONITORING
+══════════════════════════════════════════ */
+window.addEventListener('online', ()=>{
+  online=true;
+  const b=document.getElementById('net-banner');
+  b.className='net-banner back on';
+  b.textContent='✓ Connection restored — syncing answers…';
+  setTimeout(()=>b.classList.remove('on'),3000);
+  flushCache();
+});
+window.addEventListener('offline', ()=>{
+  online=false;
+  const b=document.getElementById('net-banner');
+  b.className='net-banner on';
+  b.textContent='📡 Network lost — answers saved locally. Reconnecting…';
+});
+
+async function flushCache(){
+  if(!window._dbOK||!sessionId) return;
   try{
+    const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');
+    if(Object.keys(cached).length){
+      await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),{answers:cached,timeLeft},{merge:true});
+      localStorage.removeItem(CACHE_KEY);
+    }
+  }catch(e){}
+}
 
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true
-    });
+/* ══════════════════════════════════════════
+   ROUTING
+══════════════════════════════════════════ */
+function goto(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.getElementById('themeBtn').style.display=id==='s-login'?'':'none';
+  if(id==='s-login') cleanup();
+}
 
-    const video = document.getElementById("cam-vid");
-
-    video.srcObject = stream;
-
-    await video.play();
-
-    document.getElementById("cam-pip").style.display = "block";
-
-    return true;
-
-  }catch(err){
-
-    console.error(err);
-
-    alert("Camera permission denied.");
-
-    return false;
+/* ══════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════ */
+function setRole(r){
+  role=r;
+  document.getElementById('rtab-s').classList.toggle('on',r==='student');
+  document.getElementById('rtab-a').classList.toggle('on',r==='admin');
+  document.getElementById('lname-f').style.display=r==='student'?'':'none';
+  document.getElementById('lpw-lbl').textContent=r==='admin'?'Password':'Password';
+  const lidLbl=document.getElementById('lid-lbl');
+  const lidInp=document.getElementById('lid');
+  if(r==='admin'){
+    lidLbl.textContent='Username';
+    lidInp.placeholder='Enter your username';
+  } else {
+    lidLbl.textContent='Matric Number / ID';
+    lidInp.placeholder='e.g. MLT/2024/001';
   }
 }
 
-async function reqFS(){
-
-  const el = document.documentElement;
-
-  if(el.requestFullscreen){
-    await el.requestFullscreen();
-  }
-  else if(el.webkitRequestFullscreen){
-    el.webkitRequestFullscreen();
-  }
+function loginErr(m){
+  const el=document.getElementById('lerr');
+  el.textContent=m; el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'),5000);
 }
 
-async function grantAndStart(){
+function doLogin(){
+  const id   = document.getElementById('lid').value.trim();
+  const name = document.getElementById('lname').value.trim();
+  const pw   = document.getElementById('lpw').value.trim();
+  const btn  = document.getElementById('login-btn');
 
-  const btn = document.getElementById("start-btn");
-
-  btn.disabled = true;
-
-  btn.textContent = "Preparing Exam...";
-
-  try{
-
-    await reqFS();
-
-    const camOK = await startCamera();
-
-    if(!camOK){
-
-      btn.disabled = false;
-
-      btn.textContent = "🚀 Grant Permissions & Start Exam";
-
+  // ── LECTURER LOGIN ──
+  if(role==='admin'){
+    if(!id){ loginErr('Please enter your username.'); return; }
+    if(!pw){ loginErr('Please enter your password.'); return; }
+    if(id !== LECTURER_USER || pw !== LECTURER_PASS){
+      loginErr('Incorrect username or password.');
       return;
     }
+    sId='Amuhd'; sName='Amuhd';
+    initAdmin();
+    goto('s-admin');
+    return;
+  }
 
-    goto("s-exam");
+  // ── STUDENT LOGIN ──
+  if(!id)  { loginErr('Please enter your Matric Number.'); return; }
+  if(!name){ loginErr('Please enter your full name.');     return; }
+  if(!pw)  { loginErr('Please enter your password.');      return; }
 
-    setTimeout(()=>{
+  // Save to localStorage so browser remembers next time
+  localStorage.setItem('eg_last_id',   id);
+  localStorage.setItem('eg_last_name', name);
 
-      startExam();
+  sId=id; sName=name;
+  const ini=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)||'S';
+  document.getElementById('setup-ava').textContent  = ini;
+  document.getElementById('setup-name').textContent = name;
+  document.getElementById('setup-id').textContent   = id;
+  goto('s-setup');
+}
 
-    },100);
+/* ══════════════════════════════════════════
+   SETUP & PERMISSIONS
+══════════════════════════════════════════ */
+function grantAndStart(){
+  const btn=document.getElementById('start-btn');
+  btn.disabled=true;
+  btn.textContent='Starting…';
+  try{ reqFS(); }catch(e){}
+  startExam();
+}
 
-  }catch(err){
+// camera popup removed — caused Android hang
 
-    console.error(err);
 
-    alert("Failed to start exam.");
 
-    btn.disabled = false;
 
-    btn.textContent = "🚀 Grant Permissions & Start Exam";
+
+
+
+function reqFS(){
+  const el=document.documentElement;
+  return (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen||function(){}).call(el);
+}
+
+/* ══════════════════════════════════════════
+   EXAM START
+══════════════════════════════════════════ */
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+
+function startExam(){
+  ans={}; warns=[]; wCount=0; t0=Date.now(); timeLeft=EXAM_DURATION;
+  active=true; done=false;
+
+  // Shuffle questions and options
+  qs=shuffle(QB).map(q=>{
+    const mapped=q.opts.map((o,i)=>({o,correct:i===q.ans}));
+    return{...q,opts:shuffle(mapped)};
+  });
+
+  // Restore cached answers if any
+  try{
+    const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');
+    if(Object.keys(cached).length) ans={...cached};
+  }catch(e){}
+
+  // Start exam UI IMMEDIATELY — no waiting for anything
+  setupAntiCheat();
+  renderQ(0);
+  renderGrid();
+  runTimer();
+  runAutoSave();
+  goto('s-exam');
+
+  // Create Firestore session in background AFTER exam is already showing
+  // This never blocks the student
+  if(window._dbOK){
+    window._addDoc(window._col(window._db,'exam_sessions'),{
+      studentId:sId, studentName:sName, course:'History of Medicine',
+      status:'active', startedAt:window._sTS(),
+      score:null, correct:null, total:QB.length,
+      timeTaken:null, timeLeft:EXAM_DURATION,
+      flagCount:0, flags:[], answers:{},
+      submitted:false, autoSubmit:false, forceSubmitted:false
+    }).then(ref=>{ sessionId=ref.id; })
+      .catch(e=>{ console.warn('Session create failed:',e); });
   }
 }
 
+/* ══════════════════════════════════════════
+   CAMERA
+══════════════════════════════════════════ */
+function setupCamera(){
+  if(!stream) return;
+  document.getElementById('cam-vid').srcObject=stream;
+  document.getElementById('cam-pip').style.display='block';
+}
+
+/* ══════════════════════════════════════════
+   ANTI-CHEAT
+══════════════════════════════════════════ */
+function setupAntiCheat(){
+  document.addEventListener('visibilitychange', onVis);
+  window.addEventListener('blur', onBlur);
+  document.addEventListener('fullscreenchange', onFS);
+  document.addEventListener('webkitfullscreenchange', onFS);
+  document.addEventListener('contextmenu', noCtx);
+  document.addEventListener('copy',  noEvt);
+  document.addEventListener('paste', noEvt);
+  document.addEventListener('cut',   noEvt);
+  document.addEventListener('selectstart', noEvt);
+  document.addEventListener('keydown', onKey);
+  window._devTimer=setInterval(chkDevTools, 4000);
+}
+
+const noCtx=e=>e.preventDefault();
+const noEvt=e=>e.preventDefault();
+
+function onVis(){ if(document.hidden && active && !done) flag('Tab switch / screen minimized detected'); }
+function onBlur(){ if(active && !done) flag('Browser focus lost — possible app switch'); }
+function onFS(){
+  if(!document.fullscreenElement && !document.webkitFullscreenElement && active && !done){
+    flag('Fullscreen mode exited');
+    document.getElementById('ov-fs').classList.add('on');
+    setTimeout(()=>document.getElementById('ov-fs').classList.remove('on'), 6000);
+  }
+}
+function onKey(e){
+  if((e.ctrlKey||e.metaKey)&&['c','v','u','a','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
+  if(e.key==='F12') e.preventDefault();
+  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&['i','j','c','k'].includes(e.key.toLowerCase())) e.preventDefault();
+}
+
+let _dtOpen=false;
+function chkDevTools(){
+  const t=160;
+  const open=window.outerWidth-window.innerWidth>t||window.outerHeight-window.innerHeight>t;
+  if(open && !_dtOpen && active && !done){_dtOpen=true; flag('Developer tools detected');}
+  else if(!open) _dtOpen=false;
+}
+
+function rmListeners(){
+  document.removeEventListener('visibilitychange', onVis);
+  window.removeEventListener('blur', onBlur);
+  document.removeEventListener('fullscreenchange', onFS);
+  document.removeEventListener('webkitfullscreenchange', onFS);
+  document.removeEventListener('contextmenu', noCtx);
+  document.removeEventListener('copy', noEvt);
+  document.removeEventListener('paste', noEvt);
+  document.removeEventListener('cut', noEvt);
+  document.removeEventListener('selectstart', noEvt);
+  document.removeEventListener('keydown', onKey);
+  clearInterval(window._devTimer);
+}
+
+/* ══════════════════════════════════════════
+   WARNING SYSTEM
+══════════════════════════════════════════ */
+async function flag(msg){
+  if(!active||done) return;
+  wCount++;
+  const entry={msg, time:new Date().toLocaleTimeString(), ts:Date.now()};
+  warns.push(entry);
+
+  // Update pill
+  const pill=document.getElementById('warn-pill');
+  pill.style.display='flex';
+  document.getElementById('wc').textContent=wCount;
+  pill.className='warn-pill'+(wCount>=2?' hot':'');
+
+  // Show strip
+  document.getElementById('ws-num').textContent=`${wCount}/${MAX_WARN}`;
+  document.getElementById('ws-msg').textContent=
+    msg+(wCount<MAX_WARN?` — ${MAX_WARN-wCount} warning(s) remaining.`:' — Terminating now…');
+  const strip=document.getElementById('warn-strip');
+  strip.style.display='block';
+  clearTimeout(window._stripT);
+  if(wCount<MAX_WARN) window._stripT=setTimeout(()=>strip.style.display='none', 7000);
+
+  // Save to Firestore
+  if(window._dbOK && sessionId){
+    try{
+      await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),
+        {flagCount:wCount, flags:warns, status:wCount>=MAX_WARN?'disqualified':'active'},{merge:true});
+    }catch(e){}
+  }
+
+  if(wCount>=MAX_WARN) disqualify();
+}
+
+async function disqualify(){
+  active=false;
+  clearInterval(timerInt); clearInterval(saveInt);
+  rmListeners();
+  await persist(true,'disqualified');
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  document.getElementById('ov-disq').classList.add('on');
+  let s=5;
+  const t=setInterval(()=>{
+    s--;
+    document.getElementById('disq-cd').textContent=s;
+    if(s<=0){clearInterval(t); forceOut();}
+  },1000);
+}
+
+/* ══════════════════════════════════════════
+   TIMER
+══════════════════════════════════════════ */
+function runTimer(){
+  clearInterval(timerInt);
+  timerInt=setInterval(async()=>{
+    timeLeft--;
+    updTimer();
+    // sync every 20s
+    if(timeLeft%20===0 && window._dbOK && sessionId){
+      try{await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),{timeLeft,answers:ans},{merge:true});}catch(e){}
+    }
+    if(timeLeft<=0){clearInterval(timerInt); timeUp();}
+  },1000);
+}
+
+function updTimer(){
+  const m=Math.floor(timeLeft/60), s=timeLeft%60;
+  document.getElementById('timer-n').textContent=
+    String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const box=document.getElementById('timer-box');
+  box.className='timer-box'+(timeLeft<=300?' ambar':'')+(timeLeft<=60?' fire':'');
+}
+
+async function timeUp(){
+  active=false; clearInterval(saveInt); rmListeners();
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  await persist(true,'timeout');
+  document.getElementById('ov-lock').classList.add('on');
+}
+
+/* ══════════════════════════════════════════
+   AUTO-SAVE (offline-aware)
+══════════════════════════════════════════ */
+function runAutoSave(){
+  clearInterval(saveInt);
+  saveInt=setInterval(async()=>{
+    // Always cache locally first
+    localStorage.setItem(CACHE_KEY, JSON.stringify(ans));
+    if(!online || !window._dbOK || !sessionId) return;
+    try{
+      await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),
+        {answers:ans, timeLeft},{merge:true});
+      localStorage.removeItem(CACHE_KEY);
+    }catch(e){}
+  }, AUTOSAVE_MS);
+}
+
+/* ══════════════════════════════════════════
+   RENDER QUESTION
+══════════════════════════════════════════ */
+function renderQ(idx){
+  curQ=idx;
+  const q=qs[idx], total=qs.length;
+  const done2=Object.keys(ans).length;
+  document.getElementById('prog-fill').style.width=`${Math.round((done2/total)*100)}%`;
+  document.getElementById('exam-scroll').scrollTo(0,0);
+
+  const L=['a.','b.','c.','d.'];
+  const scHtml=q.sc
+    ?`<div class="q-scenario">📋 Scenario — read carefully before selecting your answer.</div>`:'';
+
+  document.getElementById('q-wrap').innerHTML=`
+    <div class="q-meta">
+      <div class="q-pos">Q<strong>${idx+1}</strong>/${total} · ${done2} answered</div>
+      <div class="q-dots" id="q-dots-mini"></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">QUESTION ${String(idx+1).padStart(2,'0')}${q.sc?' · SCENARIO':''}</div>
+      ${scHtml}
+      <div class="q-text">${q.q}</div>
+    </div>
+    <div class="opts">
+      ${q.opts.map((o,i)=>`
+        <button class="opt ${ans[idx]===i?'picked':''}" onclick="pick(${idx},${i})">
+          <span class="opt-key">${L[i]}</span>
+          <span style="flex:1">${o.o}</span>
+          <span class="opt-check">✓</span>
+        </button>`).join('')}
+    </div>
+    <div class="navrow">
+      ${idx>0?`<button class="navbtn" onclick="renderQ(${idx-1})">← Back</button>`:'<span></span>'}
+      ${idx<total-1
+        ?`<button class="navbtn fwd" onclick="renderQ(${idx+1})">Next →</button>`
+        :`<button class="navbtn done" onclick="openSubmit()">✓ Submit</button>`}
+    </div>`;
+
+  // Mini dots
+  const md=document.getElementById('q-dots-mini');
+  if(md) md.innerHTML=qs.map((_,i)=>
+    `<div class="qdot ${ans[i]!==undefined?'ans':''} ${i===idx?'cur':''}" onclick="renderQ(${i})"></div>`).join('');
+
+  renderGrid();
+}
+
+function pick(qi,oi){ ans[qi]=oi; renderQ(qi); }
+
+function renderGrid(){
+  document.getElementById('grid-bar').innerHTML=qs.map((_,i)=>
+    `<div class="gb-dot ${ans[i]!==undefined?'ans':''} ${i===curQ?'cur':''}" onclick="renderQ(${i})">${i+1}</div>`).join('');
+}
+
+/* ══════════════════════════════════════════
+   SUBMIT
+══════════════════════════════════════════ */
+function openSubmit(){
+  const total=qs.length, done2=Object.keys(ans).length, left=total-done2;
+  document.getElementById('modal-b').innerHTML=
+    done2===total
+      ?`All <strong>${total} questions</strong> answered. Ready to submit?`
+      :`<strong>${done2}/${total}</strong> answered. <span style="color:var(--amb)">${left} unanswered.</span> Submit anyway?`;
+  document.getElementById('submit-modal').classList.add('on');
+}
+function closeModal(){ document.getElementById('submit-modal').classList.remove('on'); }
+
+async function finalSubmit(auto=false){
+  if(done) return;
+  done=true; active=false;
+  closeModal();
+  clearInterval(timerInt); clearInterval(saveInt);
+  rmListeners();
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  await persist(auto,'completed');
+  showResults();
+}
+
+/* ══════════════════════════════════════════
+   PERSIST
+══════════════════════════════════════════ */
+async function persist(auto, status){
+  let correct=0;
+  qs.forEach((q,i)=>{ if(ans[i]!==undefined && q.opts[ans[i]]?.correct) correct++; });
+  const total=qs.length, pct=Math.round((correct/total)*100);
+  const taken=Math.floor((Date.now()-t0)/1000);
+  const tm=`${String(Math.floor(taken/60)).padStart(2,'0')}:${String(taken%60).padStart(2,'0')}`;
+  window._lastRes={correct,total,pct,tm,taken,passed:pct>=50,status,auto};
+
+  if(window._dbOK){
+    try{
+      const data={
+        status, score:pct, correct, total,
+        timeTaken:tm, takenSeconds:taken, passed:pct>=50,
+        flagCount:wCount, flags:warns, answers:ans,
+        autoSubmit:auto, submittedAt:window._sTS(), endedAt:window._sTS()
+      };
+      if(sessionId) await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),data,{merge:true});
+      else await window._addDoc(window._col(window._db,'exam_sessions'),{studentId:sId,studentName:sName,course:'History of Medicine',...data});
+      window._lastRes.saved=true;
+      localStorage.removeItem(CACHE_KEY);
+    }catch(e){ window._lastRes.saved=false; }
+  }
+}
+
+/* ══════════════════════════════════════════
+   RESULTS
+══════════════════════════════════════════ */
+function showResults(){
+  const r=window._lastRes; if(!r) return;
+  const ini=sName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)||'S';
+  document.getElementById('res-ava').textContent=ini;
+  document.getElementById('res-name').textContent=sName;
+  document.getElementById('res-pct').textContent=r.pct+'%';
+  document.getElementById('res-correct').textContent=`${r.correct}/${r.total}`;
+  document.getElementById('res-time').textContent=r.tm;
+  document.getElementById('res-flags').textContent=wCount;
+  const grade=r.pct>=90?'A':r.pct>=80?'B':r.pct>=70?'C':r.pct>=60?'D':r.pct>=50?'E':'F';
+  document.getElementById('res-grade').textContent=grade;
+  document.getElementById('res-status').textContent=r.passed?'Pass':'Fail';
+  document.getElementById('res-status').style.color=r.passed?'var(--grn)':'var(--red)';
+
+  const ring=document.getElementById('score-ring');
+  ring.style.strokeDashoffset=314.2*(1-r.pct/100);
+  ring.style.stroke=r.pct>=70?'var(--grn)':r.pct>=50?'var(--amb)':'var(--red)';
+
+  const fd=document.getElementById('flag-detail');
+  fd.innerHTML=warns.length
+    ?`<div class="card"><div class="flag-hd">Activity Flags (${warns.length})</div>${warns.map(f=>`
+      <div class="flag-row"><div class="flag-dot" style="background:var(--amb)"></div>
+      <div class="flag-txt">${f.msg}<div class="flag-time">${f.time}</div></div></div>`).join('')}</div>`
+    :`<div style="text-align:center;padding:1rem;font-size:12px;color:var(--grn)">✓ No suspicious activity detected</div>`;
+
+  const sr=document.getElementById('save-row');
+  if(r.saved===false){sr.className='save-row fail';sr.textContent='⚠️ Could not save — check connection';}
+  else if(window._dbOK){sr.className='save-row ok';sr.textContent='✓ Results saved to database';}
+  else{sr.className='save-row fail';sr.textContent='⚠️ Database not connected';}
+
+  goto('s-results');
+}
+
+function forceOut(){
+  document.getElementById('ov-disq').classList.remove('on');
+  document.getElementById('ov-lock').classList.remove('on');
+  cleanup(); goto('s-login');
+}
+
+/* ══════════════════════════════════════════
+   CLEANUP
+══════════════════════════════════════════ */
+function cleanup(){
+  clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer);
+  rmListeners();
+  if(stream){stream.getTracks().forEach(t=>t.stop()); stream=null;}
+  active=false; done=false; sessionId=null;
+  document.getElementById('warn-strip').style.display='none';
+  document.getElementById('cam-pip').style.display='none';
+  document.getElementById('submit-modal').classList.remove('on');
+  document.getElementById('warn-pill').style.display='none';
+  document.getElementById('ov-fs').classList.remove('on');
+  document.getElementById('net-banner').classList.remove('on');
+  if(adminUnsub){adminUnsub(); adminUnsub=null;}
+}
+
+/* ══════════════════════════════════════════
+   ADMIN
+══════════════════════════════════════════ */
+function initAdmin(){
+  if(!window._dbOK){
+    document.getElementById('admin-body').innerHTML=
+      '<div class="empty-st">⚠️ Firebase not connected.<br>Paste your config in the HTML file.</div>';
+    return;
+  }
+  if(adminUnsub) adminUnsub();
+  const q=window._q(window._col(window._db,'exam_sessions'),window._ob('startedAt','desc'));
+  adminUnsub=window._onSnap(q, snap=>{
+    allSess=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderTab(curTab);
+    updFlagBadge();
+  }, err=>{
+    document.getElementById('admin-body').innerHTML=
+      `<div class="empty-st">⚠️ ${err.message}<br><small>Check Firestore rules & internet.</small></div>`;
+  });
+}
+
+function aTab(tab,el){
+  curTab=tab;
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderTab(tab);
+}
+
+function renderTab(tab){
+  const body=document.getElementById('admin-body');
+  if(!window._dbOK) return;
+  if(tab==='live') tabLive(body);
+  else if(tab==='results') tabResults(body);
+  else if(tab==='flags') tabFlags(body);
+  else tabAnalytics(body);
+}
+
+function tabLive(body){
+  const live=allSess.filter(s=>s.status==='active');
+  const comp=allSess.filter(s=>s.status==='completed');
+  const disq=allSess.filter(s=>s.status==='disqualified');
+  const tout=allSess.filter(s=>s.status==='timeout');
+  let h=`<div class="sg">
+    <div class="sc"><div class="sc-v" style="color:var(--grn)">${live.length}</div><div class="sc-k">Active Now</div></div>
+    <div class="sc"><div class="sc-v" style="color:var(--acc)">${comp.length}</div><div class="sc-k">Completed</div></div>
+    <div class="sc"><div class="sc-v" style="color:var(--red)">${disq.length}</div><div class="sc-k">Disqualified</div></div>
+    <div class="sc"><div class="sc-v" style="color:var(--amb)">${tout.length}</div><div class="sc-k">Timed Out</div></div>
+  </div>`;
+  if(!allSess.length) h+='<div class="empty-st">No students have started yet.<br>Results appear here in real time.</div>';
+  else h+=allSess.map(s=>stuCard(s)).join('');
+  body.innerHTML=h;
+}
+
+function stuCard(s){
+  const statusMap={
+    active:`<span class="chip chip-g">🟢 Active</span>`,
+    completed:`<span class="chip chip-b">✓ ${s.score??'—'}%</span>`,
+    disqualified:`<span class="chip chip-r">🚫 Disq.</span>`,
+    timeout:`<span class="chip chip-a">⏰ Timeout</span>`
+  };
+  const prog=(['completed','disqualified','timeout'].includes(s.status))?100:
+    s.answers?Math.round((Object.keys(s.answers).length/QB.length)*100):0;
+  const barC=s.status==='disqualified'?'var(--red)':s.status==='completed'?(s.passed?'var(--grn)':'var(--amb)'):'var(--acc)';
+  const tl=s.timeLeft!==undefined?`${String(Math.floor(s.timeLeft/60)).padStart(2,'0')}:${String(s.timeLeft%60).padStart(2,'0')}`:'—';
+  return `<div class="stu-card">
+    <div class="stu-top">
+      <div class="stu-ava">${(s.studentName||'?')[0].toUpperCase()}</div>
+      <div class="stu-info">
+        <div class="stu-name">${s.studentName||'Unknown'}</div>
+        <div class="stu-meta">${s.studentId} · ⏱ ${tl} left</div>
+      </div>
+      ${statusMap[s.status]||''}
+    </div>
+    <div class="stu-prog"><div class="stu-fill" style="width:${prog}%;background:${barC}"></div></div>
+    <div class="stu-btm">
+      ${s.flagCount>0?`<span class="chip chip-a">⚠️ ${s.flagCount} flag${s.flagCount>1?'s':''}</span>`:''}
+      ${s.status==='active'?`<button class="btn btn-r btn-sm" onclick="forceSubmit('${s.id}')">Force Submit</button>`:''}
+    </div>
+  </div>`;
+}
+
+function tabResults(body){
+  const comp=allSess.filter(s=>['completed','timeout'].includes(s.status));
+  if(!comp.length){body.innerHTML='<div class="empty-st">No completed exams yet.</div>';return;}
+  const avg=Math.round(comp.reduce((a,s)=>a+(s.score||0),0)/comp.length);
+  const passed=comp.filter(s=>s.passed).length;
+  let h=`<div class="sg">
+    <div class="sc"><div class="sc-v" style="color:var(--acc)">${avg}%</div><div class="sc-k">Avg Score</div></div>
+    <div class="sc"><div class="sc-v" style="color:var(--grn)">${passed}/${comp.length}</div><div class="sc-k">Pass Rate</div></div>
+  </div>`;
+  h+=comp.sort((a,b)=>(b.score||0)-(a.score||0)).map(s=>`<div class="stu-card">
+    <div class="stu-top">
+      <div class="stu-ava">${(s.studentName||'?')[0].toUpperCase()}</div>
+      <div class="stu-info">
+        <div class="stu-name">${s.studentName}</div>
+        <div class="stu-meta">${s.studentId} · ${s.timeTaken||'—'} · ${s.status}</div>
+      </div>
+      <span class="chip ${s.passed?'chip-g':'chip-r'}">${s.score}%</span>
+    </div>
+    ${s.flagCount>0?`<div><span class="chip chip-a" style="margin-top:.3rem">⚠️ ${s.flagCount} flag${s.flagCount>1?'s':''}</span></div>`:''}
+  </div>`).join('');
+  body.innerHTML=h;
+}
+
+function tabFlags(body){
+  document.getElementById('flag-badge').style.display='none';
+  const flagged=allSess.filter(s=>s.flagCount>0);
+  if(!flagged.length){body.innerHTML='<div class="empty-st">✓ No flags raised yet.</div>';return;}
+  let h='';
+  flagged.forEach(s=>{
+    (s.flags||[]).forEach(f=>{
+      h+=`<div class="al-card">
+        <div class="al-ic" style="background:var(--redD)">🚨</div>
+        <div style="flex:1">
+          <div class="al-name">${s.studentName||s.studentId}</div>
+          <div class="al-msg">${f.msg}</div>
+          <div class="al-t">${f.time}</div>
+        </div>
+      </div>`;
+    });
+  });
+  body.innerHTML=h;
+}
+
+function tabAnalytics(body){
+  const comp=allSess.filter(s=>s.score!==null&&s.score!==undefined);
+  if(!comp.length){body.innerHTML='<div class="empty-st">Not enough data yet.</div>';return;}
+  const scores=comp.map(s=>s.score);
+  const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+  const mx=Math.max(...scores), mn=Math.min(...scores);
+  const totalF=allSess.reduce((a,s)=>a+(s.flagCount||0),0);
+  const passed=comp.filter(s=>s.passed).length;
+  const disqCount=allSess.filter(s=>s.status==='disqualified').length;
+  const ranges=[
+    {l:'90–100%',c:scores.filter(s=>s>=90).length,col:'var(--grn)'},
+    {l:'70–89%', c:scores.filter(s=>s>=70&&s<90).length,col:'var(--acc)'},
+    {l:'50–69%', c:scores.filter(s=>s>=50&&s<70).length,col:'var(--amb)'},
+    {l:'0–49%',  c:scores.filter(s=>s<50).length,col:'var(--red)'}
+  ];
+  const mx2=Math.max(...ranges.map(r=>r.c),1);
+  body.innerHTML=`
+    <div class="sg">
+      <div class="sc"><div class="sc-v" style="color:var(--acc)">${avg}%</div><div class="sc-k">Average</div></div>
+      <div class="sc"><div class="sc-v" style="color:var(--grn)">${mx}%</div><div class="sc-k">Highest</div></div>
+      <div class="sc"><div class="sc-v" style="color:var(--red)">${mn}%</div><div class="sc-k">Lowest</div></div>
+      <div class="sc"><div class="sc-v" style="color:var(--amb)">${totalF}</div><div class="sc-k">Total Flags</div></div>
+    </div>
+    <div class="chart-wrap">
+      <div style="font-size:11px;font-weight:700;margin-bottom:.75rem">Score Distribution</div>
+      ${ranges.map(r=>`<div class="ch-row">
+        <div class="ch-lbl">${r.l}</div>
+        <div class="ch-bg"><div class="ch-fill" style="width:${Math.round((r.c/mx2)*100)}%;background:${r.col}"></div></div>
+        <div class="ch-val" style="color:${r.col}">${r.c}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div style="font-size:11px;font-weight:700;margin-bottom:.5rem">Summary</div>
+      <div style="font-size:12px;color:var(--txt2);line-height:1.9">
+        ${comp.length} student${comp.length!==1?'s':''} completed the exam.<br>
+        Pass rate: <strong style="color:${passed/comp.length>=.5?'var(--grn)':'var(--red)'}">${Math.round((passed/comp.length)*100)}%</strong> (${passed} of ${comp.length})<br>
+        ${disqCount} student${disqCount!==1?'s':''} disqualified for violations.<br>
+        Total suspicious activity flags: <strong>${totalF}</strong>
+      </div>
+    </div>`;
+}
+
+function updFlagBadge(){
+  const t=allSess.reduce((a,s)=>a+(s.flagCount||0),0);
+  const b=document.getElementById('flag-badge');
+  if(t>0){b.textContent=t;b.style.display='inline';}
+}
+
+async function forceSubmit(docId){
+  if(!window._dbOK) return;
+  if(!confirm('Force-submit this student\'s exam now?')) return;
+  try{
+    await window._setDoc(window._doc(window._db,'exam_sessions',docId),
+      {status:'completed',submittedAt:window._sTS(),forceSubmitted:true},{merge:true});
+  }catch(e){alert('Failed: '+e.message);}
+}
+
+// Init role UI
+setRole('student');
+
+// Pre-fill student login from localStorage
+(function(){
+  const savedId   = localStorage.getItem('eg_last_id');
+  const savedName = localStorage.getItem('eg_last_name');
+  if(savedId)   document.getElementById('lid').value   = savedId;
+  if(savedName) document.getElementById('lname').value = savedName;
+})();
+
+
+// Remember last login info
+(function(){
+  const savedId   = localStorage.getItem('eg_last_id')   || '';
+  const savedName = localStorage.getItem('eg_last_name') || '';
+  if(savedId)   document.getElementById('lid').value   = savedId;
+  if(savedName) document.getElementById('lname').value = savedName;
+})();
 </script>
+</body>
+</html>
