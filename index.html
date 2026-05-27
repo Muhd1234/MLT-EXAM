@@ -929,7 +929,20 @@ function doLogin(){
   }
 
   sId=id; sName=name;
-  // Restore warning count for this student across sessions
+
+  // Block if student was disqualified
+  if(localStorage.getItem('eg_disq_'+id)==='1'){
+    loginErr('Your exam was terminated due to violations. Contact your lecturer.');
+    return;
+  }
+
+  // Block if student already submitted
+  if(localStorage.getItem('eg_submitted_'+id)==='1'){
+    loginErr('You have already submitted your exam. Contact your lecturer if this is an error.');
+    return;
+  }
+
+  // Restore warning count and history for this student
   var savedWarns = parseInt(localStorage.getItem('eg_warns_'+id)||'0');
   wCount = savedWarns;
 
@@ -1133,7 +1146,7 @@ function rmListeners(){
    WARNING SYSTEM
 ══════════════════════════════════════════ */
 function flag(msg){
-  if(!active||done) return;
+  if(!active || done || wCount>=MAX_WARN) return;
   wCount++;
   const entry={msg, time:new Date().toLocaleTimeString(), ts:Date.now()};
   warns.push(entry);
@@ -1168,17 +1181,26 @@ function flag(msg){
 }
 
 function disqualify(){
-  active=false;
+  if(done) return;          // prevent double-call
+  active=false; done=true;  // stop ALL further flags immediately
   clearInterval(timerInt); clearInterval(saveInt);
+  clearTimeout(window._stripT);
   rmListeners();
   if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-  persistBackground(true,'disqualified');
+
+  // Mark in localStorage so re-login is blocked
+  localStorage.setItem('eg_disq_'+sId, '1');
+
+  // Save to database
+  persistNow(true,'disqualified').catch(function(){});
+
+  // Show overlay with countdown
   document.getElementById('ov-disq').classList.add('on');
-  let s=5;
-  const t=setInterval(()=>{
+  var s=5;
+  var t=setInterval(function(){
     s--;
     document.getElementById('disq-cd').textContent=s;
-    if(s<=0){clearInterval(t); forceOut();}
+    if(s<=0){ clearInterval(t); forceOut(); }
   },1000);
 }
 
@@ -1207,9 +1229,11 @@ function updTimer(){
 }
 
 function timeUp(){
-  active=false; clearInterval(saveInt); rmListeners();
+  if(done) return;
+  active=false; done=true; clearInterval(saveInt); rmListeners();
   if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-  persistBackground(true,'timeout');
+  localStorage.setItem('eg_submitted_'+sId,'1');
+  persistNow(true,'timeout').catch(function(){});
   document.getElementById('ov-lock').classList.add('on');
 }
 
@@ -1372,12 +1396,14 @@ function persistNow(auto, status){
 
   return savePromise.then(function(){
     localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem('eg_warns_'+sId);
-    localStorage.removeItem('eg_warns_arr_'+sId);
+    // Mark submitted so student cannot re-enter after submission
+    if(status==='completed'){
+      localStorage.setItem('eg_submitted_'+sId,'1');
+    }
   });
 }
 
-/* persistBackground replaced by persistNow */
+
 
 /* ══════════════════════════════════════════
    RESULTS — computes score directly, shows instantly
