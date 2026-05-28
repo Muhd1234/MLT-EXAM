@@ -1037,8 +1037,35 @@ function startExam(){
 ══════════════════════════════════════════ */
 function setupCamera(){
   if(!stream) return;
-  document.getElementById('cam-vid').srcObject=stream;
+  var vid = document.getElementById('cam-vid');
+  vid.srcObject=stream;
   document.getElementById('cam-pip').style.display='block';
+
+  // Take a camera snapshot every 60 seconds and save to Firestore
+  window._snapTimer = setInterval(function(){
+    if(!active || done || !stream) return;
+    takeSnapshot(vid);
+  }, 60000);
+
+  // Take one immediately after 5s
+  setTimeout(function(){ if(active && !done && stream) takeSnapshot(vid); }, 5000);
+}
+
+function takeSnapshot(vid){
+  if(!sessionId || !window._dbOK) return;
+  try{
+    var canvas = document.createElement('canvas');
+    canvas.width  = 160;
+    canvas.height = 120;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(vid, 0, 0, 160, 120);
+    var dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+    // Save snapshot to Firestore as a sub-document
+    window._addDoc(
+      window._col(window._doc(window._db,'exam_sessions',sessionId),'snapshots'),
+      { ts: window._sTS(), img: dataUrl, studentId:sId }
+    ).catch(function(){});
+  }catch(e){}
 }
 
 function showCameraBtn(){
@@ -1380,15 +1407,36 @@ function persistNow(auto, status){
   var total=qs.length, pct=Math.round((correct/total)*100);
   var taken=Math.floor((Date.now()-t0)/1000);
   var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
+  var grade = pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':pct>=50?'E':'F';
+
+  // Build rich answer log — question text, chosen text, correct text, pass/fail per Q
+  var answerLog = [];
+  qs.forEach(function(q,i){
+    var chosenIdx = ans[i];
+    var chosenOpt = (chosenIdx!==undefined && q.opts[chosenIdx]) ? q.opts[chosenIdx] : null;
+    var correctOpt = q.opts.find(function(o){return o.correct;});
+    answerLog.push({
+      qNum:      i+1,
+      question:  q.q.length>120 ? q.q.substring(0,120)+'…' : q.q,
+      chosen:    chosenOpt ? chosenOpt.o : 'Not answered',
+      correct:   correctOpt ? correctOpt.o : '',
+      isCorrect: chosenOpt ? chosenOpt.correct : false,
+      answered:  chosenIdx !== undefined
+    });
+  });
 
   if(!window._dbOK) return Promise.resolve();
 
   var data={
-    status:status, score:pct, correct:correct, total:total,
+    status:status, score:pct, grade:grade, correct:correct, total:total,
     timeTaken:tm, takenSeconds:taken, passed:pct>=50,
-    flagCount:wCount, flags:warns, answers:ans,
+    flagCount:wCount, flags:warns,
+    answers:ans,        // raw index map (kept for compatibility)
+    answerLog:answerLog, // rich readable log for lecturer
+    cameraUsed: stream!==null,
     autoSubmit:auto, submittedAt:window._sTS(), endedAt:window._sTS()
   };
+
   var savePromise = sessionId
     ? window._setDoc(window._doc(window._db,'exam_sessions',sessionId),data,{merge:true})
     : window._addDoc(window._col(window._db,'exam_sessions'),
@@ -1396,7 +1444,6 @@ function persistNow(auto, status){
 
   return savePromise.then(function(){
     localStorage.removeItem(CACHE_KEY);
-    // Mark submitted so student cannot re-enter after submission
     if(status==='completed'){
       localStorage.setItem('eg_submitted_'+sId,'1');
     }
@@ -1468,7 +1515,7 @@ function forceOut(){
    CLEANUP
 ══════════════════════════════════════════ */
 function cleanup(){
-  clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer);
+  clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer); clearInterval(window._snapTimer);
   rmListeners();
   if(stream){stream.getTracks().forEach(function(t){t.stop();}); stream=null;}
   active=false; done=false; sessionId=null;
@@ -1564,78 +1611,205 @@ function stuCard(s){
 
 function tabResults(body){
   const comp=allSess.filter(s=>['completed','timeout','disqualified'].includes(s.status));
-  if(!comp.length){body.innerHTML='<div class="empty-st">No completed exams yet.<br>Results appear here instantly after a student submits.</div>';return;}
+  if(!comp.length){
+    body.innerHTML='<div class="empty-st">No completed exams yet.<br>Results appear here instantly after a student submits.</div>';
+    return;
+  }
+
   const scoresOnly=comp.filter(s=>s.score!==null&&s.score!==undefined);
   const avg=scoresOnly.length?Math.round(scoresOnly.reduce((a,s)=>a+(s.score||0),0)/scoresOnly.length):0;
   const passed=comp.filter(s=>s.passed).length;
 
   let h=`<div class="sg">
-    <div class="sc"><div class="sc-v" style="color:var(--acc)">${avg}%</div><div class="sc-k">Avg Score</div></div>
+    <div class="sc"><div class="sc-v" style="color:var(--acc)">${avg}%</div><div class="sc-k">Class Average</div></div>
     <div class="sc"><div class="sc-v" style="color:var(--grn)">${passed}/${comp.length}</div><div class="sc-k">Pass Rate</div></div>
   </div>`;
 
-  h+=comp.sort((a,b)=>(b.score||0)-(a.score||0)).map(s=>{
-    const sid=s.id;
-    const statusChip=s.status==='disqualified'
-      ?'<span class="chip chip-r">Disqualified</span>'
-      :`<span class="chip ${s.passed?'chip-g':'chip-r'}">${s.score??'?'}%  ${s.passed?'Pass':'Fail'}</span>`;
+  const sorted = comp.slice().sort((a,b)=>(b.score||0)-(a.score||0));
 
-    const letters=['a.','b.','c.','d.'];
-    let qRows='<div style="font-size:11px;color:var(--txt2);padding:.35rem 0">No answers recorded</div>';
-    if(s.answers&&Object.keys(s.answers).length){
-      qRows=Object.keys(s.answers).sort((a,b)=>+a-+b).map(qi=>{
-        const chosen=s.answers[qi];
-        return '<div style="display:flex;align-items:center;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--brd);font-size:11px">'
-          +'<span style="font-family:var(--fm);color:var(--txt2);width:24px;flex-shrink:0">Q'+(+qi+1)+'</span>'
-          +'<span style="color:var(--txt)">Chose option <strong>'+(letters[chosen]||chosen)+'</strong></span>'
-          +'</div>';
+  sorted.forEach(function(s){
+    const sid = s.id;
+    const grade = s.grade || (s.score>=90?'A':s.score>=80?'B':s.score>=70?'C':s.score>=60?'D':s.score>=50?'E':'F');
+    const gradeColor = s.passed?'var(--grn)':'var(--red)';
+
+    // Status chip
+    const statusChip = {
+      completed:    `<span class="chip chip-b">Submitted</span>`,
+      disqualified: `<span class="chip chip-r">🚫 Disqualified</span>`,
+      timeout:      `<span class="chip chip-a">⏰ Timed Out</span>`
+    }[s.status] || '';
+
+    // ── Answer log rows ──
+    let ansRows = '<div style="font-size:11px;color:var(--txt2);padding:.5rem 0">No answers recorded</div>';
+    if(s.answerLog && s.answerLog.length){
+      ansRows = s.answerLog.map(function(a){
+        const correct = a.isCorrect;
+        const answered = a.answered;
+        return '<div style="padding:.45rem 0;border-bottom:1px solid var(--brd)">'
+          +'<div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem">'
+            +'<span style="font-family:var(--fm);font-size:10px;color:var(--txt2);flex-shrink:0;width:26px">Q'+a.qNum+'</span>'
+            +'<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;flex-shrink:0;background:'
+              +(correct?'var(--grnD)':answered?'var(--redD)':'var(--surf3)')
+              +';color:'+(correct?'var(--grn)':answered?'var(--red)':'var(--txt3)')+';">'
+              +(correct?'✓ Correct':answered?'✗ Wrong':'— Skipped')+'</span>'
+          +'</div>'
+          +'<div style="font-size:11px;color:var(--txt2);padding-left:30px;line-height:1.4">'
+            +a.question
+          +'</div>'
+          +'<div style="font-size:11px;padding-left:30px;margin-top:.2rem">'
+            +'<span style="color:var(--txt2)">Chose: </span>'
+            +'<span style="color:'+(correct?'var(--grn)':answered?'var(--red)':'var(--txt3)')+';font-weight:600">'
+              +a.chosen+'</span>'
+            +(!correct && answered
+              ?'<span style="color:var(--txt3)"> · Correct: </span>'
+                +'<span style="color:var(--grn);font-weight:600">'+a.correct+'</span>'
+              :'')
+          +'</div>'
+        +'</div>';
+      }).join('');
+    } else if(s.answers && Object.keys(s.answers).length){
+      // Fallback — only raw indices stored
+      ansRows = '<div style="font-size:11px;color:var(--txt2);padding:.5rem 0">'
+        +'Student answered '+Object.keys(s.answers).length+' of 20 questions (detailed log unavailable for older submissions)</div>';
+    }
+
+    // ── Flag rows ──
+    let flagRows = '<div style="font-size:11px;color:var(--grn);padding:.35rem 0">✓ No violations detected</div>';
+    if(s.flags && s.flags.length){
+      flagRows = s.flags.map(function(f){
+        return '<div style="display:flex;gap:.5rem;padding:.35rem 0;border-bottom:1px solid rgba(239,35,60,.15)">'
+          +'<span style="color:var(--amb);flex-shrink:0">⚠️</span>'
+          +'<div>'
+            +'<div style="font-size:11px;color:var(--txt)">'+f.msg+'</div>'
+            +'<div style="font-size:10px;color:var(--txt3);font-family:var(--fm)">'+f.time+'</div>'
+          +'</div>'
+        +'</div>';
       }).join('');
     }
 
-    let flagRows='';
-    if(s.flags&&s.flags.length){
-      flagRows=s.flags.map(f=>
-        '<div style="display:flex;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--brd);font-size:11px">'
-        +'<span style="color:var(--amb)">⚠️</span>'
-        +'<div><div>'+f.msg+'</div><div style="color:var(--txt3);font-size:10px;font-family:var(--fm)">'+f.time+'</div></div>'
-        +'</div>'
-      ).join('');
-    }
-
-    return '<div class="stu-card" style="margin-bottom:.75rem">'
+    h += '<div class="stu-card" style="margin-bottom:.875rem">'
+      // ── Header ──
       +'<div class="stu-top">'
-        +'<div class="stu-ava">'+(s.studentName||'?')[0].toUpperCase()+'</div>'
+        +'<div class="stu-ava">'+((s.studentName||'?')[0].toUpperCase())+'</div>'
         +'<div class="stu-info">'
           +'<div class="stu-name">'+(s.studentName||'Unknown')+'</div>'
-          +'<div class="stu-meta">'+(s.studentId||'')+'&nbsp;·&nbsp;'+(s.timeTaken||'—')+'</div>'
+          +'<div class="stu-meta">'+(s.studentId||'')+'</div>'
         +'</div>'
         +statusChip
       +'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin:.6rem 0">'
-        +'<div style="background:var(--surf2);border-radius:6px;padding:.5rem;text-align:center">'
-          +'<div style="font-family:var(--fm);font-size:17px;font-weight:700;color:'+(s.passed?'var(--grn)':'var(--red)')+'">'+( s.score??'—')+'%</div>'
-          +'<div style="font-size:9px;color:var(--txt2)">Score</div></div>'
-        +'<div style="background:var(--surf2);border-radius:6px;padding:.5rem;text-align:center">'
-          +'<div style="font-family:var(--fm);font-size:17px;font-weight:700;color:var(--acc)">'+(s.correct??'—')+'/'+(s.total||20)+'</div>'
-          +'<div style="font-size:9px;color:var(--txt2)">Correct</div></div>'
-        +'<div style="background:var(--surf2);border-radius:6px;padding:.5rem;text-align:center">'
-          +'<div style="font-family:var(--fm);font-size:17px;font-weight:700;color:var(--amb)">'+(s.flagCount||0)+'</div>'
-          +'<div style="font-size:9px;color:var(--txt2)">Flags</div></div>'
+
+      // ── Score grid ──
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.35rem;margin:.65rem 0">'
+        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
+          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:'+gradeColor+'">'+grade+'</div>'
+          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Grade</div>'
+        +'</div>'
+        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
+          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:'+gradeColor+'">'+(s.score??'—')+'%</div>'
+          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Score</div>'
+        +'</div>'
+        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
+          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:var(--acc)">'+(s.correct??'—')+'/'+(s.total||20)+'</div>'
+          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Correct</div>'
+        +'</div>'
+        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
+          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:var(--amb)">'+(s.flagCount||0)+'</div>'
+          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Flags</div>'
+        +'</div>'
       +'</div>'
-      +'<button data-sec="ans-'+sid+'" onclick="toggleSec(this)" style="width:100%;padding:.45rem .75rem;background:var(--surf2);border:1px solid var(--brd);border-radius:6px;font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:var(--f);text-align:left;margin-bottom:.35rem">'
-        +'📝 Answers ('+Object.keys(s.answers||{}).length+' answered) ▾'
+
+      // ── Meta row ──
+      +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;font-size:11px;color:var(--txt2)">'
+        +'<span>⏱ '+( s.timeTaken||'—')+'</span>'
+        +'<span>·</span>'
+        +'<span>'+(s.passed?'<span style="color:var(--grn);font-weight:700">PASS</span>':'<span style="color:var(--red);font-weight:700">FAIL</span>')+'</span>'
+        +'<span>·</span>'
+        +'<span>'+(s.cameraUsed?'📷 Camera ON':'📷 No camera')+'</span>'
+        +(s.autoSubmit?'<span>·</span><span style="color:var(--amb)">Auto-submitted</span>':'')
+      +'</div>'
+
+      // ── Expandable: Answers ──
+      +'<button data-sec="ans-'+sid+'" onclick="toggleSec(this)" '
+        +'style="width:100%;padding:.5rem .875rem;background:var(--accG);border:1px solid rgba(67,97,238,.25);'
+        +'border-radius:7px;font-size:11px;font-weight:700;color:var(--acc);cursor:pointer;'
+        +'font-family:var(--f);text-align:left;margin-bottom:.35rem">'
+        +'📝 View Answers ('+(s.answerLog?s.answerLog.filter(function(a){return a.answered;}).length:Object.keys(s.answers||{}).length)+' answered) ▾'
       +'</button>'
-      +'<div id="ans-'+sid+'" style="display:none;max-height:220px;overflow-y:auto;background:var(--surf2);border-radius:6px;padding:.5rem;margin-bottom:.35rem">'+qRows+'</div>'
-      +(flagRows
-        ?'<button data-sec="flg-'+sid+'" onclick="toggleSec(this)" style="width:100%;padding:.45rem .75rem;background:var(--ambD);border:1px solid rgba(255,214,10,.2);border-radius:6px;font-size:11px;font-weight:700;color:var(--amb);cursor:pointer;font-family:var(--f);text-align:left;margin-bottom:.35rem">'
-          +'⚠️ Flags ('+s.flagCount+') ▾</button>'
-          +'<div id="flg-'+sid+'" style="display:none;background:var(--redD);border-radius:6px;padding:.5rem">'+flagRows+'</div>'
-        :'<div style="font-size:11px;color:var(--grn);padding:.25rem 0">✓ No flags raised</div>')
-    +'</div>';
-  }).join('');
+      +'<div id="ans-'+sid+'" style="display:none;max-height:300px;overflow-y:auto;'
+        +'background:var(--surf2);border-radius:7px;padding:.75rem;margin-bottom:.35rem">'+ansRows+'</div>'
+
+      // ── Expandable: Flags ──
+      +'<button data-sec="flg-'+sid+'" onclick="toggleSec(this)" '
+        +'style="width:100%;padding:.5rem .875rem;background:'+(s.flagCount>0?'var(--ambD)':'var(--surf2)')+';'
+        +'border:1px solid '+(s.flagCount>0?'rgba(255,214,10,.2)':'var(--brd)')+';'
+        +'border-radius:7px;font-size:11px;font-weight:700;color:'+(s.flagCount>0?'var(--amb)':'var(--txt2)')+';'
+        +'cursor:pointer;font-family:var(--f);text-align:left;margin-bottom:.35rem">'
+        +'⚠️ Violations ('+(s.flagCount||0)+') ▾'
+      +'</button>'
+      +'<div id="flg-'+sid+'" style="display:none;background:var(--surf2);border-radius:7px;padding:.75rem;margin-bottom:.35rem">'+flagRows+'</div>'
+
+      // ── Camera snapshots ──
+      +(s.cameraUsed
+        ?'<button data-sid="'+sid+'" data-sec="cam-'+sid+'" onclick="loadSnaps(this)" '
+          +'style="width:100%;padding:.5rem .875rem;background:var(--surf2);border:1px solid var(--brd);'
+          +'border-radius:7px;font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;'
+          +'font-family:var(--f);text-align:left">'
+          +'📷 View Camera Snapshots ▾'
+        +'</button>'
+        +'<div id="cam-'+sid+'" style="display:none;background:var(--surf2);border-radius:7px;padding:.75rem;margin-top:.35rem">'
+          +'<div style="font-size:11px;color:var(--txt2)">Loading snapshots…</div>'
+        +'</div>'
+        :'<div style="font-size:11px;color:var(--txt3);padding:.25rem 0">📷 Student did not enable camera</div>')
+
+    +'</div>'; // end stu-card
+  });
 
   body.innerHTML=h;
 }
+
+function toggleSec(btn){
+  var id=btn.getAttribute('data-sec');
+  var el=document.getElementById(id);
+  if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
+
+function loadSnaps(btn){
+  var sessionId = btn.getAttribute('data-sid');
+  var container = document.getElementById('cam-'+sessionId);
+  if(!container) return;
+  // Toggle
+  if(container.style.display==='block'){
+    container.style.display='none';
+    return;
+  }
+  container.style.display='block';
+  btn.disabled=true;
+  btn.textContent='📷 Loading snapshots…';
+
+  window._getDocs(window._col(window._doc(window._db,'exam_sessions',sessionId),'snapshots'))
+    .then(function(snap){
+      if(snap.empty){
+        container.innerHTML='<div style="font-size:11px;color:var(--txt2)">No snapshots saved for this session.</div>';
+        btn.textContent='📷 Camera Snapshots (0)';
+        btn.disabled=false;
+        return;
+      }
+      var imgs = '';
+      snap.forEach(function(d){
+        var dat = d.data();
+        imgs += '<img src="'+dat.img+'" style="width:80px;height:60px;object-fit:cover;border-radius:5px;border:1px solid var(--brd);margin:2px" title="'+dat.ts+'">';
+      });
+      container.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:4px">'+imgs+'</div>'
+        +'<div style="font-size:10px;color:var(--txt3);margin-top:.35rem">'+snap.size+' snapshot(s) captured during exam</div>';
+      btn.textContent='📷 Camera Snapshots ('+snap.size+') ▾';
+      btn.disabled=false;
+    })
+    .catch(function(e){
+      container.innerHTML='<div style="font-size:11px;color:var(--red)">Could not load snapshots: '+e.message+'</div>';
+      btn.disabled=false;
+    });
+}
+
 
 function toggleSec(btn){
   var id = btn.getAttribute('data-sec');
