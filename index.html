@@ -338,6 +338,12 @@ img{user-select:none;-webkit-user-drag:none}
         <span id="login-txt">Sign In →</span>
       </button>
       <div class="login-note">All activity is monitored &amp; recorded.<br>By signing in you agree to academic integrity terms.</div>
+      <div id="db-status" style="display:flex;align-items:center;justify-content:center;gap:.4rem;
+        font-size:11px;color:var(--txt3);margin-top:.5rem">
+        <div id="db-dot" style="width:7px;height:7px;border-radius:50%;background:var(--amb);
+          animation:spin-a 1s linear infinite;flex-shrink:0"></div>
+        <span id="db-txt">Connecting to database…</span>
+      </div>
     </div>
   </div>
 </div>
@@ -548,14 +554,14 @@ import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs,
          onSnapshot, serverTimestamp, query, orderBy, where, updateDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── PASTE YOUR FIREBASE CONFIG HERE ──
+// ── YOUR FIREBASE CONFIG ──
 const FC = {
-  apiKey:            "PASTE_YOUR_API_KEY",
-  authDomain:        "PASTE_YOUR_PROJECT.firebaseapp.com",
-  projectId:         "PASTE_YOUR_PROJECT_ID",
-  storageBucket:     "PASTE_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId:             "PASTE_APP_ID"
+  apiKey:            "AIzaSyAWEI0SdLmximjy_TCfx2XdIwyEYPzPlEo",
+  authDomain:        "mlt112-exam.firebaseapp.com",
+  projectId:         "mlt112-exam",
+  storageBucket:     "mlt112-exam.firebasestorage.app",
+  messagingSenderId: "869697137618",
+  appId:             "1:869697137618:web:d10a26546b9abb3ae4f60b"
 };
 
 try {
@@ -567,7 +573,17 @@ try {
     _q:query,_ob:orderBy,_wh:where,_upDoc:updateDoc,_dbOK:true
   });
   window.dispatchEvent(new Event('dbOK'));
-} catch(e){ window._dbOK=false; console.warn('Firebase:',e); }
+} catch(e){
+  window._dbOK=false;
+  console.warn('Firebase init error:',e);
+  // Show error on login page
+  setTimeout(function(){
+    var dot=document.getElementById('db-dot');
+    var txt=document.getElementById('db-txt');
+    if(dot){dot.style.background='var(--red)';dot.style.animation='none';}
+    if(txt) txt.textContent='Database error — check Firebase config';
+  },100);
+}
 </script>
 
 <!-- ══════════════════════════════════════
@@ -1446,7 +1462,19 @@ function persistNow(auto, status){
     localStorage.removeItem(CACHE_KEY);
     if(status==='completed'){
       localStorage.setItem('eg_submitted_'+sId,'1');
+      // Clear backup since Firebase saved successfully
+      for(var k in localStorage){
+        if(k.startsWith('eg_result_'+sId)) localStorage.removeItem(k);
+      }
     }
+  }).catch(function(err){
+    // Firebase failed — at minimum keep the localStorage backup
+    console.warn('Firebase save failed:', err);
+    // Save backup to localStorage so data is not lost
+    try{
+      var backup={studentId:sId,studentName:sName,data:data,savedAt:new Date().toISOString()};
+      localStorage.setItem('eg_result_backup_'+sId, JSON.stringify(backup));
+    }catch(e){}
   });
 }
 
@@ -1897,6 +1925,28 @@ async function forceSubmit(docId){
 
 // Init role UI
 setRole('student');
+
+// Update DB status indicator when Firebase connects
+window.addEventListener('dbOK', function(){
+  var dot=document.getElementById('db-dot');
+  var txt=document.getElementById('db-txt');
+  if(dot){dot.style.background='var(--grn)';dot.style.animation='none';}
+  if(txt) txt.textContent='Database connected ✓';
+  setTimeout(function(){
+    var s=document.getElementById('db-status');
+    if(s) s.style.opacity='0.5';
+  }, 3000);
+});
+
+// If no connection after 8s, show error
+setTimeout(function(){
+  if(!window._dbOK){
+    var dot=document.getElementById('db-dot');
+    var txt=document.getElementById('db-txt');
+    if(dot){dot.style.background='var(--red)';dot.style.animation='none';}
+    if(txt) txt.textContent='Database not connected — results will not save';
+  }
+}, 8000);
 
 // Pre-fill student login from localStorage
 (function(){
