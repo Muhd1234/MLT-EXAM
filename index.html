@@ -1057,31 +1057,49 @@ function setupCamera(){
   vid.srcObject=stream;
   document.getElementById('cam-pip').style.display='block';
 
-  // Take a camera snapshot every 60 seconds and save to Firestore
+  // Take snapshot every 30 seconds
   window._snapTimer = setInterval(function(){
     if(!active || done || !stream) return;
     takeSnapshot(vid);
-  }, 60000);
+  }, 30000);
 
-  // Take one immediately after 5s
-  setTimeout(function(){ if(active && !done && stream) takeSnapshot(vid); }, 5000);
+  // Take first snapshot after 3 seconds
+  setTimeout(function(){ if(active && !done && stream) takeSnapshot(vid); }, 3000);
 }
 
 function takeSnapshot(vid){
   if(!sessionId || !window._dbOK) return;
+  // Make sure video is actually playing and has dimensions
+  if(!vid || vid.readyState < 2 || vid.videoWidth === 0) return;
   try{
     var canvas = document.createElement('canvas');
-    canvas.width  = 160;
-    canvas.height = 120;
+    canvas.width  = 200;
+    canvas.height = 150;
     var ctx = canvas.getContext('2d');
-    ctx.drawImage(vid, 0, 0, 160, 120);
-    var dataUrl = canvas.toDataURL('image/jpeg', 0.5);
-    // Save snapshot to Firestore as a sub-document
+    ctx.drawImage(vid, 0, 0, 200, 150);
+    var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+    var snapTime = new Date().toLocaleTimeString();
+    // Save snapshot to Firestore snapshots subcollection
     window._addDoc(
       window._col(window._doc(window._db,'exam_sessions',sessionId),'snapshots'),
-      { ts: window._sTS(), img: dataUrl, studentId:sId }
-    ).catch(function(){});
-  }catch(e){}
+      {
+        ts:         window._sTS(),
+        timeLabel:  snapTime,
+        img:        dataUrl,
+        studentId:  sId,
+        studentName:sName
+      }
+    ).then(function(){
+      // Increment snapshot count on session doc
+      window._setDoc(
+        window._doc(window._db,'exam_sessions',sessionId),
+        {snapshotCount:(window._snapCount=(window._snapCount||0)+1)},
+        {merge:true}
+      ).catch(function(){});
+    }).catch(function(e){
+      console.warn('Snapshot save failed:',e);
+    });
+  }catch(e){ console.warn('Snapshot error:',e); }
 }
 
 function showCameraBtn(){
@@ -1108,11 +1126,17 @@ function showCameraBtn(){
     navigator.mediaDevices.getUserMedia({video:true, audio:false})
       .then(function(s){
         stream = s;
-        var vid = document.getElementById('cam-vid');
-        var pip = document.getElementById('cam-pip');
-        if(vid){ vid.srcObject = s; }
-        if(pip){ pip.style.display = 'block'; }
-        btn.remove(); // camera running — remove button
+        // Call setupCamera so PiP shows AND snapshot timer starts
+        setupCamera();
+        btn.remove();
+        // Update Firestore immediately — cameraUsed = true
+        if(window._dbOK && sessionId){
+          window._setDoc(
+            window._doc(window._db,'exam_sessions',sessionId),
+            {cameraUsed:true, cameraEnabledAt:window._sTS()},
+            {merge:true}
+          ).catch(function(){});
+        }
       })
       .catch(function(){
         flag('Camera access blocked or denied by student');
@@ -1121,6 +1145,14 @@ function showCameraBtn(){
         btn.style.color = 'var(--red)';
         btn.style.borderColor = 'rgba(239,35,60,.3)';
         btn.disabled = true;
+        // Update Firestore — camera was denied
+        if(window._dbOK && sessionId){
+          window._setDoc(
+            window._doc(window._db,'exam_sessions',sessionId),
+            {cameraUsed:false, cameraDenied:true},
+            {merge:true}
+          ).catch(function(){});
+        }
       });
   };
   // Insert button into topbar before warn-pill
@@ -1805,36 +1837,61 @@ function loadSnaps(btn){
   var sessionId = btn.getAttribute('data-sid');
   var container = document.getElementById('cam-'+sessionId);
   if(!container) return;
-  // Toggle
+  // Toggle off
   if(container.style.display==='block'){
     container.style.display='none';
+    btn.textContent=btn.textContent.replace(' ▲',' ▾');
     return;
   }
   container.style.display='block';
   btn.disabled=true;
   btn.textContent='📷 Loading snapshots…';
+  container.innerHTML='<div style="font-size:11px;color:var(--txt2);padding:.5rem">Loading camera snapshots from database…</div>';
 
   window._getDocs(window._col(window._doc(window._db,'exam_sessions',sessionId),'snapshots'))
     .then(function(snap){
+      btn.disabled=false;
       if(snap.empty){
-        container.innerHTML='<div style="font-size:11px;color:var(--txt2)">No snapshots saved for this session.</div>';
-        btn.textContent='📷 Camera Snapshots (0)';
-        btn.disabled=false;
+        container.innerHTML=
+          '<div style="font-size:12px;color:var(--txt2);padding:.5rem;line-height:1.6">'
+          +'No snapshots found.<br>'
+          +'<span style="font-size:11px;color:var(--txt3)">This means the student had camera on but snapshots failed to save, '
+          +'or the student enabled camera after the exam started and Firestore rules may need updating.</span>'
+          +'</div>';
+        btn.textContent='📷 Camera Snapshots (0) ▾';
         return;
       }
-      var imgs = '';
-      snap.forEach(function(d){
-        var dat = d.data();
-        imgs += '<img src="'+dat.img+'" style="width:80px;height:60px;object-fit:cover;border-radius:5px;border:1px solid var(--brd);margin:2px" title="'+dat.ts+'">';
+
+      // Sort by time
+      var docs=[];
+      snap.forEach(function(d){ docs.push(d.data()); });
+      docs.sort(function(a,b){ return (a.timeLabel||'').localeCompare(b.timeLabel||''); });
+
+      var imgs='<div style="display:flex;flex-wrap:wrap;gap:6px;padding:.25rem 0">';
+      docs.forEach(function(dat){
+        imgs+='<div style="text-align:center">'
+          +'<img src="'+dat.img+'" style="width:100px;height:75px;object-fit:cover;'
+          +'border-radius:6px;border:1px solid var(--brd);display:block">'
+          +'<div style="font-size:9px;color:var(--txt3);font-family:var(--fm);margin-top:2px">'
+          +(dat.timeLabel||'')+'</div>'
+          +'</div>';
       });
-      container.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:4px">'+imgs+'</div>'
-        +'<div style="font-size:10px;color:var(--txt3);margin-top:.35rem">'+snap.size+' snapshot(s) captured during exam</div>';
-      btn.textContent='📷 Camera Snapshots ('+snap.size+') ▾';
-      btn.disabled=false;
+      imgs+='</div>';
+      imgs+='<div style="font-size:10px;color:var(--txt2);margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--brd)">'
+        +'📷 '+docs.length+' snapshot(s) captured · taken every 30 seconds during exam'
+        +'</div>';
+
+      container.innerHTML=imgs;
+      btn.textContent='📷 Camera Snapshots ('+docs.length+') ▲';
     })
     .catch(function(e){
-      container.innerHTML='<div style="font-size:11px;color:var(--red)">Could not load snapshots: '+e.message+'</div>';
       btn.disabled=false;
+      container.innerHTML='<div style="font-size:11px;color:var(--red);padding:.5rem">'
+        +'Could not load snapshots.<br>'
+        +'<span style="font-size:10px">Error: '+e.message+'<br>'
+        +'Check Firestore rules allow reading the snapshots subcollection.</span>'
+        +'</div>';
+      btn.textContent='📷 Camera Snapshots ▾';
     });
 }
 
