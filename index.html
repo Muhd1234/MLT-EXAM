@@ -7,9 +7,6 @@
 <title>ExamGuard Pro</title>
 <style>/* System fonts only for performance */</style>
 <style>
-/* ══════════════════════════════════════════
-   DESIGN TOKENS
-══════════════════════════════════════════ */
 :root{
   --bg:#07090f;--bg2:#0c0f1a;--bg3:#111525;
   --surf:#161c2e;--surf2:#1c2338;--surf3:#232b42;
@@ -37,20 +34,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--txt);font-size:15px;l
 ::selection{background:var(--accG);color:var(--acc)}
 input,button,select{font-family:var(--f)}
 img{user-select:none;-webkit-user-drag:none}
-
-/* ══════════════════════════════════════════
-   LAYOUT SYSTEM
-══════════════════════════════════════════ */
 .screen{display:none;height:100dvh;flex-direction:column;overflow:hidden;position:relative}
 .screen.on{display:flex}
 .scroller{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .scroller::-webkit-scrollbar{width:2px}
 .scroller::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:99px}
 .pad{padding:1.25rem;max-width:580px;margin:0 auto}
-
-/* ══════════════════════════════════════════
-   ATOMS
-══════════════════════════════════════════ */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.8rem 1.4rem;border-radius:var(--rs);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--f);transition:all .16s;white-space:nowrap;width:100%;letter-spacing:.01em;position:relative;overflow:hidden}
 .btn::after{content:'';position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .12s}
 .btn:active::after{opacity:.08}
@@ -62,26 +51,19 @@ img{user-select:none;-webkit-user-drag:none}
 .btn-g{background:var(--grn);color:#000;box-shadow:0 0 20px rgba(6,214,160,.25)}
 .btn-r{background:var(--red);color:#fff}
 .btn-sm{padding:.45rem .9rem;font-size:12px;width:auto;border-radius:var(--rs)}
-
 .field{margin-bottom:.875rem}
 .field label{display:block;font-size:10px;font-weight:700;color:var(--txt2);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.1em}
 .field input{width:100%;background:var(--surf2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:.78rem 1rem;color:var(--txt);font-size:15px;outline:none;transition:border-color .18s,box-shadow .18s;-webkit-appearance:none}
 .field input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG)}
 .field input::placeholder{color:var(--txt3)}
-
 .chip{display:inline-flex;align-items:center;gap:.3rem;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.07em;border:1px solid transparent}
 .chip-g{background:var(--grnD);color:var(--grn);border-color:rgba(6,214,160,.2)}
 .chip-r{background:var(--redD);color:var(--red);border-color:rgba(239,35,60,.2)}
 .chip-a{background:var(--ambD);color:var(--amb);border-color:rgba(255,214,10,.2)}
 .chip-b{background:var(--accG);color:var(--acc);border-color:rgba(67,97,238,.2)}
 .chip-p{background:rgba(114,9,183,.12);color:var(--purL);border-color:rgba(181,23,158,.2)}
-
 .card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:1.2rem}
 .hr{height:1px;background:var(--brd);margin:.875rem 0}
-
-/* ══════════════════════════════════════════
-   LOGIN
-══════════════════════════════════════════ */
 #s-login{background:var(--bg);align-items:center;justify-content:center;padding:1.5rem}
 #s-login::before{content:'';position:fixed;top:-120px;left:50%;transform:translateX(-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(67,97,238,.15) 0%,transparent 70%);pointer-events:none}
 .login-wrap{width:100%;max-width:400px;position:relative}
@@ -98,10 +80,6 @@ img{user-select:none;-webkit-user-drag:none}
 .login-note{text-align:center;font-size:11px;color:var(--txt3);margin-top:.875rem;line-height:1.5}
 .theme-btn{position:fixed;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:var(--surf);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;z-index:9000;transition:all .2s;box-shadow:var(--sh)}
 .theme-btn:hover{background:var(--surf2)}
-
-/* ══════════════════════════════════════════
-   SETUP SCREEN
-══════════════════════════════════════════ */
 #s-setup{background:var(--bg)}
 .topbar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.8rem 1.1rem;display:flex;align-items:center;gap:.7rem;flex-shrink:0}
 .ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
@@ -122,10 +100,6 @@ img{user-select:none;-webkit-user-drag:none}
 .perm-desc{font-size:10px;color:var(--txt2)}
 .integ-box{background:var(--ambD);border:1px solid rgba(255,214,10,.2);border-radius:var(--rs);padding:.875rem 1rem;font-size:12px;color:var(--amb);line-height:1.6;margin-top:1rem}
 .sticky-btn{position:sticky;bottom:0;padding:1rem 1.25rem;background:linear-gradient(to top,var(--bg) 70%,transparent);flex-shrink:0}
-
-/* ══════════════════════════════════════════
-   EXAM SCREEN
-══════════════════════════════════════════ */
 #s-exam{background:var(--bg);position:relative}
 .exam-bar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.6rem .9rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0;position:relative;z-index:50}
 .exam-bar-left{flex:1;min-width:0}
@@ -141,19 +115,13 @@ img{user-select:none;-webkit-user-drag:none}
 .timer-box.fire{border-color:var(--red);background:var(--redD);animation:fire-blink 1s infinite}
 .timer-box.fire .timer-n{color:var(--red)}
 @keyframes fire-blink{0%,100%{opacity:1}50%{opacity:.55}}
-
-/* Warn strip */
 .warn-strip{background:var(--redD);border-bottom:2px solid rgba(239,35,60,.5);padding:.7rem 1rem;flex-shrink:0;display:none;animation:strip-in .25s ease}
 @keyframes strip-in{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .ws-inner{display:flex;align-items:center;gap:.75rem}
 .ws-num{background:var(--red);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;flex-shrink:0;font-family:var(--fm)}
 .ws-msg{font-size:12px;color:var(--red);line-height:1.4}
-
-/* Progress */
 .prog-rail{height:2px;background:var(--brd);flex-shrink:0;position:relative}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--grn));transition:width .4s ease;position:absolute;top:0;left:0}
-
-/* Q body */
 .q-wrap{padding:1.1rem;max-width:620px;margin:0 auto}
 .q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem}
 .q-pos{font-family:var(--fm);font-size:11px;color:var(--txt2);font-weight:500}
@@ -182,21 +150,15 @@ img{user-select:none;-webkit-user-drag:none}
 .navbtn.fwd{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 2px 14px rgba(67,97,238,.3)}
 .navbtn.done{background:var(--grn);border-color:var(--grn);color:#000;box-shadow:0 2px 14px rgba(6,214,160,.3)}
 .navbtn:active{transform:scale(.97)}
-
-/* Grid bar */
 .grid-bar{display:flex;flex-wrap:wrap;gap:.28rem;padding:.75rem .9rem;border-top:1px solid var(--brd);flex-shrink:0}
 .gb-dot{width:26px;height:26px;border-radius:6px;background:var(--surf);border:1px solid var(--brd);font-size:9px;font-weight:700;color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--fm);transition:all .18s}
 .gb-dot.ans{background:var(--acc);border-color:var(--acc);color:#fff}
 .gb-dot.cur{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 2px var(--accG)}
-
-/* Camera pip */
 .cam-pip{position:absolute;bottom:68px;right:10px;width:78px;height:106px;border-radius:10px;overflow:hidden;border:2px solid var(--acc);background:#000;z-index:40;display:none;box-shadow:0 4px 20px rgba(0,0,0,.6)}
 .cam-pip video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 .cam-rec{position:absolute;top:4px;left:4px;display:flex;align-items:center;gap:3px}
 .cam-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:fire-blink 2s infinite}
 .cam-lbl{font-size:7px;font-weight:700;color:#fff;font-family:var(--fm);background:rgba(0,0,0,.55);padding:1px 4px;border-radius:3px}
-
-/* Submit modal */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:800;display:none;align-items:flex-end;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .modal-bg.on{display:flex}
 .modal-sheet{background:var(--surf);border-radius:22px 22px 0 0;border-top:1px solid var(--brd);padding:1.75rem 1.4rem;width:100%;animation:sheet-up .2s ease}
@@ -205,10 +167,6 @@ img{user-select:none;-webkit-user-drag:none}
 .modal-t{font-family:var(--fh);font-size:18px;font-weight:800;text-align:center;margin-bottom:.35rem}
 .modal-b{font-size:13px;color:var(--txt2);text-align:center;margin-bottom:1.5rem;line-height:1.6}
 .modal-acts{display:flex;flex-direction:column;gap:.45rem}
-
-/* ══════════════════════════════════════════
-   OVERLAYS
-══════════════════════════════════════════ */
 .overlay{position:fixed;inset:0;z-index:9500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
 .overlay.on{display:flex}
 #ov-disq{background:rgba(7,9,15,.97)}
@@ -221,10 +179,6 @@ img{user-select:none;-webkit-user-drag:none}
 .ov-countdown-lbl{font-size:10px;color:var(--txt3);margin-top:.3rem;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.1em}
 #ov-disq .ov-title{color:var(--red)}
 #ov-lock .ov-title{color:var(--red)}
-
-/* ══════════════════════════════════════════
-   RESULTS
-══════════════════════════════════════════ */
 #s-results{background:var(--bg)}
 .res-hero{background:linear-gradient(135deg,var(--bg2),var(--surf));border:1px solid var(--brd);border-radius:var(--rl);padding:1.75rem;text-align:center;margin-bottom:.875rem;position:relative;overflow:hidden}
 .res-hero::after{content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:250px;height:80px;background:radial-gradient(ellipse,var(--accG),transparent 70%)}
@@ -247,24 +201,16 @@ img{user-select:none;-webkit-user-drag:none}
 .save-row.ok{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
 .save-row.saving{background:var(--ambD);border-color:rgba(255,214,10,.2);color:var(--amb)}
 .save-row.fail{background:var(--redD);border-color:rgba(239,35,60,.25);color:var(--red)}
-
-/* ══════════════════════════════════════════
-   ADMIN SCREEN
-══════════════════════════════════════════ */
 #s-admin{background:var(--bg)}
 .admin-tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--brd);overflow-x:auto;flex-shrink:0}
 .admin-tabs::-webkit-scrollbar{display:none}
 .atab{flex-shrink:0;padding:.7rem .95rem;font-size:12px;font-weight:700;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;font-family:var(--fh)}
 .atab.on{color:var(--acc);border-bottom-color:var(--acc)}
 .a-pad{padding:.875rem;max-width:680px;margin:0 auto}
-
-/* Admin stat grid */
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.875rem}
 .sc{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem}
 .sc-v{font-family:var(--fm);font-size:24px;font-weight:700;margin-bottom:.15rem}
 .sc-k{font-size:10px;color:var(--txt2);font-weight:500}
-
-/* Student cards */
 .stu-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.5rem}
 .stu-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
 .stu-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
@@ -274,27 +220,20 @@ img{user-select:none;-webkit-user-drag:none}
 .stu-prog{height:3px;background:var(--brd);border-radius:99px;overflow:hidden;margin:.4rem 0}
 .stu-fill{height:100%;border-radius:99px;transition:width .5s}
 .stu-btm{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
-
-/* Alert cards */
 .al-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.85rem;margin-bottom:.45rem;display:flex;gap:.7rem}
 .al-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .al-name{font-size:13px;font-weight:700;margin-bottom:.15rem}
 .al-msg{font-size:11px;color:var(--txt2);line-height:1.4}
 .al-t{font-size:9px;color:var(--txt3);font-family:var(--fm);margin-top:.2rem}
-
-/* Chart */
 .chart-wrap{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.55rem}
 .ch-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem}
 .ch-lbl{font-size:11px;width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ch-bg{flex:1;height:16px;background:var(--surf2);border-radius:99px;overflow:hidden}
 .ch-fill{height:100%;border-radius:99px;transition:width .8s ease}
 .ch-val{font-size:10px;font-family:var(--fm);font-weight:600;width:28px;text-align:right;flex-shrink:0}
-
 .empty-st{text-align:center;padding:3rem 1rem;color:var(--txt2);font-size:13px;line-height:1.6}
 .spin{display:inline-block;width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin-a .7s linear infinite;margin-bottom:.65rem}
 @keyframes spin-a{to{transform:rotate(360deg)}}
-
-/* Network banner */
 .net-banner{background:var(--redD);border-bottom:1px solid rgba(239,35,60,.3);padding:.5rem 1rem;font-size:11px;color:var(--red);text-align:center;display:none;flex-shrink:0}
 .net-banner.on{display:block}
 .net-banner.back{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
@@ -304,9 +243,6 @@ img{user-select:none;-webkit-user-drag:none}
 
 <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
 
-<!-- ══════════════════════════════════════
-     LOGIN
-══════════════════════════════════════ -->
 <div id="s-login" class="screen on">
   <div class="login-wrap">
     <div class="login-logo-row">
@@ -348,9 +284,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SETUP
-══════════════════════════════════════ -->
 <div id="s-setup" class="screen">
   <div class="topbar">
     <div class="ava" id="setup-ava">A</div>
@@ -405,13 +338,8 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     EXAM
-══════════════════════════════════════ -->
 <div id="s-exam" class="screen">
-  <!-- Network banner -->
   <div class="net-banner" id="net-banner">📡 Network lost — answers cached locally. Reconnecting…</div>
-  <!-- Top bar -->
   <div class="exam-bar">
     <div class="exam-bar-left">
       <div class="eb-title" id="eb-title">First aid And Primary Health Care</div>
@@ -423,27 +351,21 @@ img{user-select:none;-webkit-user-drag:none}
       <span class="timer-n" id="timer-n">30:00</span>
     </div>
   </div>
-  <!-- Warning strip -->
   <div class="warn-strip" id="warn-strip">
     <div class="ws-inner">
       <div class="ws-num" id="ws-num">1/3</div>
       <div class="ws-msg" id="ws-msg">Suspicious activity detected.</div>
     </div>
   </div>
-  <!-- Progress -->
   <div class="prog-rail"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-  <!-- Body -->
   <div class="scroller" id="exam-scroll">
     <div class="q-wrap" id="q-wrap"></div>
   </div>
-  <!-- Grid -->
   <div class="grid-bar" id="grid-bar"></div>
-  <!-- Camera PiP -->
   <div class="cam-pip" id="cam-pip">
     <video id="cam-vid" autoplay muted playsinline></video>
     <div class="cam-rec"><div class="cam-dot"></div><div class="cam-lbl">LIVE</div></div>
   </div>
-  <!-- Submit modal -->
   <div class="modal-bg" id="submit-modal">
     <div class="modal-sheet">
       <div class="modal-ic">📋</div>
@@ -457,9 +379,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     RESULTS
-══════════════════════════════════════ -->
 <div id="s-results" class="screen">
   <div class="topbar">
     <div class="ava" id="res-ava">A</div>
@@ -496,9 +415,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN
-══════════════════════════════════════ -->
 <div id="s-admin" class="screen">
   <div class="topbar">
     <div class="ava" style="background:linear-gradient(135deg,var(--pur),var(--purL))">L</div>
@@ -510,6 +426,7 @@ img{user-select:none;-webkit-user-drag:none}
     <div class="atab" onclick="aTab('results',this)">📊 Results</div>
     <div class="atab" onclick="aTab('flags',this)">🚨 Flags <span id="flag-badge" style="background:var(--red);color:#fff;border-radius:99px;padding:1px 6px;font-size:9px;margin-left:2px;display:none"></span></div>
     <div class="atab" onclick="aTab('analytics',this)">📈 Analytics</div>
+    <div class="atab" onclick="aTab('settings',this)">⚙️ Settings</div>
   </div>
   <div class="scroller">
     <div class="a-pad" id="admin-body">
@@ -518,9 +435,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     OVERLAYS
-══════════════════════════════════════ -->
 <div class="overlay" id="ov-disq">
   <div class="ov-icon">🚫</div>
   <div class="ov-title">Examination Terminated</div>
@@ -545,16 +459,12 @@ img{user-select:none;-webkit-user-drag:none}
   <button class="btn btn-p" style="width:auto;padding:.75rem 2rem" onclick="reqFS()">Enable Fullscreen</button>
 </div>
 
-<!-- ══════════════════════════════════════
-     FIREBASE SDK
-══════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs,
          onSnapshot, serverTimestamp, query, orderBy, where, updateDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── YOUR FIREBASE CONFIG ──
 const FC = {
   apiKey:            "AIzaSyAWEI0SdLmximjy_TCfx2XdIwyEYPzPlEo",
   authDomain:        "mlt112-exam.firebaseapp.com",
@@ -576,7 +486,6 @@ try {
 } catch(e){
   window._dbOK=false;
   console.warn('Firebase init error:',e);
-  // Show error on login page
   setTimeout(function(){
     var dot=document.getElementById('db-dot');
     var txt=document.getElementById('db-txt');
@@ -586,9 +495,6 @@ try {
 }
 </script>
 
-<!-- ══════════════════════════════════════
-     QUESTION BANK
-══════════════════════════════════════ -->
 <script>
 const QB = [
   {q:"What is Medical Laboratory Science mainly concerned with?",sc:false,opts:["Examination and analysis of clinical specimens","Construction of hospitals","Selling medicines","Training drivers"],ans:0},
@@ -623,9 +529,6 @@ const QB = [
   {q:"Which of the following is a role of Medical Laboratory Science in infection prevention and control?",sc:false,opts:["Building roads","Selling food","Designing houses","Safe specimen handling and laboratory biosafety"],ans:3}
 ];
 
-/* ══════════════════════════════════════════
-   CONSTANTS
-══════════════════════════════════════════ */
 const EXAM_DURATION  = 30 * 60;
 const MAX_WARN       = 3;
 const LECTURER_USER  = 'Amuhd';
@@ -633,38 +536,23 @@ const LECTURER_PASS  = '64818991';
 const AUTOSAVE_MS    = 7000;
 const CACHE_KEY      = 'eg_answers_cache';
 
-// ── LINK WINDOW ──
-// EXAM_OPENS_AT = the moment you share the exam link with students.
-// Update this line each time before sharing, in the format YYYY-MM-DDTHH:MM:SS
-// (24-hour clock, your local time). Students can only START the exam within
-// LOGIN_WINDOW_MS of this time — after that the link stops accepting new
-// logins. Once a student has started, their own 30-minute timer still runs
-// independently and is not affected by this cutoff.
-const EXAM_OPENS_AT   = new Date('2026-09-09T09:00:00').getTime();
-const LOGIN_WINDOW_MS = 60 * 60 * 1000; // 1 hour to start after the link opens
+const EXAM_OPENS_AT_DEFAULT   = new Date('2026-09-09T09:00:00').getTime();
+const LOGIN_WINDOW_MS_DEFAULT = 60 * 60 * 1000;
 
-/* ══════════════════════════════════════════
-   STATE
-══════════════════════════════════════════ */
 let role='student', sId='', sName='', sessionId=null;
 let qs=[], ans={}, curQ=0, warns=[], wCount=0;
 let timerInt=null, saveInt=null, timeLeft=EXAM_DURATION;
 let t0=null, stream=null, active=false, done=false;
 let adminUnsub=null, allSess=[], curTab='live';
 let online=true;
+let examOpensAt=EXAM_OPENS_AT_DEFAULT, examWindowMs=LOGIN_WINDOW_MS_DEFAULT, windowLoaded=false;
 
-/* ══════════════════════════════════════════
-   THEME
-══════════════════════════════════════════ */
 function toggleTheme(){
   const t = document.documentElement.dataset.theme==='dark'?'light':'dark';
   document.documentElement.dataset.theme=t;
   document.getElementById('themeBtn').textContent=t==='dark'?'🌙':'☀️';
 }
 
-/* ══════════════════════════════════════════
-   NETWORK MONITORING
-══════════════════════════════════════════ */
 window.addEventListener('online', ()=>{
   online=true;
   const b=document.getElementById('net-banner');
@@ -691,9 +579,35 @@ async function flushCache(){
   }catch(e){}
 }
 
-/* ══════════════════════════════════════════
-   ROUTING
-══════════════════════════════════════════ */
+async function loadExamWindow(){
+  if(!window._dbOK) return;
+  try{
+    const snap=await window._getDoc(window._doc(window._db,'exam_config','window'));
+    if(snap.exists()){
+      const d=snap.data();
+      if(d.opensAt)   examOpensAt = d.opensAt;
+      if(d.windowMs)  examWindowMs = d.windowMs;
+    }
+  }catch(e){
+    console.warn('Could not load exam window, using defaults:', e);
+  }
+  windowLoaded=true;
+}
+
+async function saveExamWindow(opensAtMs, windowMinutes){
+  const windowMs = windowMinutes*60*1000;
+  if(!window._dbOK) return false;
+  try{
+    await window._setDoc(window._doc(window._db,'exam_config','window'),
+      {opensAt:opensAtMs, windowMs:windowMs, updatedAt:window._sTS()});
+    examOpensAt=opensAtMs; examWindowMs=windowMs;
+    return true;
+  }catch(e){
+    console.warn('Could not save exam window:', e);
+    return false;
+  }
+}
+
 function goto(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
@@ -701,9 +615,6 @@ function goto(id){
   if(id==='s-login') cleanup();
 }
 
-/* ══════════════════════════════════════════
-   LOGIN
-══════════════════════════════════════════ */
 function setRole(r){
   role=r;
   document.getElementById('rtab-s').classList.toggle('on',r==='student');
@@ -727,13 +638,12 @@ function loginErr(m){
   setTimeout(()=>el.classList.remove('on'),5000);
 }
 
-function doLogin(){
+async function doLogin(){
   const id   = document.getElementById('lid').value.trim();
   const name = document.getElementById('lname').value.trim();
   const pw   = document.getElementById('lpw').value.trim();
   const btn  = document.getElementById('login-btn');
 
-  // ── LECTURER LOGIN ──
   if(role==='admin'){
     if(!id){ loginErr('Please enter your username.'); return; }
     if(!pw){ loginErr('Please enter your password.'); return; }
@@ -747,27 +657,23 @@ function doLogin(){
     return;
   }
 
-  // ── STUDENT LOGIN ──
   if(!id)  { loginErr('Please enter your Matric Number.'); return; }
   if(!name){ loginErr('Please enter your full name.');     return; }
   if(!pw)  { loginErr('Please enter your password.');      return; }
 
-  // Link window check — students can only START within LOGIN_WINDOW_MS of
-  // EXAM_OPENS_AT. Already-submitted / already-active students are still
-  // blocked separately below regardless of this window.
-  if(Date.now() < EXAM_OPENS_AT){'2026-09-15T14:30:00'
+  if(!windowLoaded) await loadExamWindow();
+
+  if(Date.now() < examOpensAt){
     loginErr('This exam has not opened yet. Please wait for your lecturer to confirm the start time.');
     return;
   }
-  if(Date.now() > EXAM_OPENS_AT + LOGIN_WINDOW_MS){
+  if(Date.now() > examOpensAt + examWindowMs){
     loginErr('This exam link is no longer accepting new logins. Contact your lecturer.');
     return;
   }
 
-  // Save to localStorage so browser remembers next time
   localStorage.setItem('eg_last_id',   id);
   localStorage.setItem('eg_last_name', name);
-  // Save password for this student ID so they must use same pw next time
   var existingPw = localStorage.getItem('eg_pw_'+id);
   if(!existingPw){
     localStorage.setItem('eg_pw_'+id, pw);
@@ -778,19 +684,16 @@ function doLogin(){
 
   sId=id; sName=name;
 
-  // Block if student was disqualified
   if(localStorage.getItem('eg_disq_'+id)==='1'){
     loginErr('Your exam was terminated due to violations. Contact your lecturer.');
     return;
   }
 
-  // Block if student already submitted
   if(localStorage.getItem('eg_submitted_'+id)==='1'){
     loginErr('You have already submitted your exam. Contact your lecturer if this is an error.');
     return;
   }
 
-  // Restore warning count and history for this student
   var savedWarns = parseInt(localStorage.getItem('eg_warns_'+id)||'0');
   wCount = savedWarns;
 
@@ -801,13 +704,8 @@ function doLogin(){
   goto('s-setup');
 }
 
-/* ══════════════════════════════════════════
-   SETUP & PERMISSIONS
-══════════════════════════════════════════ */
 function grantAndStart(){
-  // Re-check the link window here too — a student could log in just before
-  // the cutoff, then sit on this screen and hit Start after it's closed.
-  if(Date.now() > EXAM_OPENS_AT + LOGIN_WINDOW_MS){
+  if(Date.now() > examOpensAt + examWindowMs){
     loginErr('This exam link is no longer accepting new logins. Contact your lecturer.');
     goto('s-login');
     return;
@@ -824,9 +722,6 @@ function reqFS(){
   return (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen||function(){}).call(el);
 }
 
-/* ══════════════════════════════════════════
-   EXAM START
-══════════════════════════════════════════ */
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 
 function startExam(){
@@ -856,11 +751,6 @@ function startExam(){
   goto('s-exam');
 
   if(window._dbOK){
-    // Generate the doc ID locally (no network round-trip) so sessionId is
-    // available IMMEDIATELY. Waiting on addDoc()'s promise created a race:
-    // a fast submit could fire before sessionId was set, causing a second
-    // "completed" doc to be created while the original "active" doc was
-    // never updated — leaving the student stuck in the Live tab forever.
     const sRef = window._doc(window._col(window._db,'exam_sessions'));
     sessionId = sRef.id;
     window._setDoc(sRef,{
@@ -876,9 +766,6 @@ function startExam(){
   showCameraBtn();
 }
 
-/* ══════════════════════════════════════════
-   CAMERA
-══════════════════════════════════════════ */
 function setupCamera(){
   if(!stream) return;
   var vid = document.getElementById('cam-vid');
@@ -894,904 +781,4 @@ function setupCamera(){
 }
 
 function takeSnapshot(vid){
-  if(!sessionId || !window._dbOK) return;
-  if(!vid || vid.readyState < 2 || vid.videoWidth === 0) return;
-  try{
-    var canvas = document.createElement('canvas');
-    canvas.width  = 200;
-    canvas.height = 150;
-    var ctx = canvas.getContext('2d');
-    ctx.drawImage(vid, 0, 0, 200, 150);
-    var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-    var snapTime = new Date().toLocaleTimeString();
-    window._addDoc(
-      window._col(window._doc(window._db,'exam_sessions',sessionId),'snapshots'),
-      {
-        ts:         window._sTS(),
-        timeLabel:  snapTime,
-        img:        dataUrl,
-        studentId:  sId,
-        studentName:sName
-      }
-    ).then(function(){
-      window._setDoc(
-        window._doc(window._db,'exam_sessions',sessionId),
-        {snapshotCount:(window._snapCount=(window._snapCount||0)+1)},
-        {merge:true}
-      ).catch(function(){});
-    }).catch(function(e){
-      console.warn('Snapshot save failed:',e);
-    });
-  }catch(e){ console.warn('Snapshot error:',e); }
-}
-
-function showCameraBtn(){
-  var bar = document.getElementById('warn-pill').parentElement;
-  var existing = document.getElementById('cam-start-btn');
-  if(existing) return;
-  var btn = document.createElement('button');
-  btn.id = 'cam-start-btn';
-  btn.title = 'Enable camera monitoring';
-  btn.style.cssText = 'background:var(--accG);border:1px solid rgba(67,97,238,.4);'
-    +'color:var(--acc);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;'
-    +'cursor:pointer;font-family:var(--f);white-space:nowrap;';
-  btn.textContent = '📷 Enable';
-  btn.onclick = function(){
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      flag('Camera not supported on this device');
-      btn.remove();
-      return;
-    }
-    btn.textContent = '📷…';
-    btn.disabled = true;
-    navigator.mediaDevices.getUserMedia({video:true, audio:false})
-      .then(function(s){
-        stream = s;
-        setupCamera();
-        btn.remove();
-        if(window._dbOK && sessionId){
-          window._setDoc(
-            window._doc(window._db,'exam_sessions',sessionId),
-            {cameraUsed:true, cameraEnabledAt:window._sTS()},
-            {merge:true}
-          ).catch(function(){});
-        }
-      })
-      .catch(function(){
-        flag('Camera access blocked or denied by student');
-        btn.textContent = '📷 Blocked';
-        btn.style.background = 'var(--redD)';
-        btn.style.color = 'var(--red)';
-        btn.style.borderColor = 'rgba(239,35,60,.3)';
-        btn.disabled = true;
-        if(window._dbOK && sessionId){
-          window._setDoc(
-            window._doc(window._db,'exam_sessions',sessionId),
-            {cameraUsed:false, cameraDenied:true},
-            {merge:true}
-          ).catch(function(){});
-        }
-      });
-  };
-  var pill = document.getElementById('warn-pill');
-  pill.parentElement.insertBefore(btn, pill);
-}
-
-/* ══════════════════════════════════════════
-   ANTI-CHEAT
-══════════════════════════════════════════ */
-function setupAntiCheat(){
-  document.addEventListener('visibilitychange', onVis);
-  window.addEventListener('blur', onBlur);
-  document.addEventListener('fullscreenchange', onFS);
-  document.addEventListener('webkitfullscreenchange', onFS);
-  document.addEventListener('contextmenu', noCtx);
-  document.addEventListener('copy',  noEvt);
-  document.addEventListener('paste', noEvt);
-  document.addEventListener('cut',   noEvt);
-  document.addEventListener('selectstart', noEvt);
-  document.addEventListener('keydown', onKey);
-  window._devTimer=setInterval(chkDevTools, 4000);
-}
-
-const noCtx=e=>e.preventDefault();
-const noEvt=e=>e.preventDefault();
-
-function onVis(){ if(document.hidden && active && !done) flag('Tab switch / screen minimized detected'); }
-function onBlur(){ if(active && !done) flag('Browser focus lost — possible app switch'); }
-function onFS(){
-  if(!document.fullscreenElement && !document.webkitFullscreenElement && active && !done){
-    flag('Fullscreen mode exited');
-    document.getElementById('ov-fs').classList.add('on');
-    setTimeout(()=>document.getElementById('ov-fs').classList.remove('on'), 6000);
-  }
-}
-function onKey(e){
-  if((e.ctrlKey||e.metaKey)&&['c','v','u','a','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
-  if(e.key==='F12') e.preventDefault();
-  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&['i','j','c','k'].includes(e.key.toLowerCase())) e.preventDefault();
-}
-
-let _dtOpen=false;
-function chkDevTools(){
-  const t=160;
-  const open=window.outerWidth-window.innerWidth>t||window.outerHeight-window.innerHeight>t;
-  if(open && !_dtOpen && active && !done){_dtOpen=true; flag('Developer tools detected');}
-  else if(!open) _dtOpen=false;
-}
-
-function rmListeners(){
-  document.removeEventListener('visibilitychange', onVis);
-  window.removeEventListener('blur', onBlur);
-  document.removeEventListener('fullscreenchange', onFS);
-  document.removeEventListener('webkitfullscreenchange', onFS);
-  document.removeEventListener('contextmenu', noCtx);
-  document.removeEventListener('copy', noEvt);
-  document.removeEventListener('paste', noEvt);
-  document.removeEventListener('cut', noEvt);
-  document.removeEventListener('selectstart', noEvt);
-  document.removeEventListener('keydown', onKey);
-  clearInterval(window._devTimer);
-}
-
-/* ══════════════════════════════════════════
-   WARNING SYSTEM
-══════════════════════════════════════════ */
-function flag(msg){
-  if(!active || done || wCount>=MAX_WARN) return;
-  wCount++;
-  const entry={msg, time:new Date().toLocaleTimeString(), ts:Date.now()};
-  warns.push(entry);
-
-  const pill=document.getElementById('warn-pill');
-  pill.style.display='flex';
-  document.getElementById('wc').textContent=wCount;
-  pill.className='warn-pill'+(wCount>=2?' hot':'');
-
-  document.getElementById('ws-num').textContent=`${wCount}/${MAX_WARN}`;
-  document.getElementById('ws-msg').textContent=
-    msg+(wCount<MAX_WARN?` — ${MAX_WARN-wCount} warning(s) remaining.`:' — Terminating now…');
-  const strip=document.getElementById('warn-strip');
-  strip.style.display='block';
-  clearTimeout(window._stripT);
-  if(wCount<MAX_WARN) window._stripT=setTimeout(()=>strip.style.display='none', 7000);
-
-  localStorage.setItem('eg_warns_'+sId, wCount);
-  localStorage.setItem('eg_warns_arr_'+sId, JSON.stringify(warns));
-
-  if(window._dbOK && sessionId){
-    window._setDoc(window._doc(window._db,'exam_sessions',sessionId),
-      {flagCount:wCount, flags:warns, status:wCount>=MAX_WARN?'disqualified':'active'},{merge:true})
-    .catch(function(e){});
-  }
-
-  if(wCount>=MAX_WARN) disqualify();
-}
-
-function disqualify(){
-  if(done) return;
-  active=false; done=true;
-  clearInterval(timerInt); clearInterval(saveInt);
-  clearTimeout(window._stripT);
-  rmListeners();
-  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-
-  localStorage.setItem('eg_disq_'+sId, '1');
-
-  persistNow(true,'disqualified').catch(function(){});
-
-  document.getElementById('ov-disq').classList.add('on');
-  var s=5;
-  var t=setInterval(function(){
-    s--;
-    document.getElementById('disq-cd').textContent=s;
-    if(s<=0){ clearInterval(t); forceOut(); }
-  },1000);
-}
-
-/* ══════════════════════════════════════════
-   TIMER
-══════════════════════════════════════════ */
-function runTimer(){
-  clearInterval(timerInt);
-  timerInt=setInterval(async()=>{
-    timeLeft--;
-    updTimer();
-    if(timeLeft%20===0 && window._dbOK && sessionId){
-      try{await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),{timeLeft,answers:ans},{merge:true});}catch(e){}
-    }
-    if(timeLeft<=0){clearInterval(timerInt); timeUp();}
-  },1000);
-}
-
-function updTimer(){
-  const m=Math.floor(timeLeft/60), s=timeLeft%60;
-  document.getElementById('timer-n').textContent=
-    String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  const box=document.getElementById('timer-box');
-  box.className='timer-box'+(timeLeft<=300?' ambar':'')+(timeLeft<=60?' fire':'');
-}
-
-function timeUp(){
-  if(done) return;
-  active=false; done=true; clearInterval(saveInt); rmListeners();
-  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-  localStorage.setItem('eg_submitted_'+sId,'1');
-  persistNow(true,'timeout').catch(function(){});
-  document.getElementById('ov-lock').classList.add('on');
-}
-
-/* ══════════════════════════════════════════
-   AUTO-SAVE (offline-aware)
-══════════════════════════════════════════ */
-function runAutoSave(){
-  clearInterval(saveInt);
-  saveInt=setInterval(async()=>{
-    localStorage.setItem(CACHE_KEY, JSON.stringify(ans));
-    if(!online || !window._dbOK || !sessionId) return;
-    try{
-      await window._setDoc(window._doc(window._db,'exam_sessions',sessionId),
-        {answers:ans, timeLeft},{merge:true});
-      localStorage.removeItem(CACHE_KEY);
-    }catch(e){}
-  }, AUTOSAVE_MS);
-}
-
-/* ══════════════════════════════════════════
-   RENDER QUESTION
-══════════════════════════════════════════ */
-function renderQ(idx){
-  curQ=idx;
-  const q=qs[idx], total=qs.length;
-  const done2=Object.keys(ans).length;
-  document.getElementById('prog-fill').style.width=`${Math.round((done2/total)*100)}%`;
-  document.getElementById('exam-scroll').scrollTo(0,0);
-
-  const L=['a.','b.','c.','d.'];
-  const scHtml=q.sc
-    ?`<div class="q-scenario">📋 Scenario — read carefully before selecting your answer.</div>`:'';
-
-  document.getElementById('q-wrap').innerHTML=`
-    <div class="q-meta">
-      <div class="q-pos">Q<strong>${idx+1}</strong>/${total} · ${done2} answered</div>
-      <div class="q-dots" id="q-dots-mini"></div>
-    </div>
-    <div class="q-card">
-      <div class="q-num">QUESTION ${String(idx+1).padStart(2,'0')}${q.sc?' · SCENARIO':''}</div>
-      ${scHtml}
-      <div class="q-text">${q.q}</div>
-    </div>
-    <div class="opts">
-      ${q.opts.map((o,i)=>`
-        <button class="opt ${ans[idx]===i?'picked':''}" onclick="pick(${idx},${i})">
-          <span class="opt-key">${L[i]}</span>
-          <span style="flex:1">${o.o}</span>
-          <span class="opt-check">✓</span>
-        </button>`).join('')}
-    </div>
-    <div class="navrow">
-      ${idx>0?`<button class="navbtn" onclick="renderQ(${idx-1})">← Back</button>`:'<span></span>'}
-      ${idx<total-1
-        ?`<button class="navbtn fwd" onclick="renderQ(${idx+1})">Next →</button>`
-        :`<button class="navbtn done" onclick="openSubmit()">✓ Submit</button>`}
-    </div>`;
-
-  const md=document.getElementById('q-dots-mini');
-  if(md) md.innerHTML=qs.map((_,i)=>
-    `<div class="qdot ${ans[i]!==undefined?'ans':''} ${i===idx?'cur':''}" onclick="renderQ(${i})"></div>`).join('');
-
-  renderGrid();
-}
-
-function pick(qi,oi){ ans[qi]=oi; renderQ(qi); }
-
-function renderGrid(){
-  document.getElementById('grid-bar').innerHTML=qs.map((_,i)=>
-    `<div class="gb-dot ${ans[i]!==undefined?'ans':''} ${i===curQ?'cur':''}" onclick="renderQ(${i})">${i+1}</div>`).join('');
-}
-
-/* ══════════════════════════════════════════
-   SUBMIT
-══════════════════════════════════════════ */
-function openSubmit(){
-  const total=qs.length, done2=Object.keys(ans).length, left=total-done2;
-  document.getElementById('modal-b').innerHTML=
-    done2===total
-      ?`All <strong>${total} questions</strong> answered. Ready to submit?`
-      :`<strong>${done2}/${total}</strong> answered. <span style="color:var(--amb)">${left} unanswered.</span> Submit anyway?`;
-  document.getElementById('submit-modal').classList.add('on');
-}
-function closeModal(){ document.getElementById('submit-modal').classList.remove('on'); }
-
-function finalSubmit(auto){
-  if(auto===undefined) auto=false;
-  if(done) return;
-  done=true; active=false;
-  closeModal();
-  clearInterval(timerInt); clearInterval(saveInt);
-  rmListeners();
-  if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
-
-  showSavingOverlay(auto);
-
-  persistNow(auto,'completed')
-    .then(function(){
-      clearTimeout(window._saveTimeout);
-      removeSavingOverlay();
-      showResults(auto,'completed');
-    })
-    .catch(function(){
-      clearTimeout(window._saveTimeout);
-      removeSavingOverlay();
-      showResults(auto,'completed');
-    });
-}
-
-function showSavingOverlay(auto){
-  removeSavingOverlay();
-
-  var ov = document.createElement('div');
-  ov.id = 'saving-ov';
-  ov.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:9999;'
-    +'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;';
-  ov.innerHTML = '<div style="font-size:40px">💾</div>'
-    +'<div style="font-family:var(--fh);font-size:18px;font-weight:800">Saving Results…</div>'
-    +'<div style="font-size:13px;color:var(--txt2)">Please wait, do not close this page.</div>'
-    +'<div style="width:48px;height:48px;border:3px solid var(--brd);border-top-color:var(--acc);'
-    +'border-radius:50%;animation:spin-a .7s linear infinite;margin-top:.5rem"></div>';
-  document.body.appendChild(ov);
-
-  window._saveTimeout = setTimeout(function(){
-    removeSavingOverlay();
-    showResults(auto, 'completed');
-  }, 6000);
-}
-
-function removeSavingOverlay(){
-  var ov = document.getElementById('saving-ov');
-  if(ov) ov.remove();
-}
-
-function persistNow(auto, status){
-  var correct=0;
-  qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
-  var total=qs.length, pct=Math.round((correct/total)*100);
-  var taken=Math.floor((Date.now()-t0)/1000);
-  var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
-  var grade = pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':pct>=50?'E':'F';
-
-  var answerLog = [];
-  qs.forEach(function(q,i){
-    var chosenIdx = ans[i];
-    var chosenOpt = (chosenIdx!==undefined && q.opts[chosenIdx]) ? q.opts[chosenIdx] : null;
-    var correctOpt = q.opts.find(function(o){return o.correct;});
-    answerLog.push({
-      qNum:      i+1,
-      question:  q.q.length>120 ? q.q.substring(0,120)+'…' : q.q,
-      chosen:    chosenOpt ? chosenOpt.o : 'Not answered',
-      correct:   correctOpt ? correctOpt.o : '',
-      isCorrect: chosenOpt ? chosenOpt.correct : false,
-      answered:  chosenIdx !== undefined
-    });
-  });
-
-  if(!window._dbOK) return Promise.resolve();
-
-  var data={
-    status:status, score:pct, grade:grade, correct:correct, total:total,
-    timeTaken:tm, takenSeconds:taken, passed:pct>=50,
-    flagCount:wCount, flags:warns,
-    answers:ans,
-    answerLog:answerLog,
-    cameraUsed: stream!==null,
-    autoSubmit:auto, submittedAt:window._sTS(), endedAt:window._sTS()
-  };
-
-  var savePromise = sessionId
-    ? window._setDoc(window._doc(window._db,'exam_sessions',sessionId),data,{merge:true})
-    : window._addDoc(window._col(window._db,'exam_sessions'),
-        Object.assign({studentId:sId,studentName:sName,course:'First aid And Primary Health Care'},data));
-
-  return savePromise.then(function(){
-    localStorage.removeItem(CACHE_KEY);
-    if(status==='completed'){
-      localStorage.setItem('eg_submitted_'+sId,'1');
-      for(var k in localStorage){
-        if(k.startsWith('eg_result_'+sId)) localStorage.removeItem(k);
-      }
-    }
-  }).catch(function(err){
-    console.warn('Firebase save failed:', err);
-    try{
-      var backup={studentId:sId,studentName:sName,data:data,savedAt:new Date().toISOString()};
-      localStorage.setItem('eg_result_backup_'+sId, JSON.stringify(backup));
-    }catch(e){}
-  });
-}
-
-/* ══════════════════════════════════════════
-   RESULTS — computes score directly, shows instantly
-══════════════════════════════════════════ */
-function showResults(auto, status){
-  var correct=0;
-  qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
-  var total=qs.length;
-  var pct=Math.round((correct/total)*100);
-  var taken=Math.floor((Date.now()-t0)/1000);
-  var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
-  var passed=pct>=50;
-
-  var ini=sName.split(' ').map(function(n){return n[0];}).join('').toUpperCase().slice(0,2)||'S';
-  document.getElementById('res-ava').textContent=ini;
-  document.getElementById('res-name').textContent=sName;
-  document.getElementById('res-pct').textContent=pct+'%';
-  document.getElementById('res-correct').textContent=correct+'/'+total;
-  document.getElementById('res-time').textContent=tm;
-  document.getElementById('res-flags').textContent=wCount;
-  var grade=pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':pct>=50?'E':'F';
-  document.getElementById('res-grade').textContent=grade;
-  document.getElementById('res-status').textContent=passed?'Pass':'Fail';
-  document.getElementById('res-status').style.color=passed?'var(--grn)':'var(--red)';
-
-  var ring=document.getElementById('score-ring');
-  ring.style.strokeDashoffset=314.2*(1-pct/100);
-  ring.style.stroke=pct>=70?'var(--grn)':pct>=50?'var(--amb)':'var(--red)';
-
-  var fd=document.getElementById('flag-detail');
-  if(warns.length){
-    var rows=warns.map(function(f){
-      return '<div class="flag-row"><div class="flag-dot" style="background:var(--amb)"></div>'
-        +'<div class="flag-txt">'+f.msg+'<div class="flag-time">'+f.time+'</div></div></div>';
-    }).join('');
-    fd.innerHTML='<div class="card"><div class="flag-hd">Activity Flags ('+warns.length+')</div>'+rows+'</div>';
-  } else {
-    fd.innerHTML='<div style="text-align:center;padding:1rem;font-size:12px;color:var(--grn)">✓ No suspicious activity detected</div>';
-  }
-
-  var sr=document.getElementById('save-row');
-  if(window._dbOK){
-    sr.className='save-row ok';
-    sr.textContent='✓ Results saved to database successfully';
-  } else {
-    sr.className='save-row fail';
-    sr.textContent='⚠️ Database not connected — results not saved';
-  }
-
-  goto('s-results');
-}
-
-function forceOut(){
-  document.getElementById('ov-disq').classList.remove('on');
-  document.getElementById('ov-lock').classList.remove('on');
-  cleanup(); goto('s-login');
-}
-
-/* ══════════════════════════════════════════
-   CLEANUP
-══════════════════════════════════════════ */
-function cleanup(){
-  clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer); clearInterval(window._snapTimer);
-  rmListeners();
-  if(stream){stream.getTracks().forEach(function(t){t.stop();}); stream=null;}
-  active=false; done=false; sessionId=null;
-  document.getElementById('warn-strip').style.display='none';
-  document.getElementById('cam-pip').style.display='none';
-  document.getElementById('submit-modal').classList.remove('on');
-  document.getElementById('warn-pill').style.display='none';
-  document.getElementById('ov-fs').classList.remove('on');
-  document.getElementById('net-banner').classList.remove('on');
-  if(adminUnsub){adminUnsub(); adminUnsub=null;}
-}
-
-/* ══════════════════════════════════════════
-   ADMIN
-══════════════════════════════════════════ */
-function initAdmin(){
-  if(!window._dbOK){
-    document.getElementById('admin-body').innerHTML=
-      '<div class="empty-st">⚠️ Firebase not connected.<br>Paste your config in the HTML file.</div>';
-    return;
-  }
-  if(adminUnsub) adminUnsub();
-  const q=window._q(window._col(window._db,'exam_sessions'),window._ob('startedAt','desc'));
-  adminUnsub=window._onSnap(q, snap=>{
-    allSess=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderTab(curTab);
-    updFlagBadge();
-  }, err=>{
-    document.getElementById('admin-body').innerHTML=
-      `<div class="empty-st">⚠️ ${err.message}<br><small>Check Firestore rules & internet.</small></div>`;
-  });
-}
-
-function aTab(tab,el){
-  curTab=tab;
-  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  renderTab(tab);
-}
-
-function renderTab(tab){
-  const body=document.getElementById('admin-body');
-  if(!window._dbOK) return;
-  if(tab==='live') tabLive(body);
-  else if(tab==='results') tabResults(body);
-  else if(tab==='flags') tabFlags(body);
-  else tabAnalytics(body);
-}
-
-function tabLive(body){
-  const live=allSess.filter(s=>s.status==='active');
-  const comp=allSess.filter(s=>s.status==='completed');
-  const disq=allSess.filter(s=>s.status==='disqualified');
-  const tout=allSess.filter(s=>s.status==='timeout');
-  let h=`<div class="sg">
-    <div class="sc"><div class="sc-v" style="color:var(--grn)">${live.length}</div><div class="sc-k">Active Now</div></div>
-    <div class="sc"><div class="sc-v" style="color:var(--acc)">${comp.length}</div><div class="sc-k">Completed</div></div>
-    <div class="sc"><div class="sc-v" style="color:var(--red)">${disq.length}</div><div class="sc-k">Disqualified</div></div>
-    <div class="sc"><div class="sc-v" style="color:var(--amb)">${tout.length}</div><div class="sc-k">Timed Out</div></div>
-  </div>`;
-  if(!allSess.length) h+='<div class="empty-st">No students have started yet.<br>Results appear here in real time.</div>';
-  else h+=allSess.map(s=>stuCard(s)).join('');
-  body.innerHTML=h;
-}
-
-function stuCard(s){
-  const statusMap={
-    active:`<span class="chip chip-g">🟢 Active</span>`,
-    completed:`<span class="chip chip-b">✓ ${s.score??'—'}%</span>`,
-    disqualified:`<span class="chip chip-r">🚫 Disq.</span>`,
-    timeout:`<span class="chip chip-a">⏰ Timeout</span>`
-  };
-  const prog=(['completed','disqualified','timeout'].includes(s.status))?100:
-    s.answers?Math.round((Object.keys(s.answers).length/QB.length)*100):0;
-  const barC=s.status==='disqualified'?'var(--red)':s.status==='completed'?(s.passed?'var(--grn)':'var(--amb)'):'var(--acc)';
-  const tl=s.timeLeft!==undefined?`${String(Math.floor(s.timeLeft/60)).padStart(2,'0')}:${String(s.timeLeft%60).padStart(2,'0')}`:'—';
-  return `<div class="stu-card">
-    <div class="stu-top">
-      <div class="stu-ava">${(s.studentName||'?')[0].toUpperCase()}</div>
-      <div class="stu-info">
-        <div class="stu-name">${s.studentName||'Unknown'}</div>
-        <div class="stu-meta">${s.studentId} · ⏱ ${tl} left</div>
-      </div>
-      ${statusMap[s.status]||''}
-    </div>
-    <div class="stu-prog"><div class="stu-fill" style="width:${prog}%;background:${barC}"></div></div>
-    <div class="stu-btm">
-      ${s.flagCount>0?`<span class="chip chip-a">⚠️ ${s.flagCount} flag${s.flagCount>1?'s':''}</span>`:''}
-      ${s.status==='active'?`<button class="btn btn-r btn-sm" onclick="forceSubmit('${s.id}')">Force Submit</button>`:''}
-    </div>
-  </div>`;
-}
-
-function tabResults(body){
-  const comp=allSess.filter(s=>['completed','timeout','disqualified'].includes(s.status));
-  if(!comp.length){
-    body.innerHTML='<div class="empty-st">No completed exams yet.<br>Results appear here instantly after a student submits.</div>';
-    return;
-  }
-
-  const scoresOnly=comp.filter(s=>s.score!==null&&s.score!==undefined);
-  const avg=scoresOnly.length?Math.round(scoresOnly.reduce((a,s)=>a+(s.score||0),0)/scoresOnly.length):0;
-  const passed=comp.filter(s=>s.passed).length;
-
-  let h=`<div class="sg">
-    <div class="sc"><div class="sc-v" style="color:var(--acc)">${avg}%</div><div class="sc-k">Class Average</div></div>
-    <div class="sc"><div class="sc-v" style="color:var(--grn)">${passed}/${comp.length}</div><div class="sc-k">Pass Rate</div></div>
-  </div>`;
-
-  const sorted = comp.slice().sort((a,b)=>(b.score||0)-(a.score||0));
-
-  sorted.forEach(function(s){
-    const sid = s.id;
-    const grade = s.grade || (s.score>=90?'A':s.score>=80?'B':s.score>=70?'C':s.score>=60?'D':s.score>=50?'E':'F');
-    const gradeColor = s.passed?'var(--grn)':'var(--red)';
-
-    const statusChip = {
-      completed:    `<span class="chip chip-b">Submitted</span>`,
-      disqualified: `<span class="chip chip-r">🚫 Disqualified</span>`,
-      timeout:      `<span class="chip chip-a">⏰ Timed Out</span>`
-    }[s.status] || '';
-
-    let ansRows = '<div style="font-size:11px;color:var(--txt2);padding:.5rem 0">No answers recorded</div>';
-    if(s.answerLog && s.answerLog.length){
-      ansRows = s.answerLog.map(function(a){
-        const correct = a.isCorrect;
-        const answered = a.answered;
-        return '<div style="padding:.45rem 0;border-bottom:1px solid var(--brd)">'
-          +'<div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem">'
-            +'<span style="font-family:var(--fm);font-size:10px;color:var(--txt2);flex-shrink:0;width:26px">Q'+a.qNum+'</span>'
-            +'<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;flex-shrink:0;background:'
-              +(correct?'var(--grnD)':answered?'var(--redD)':'var(--surf3)')
-              +';color:'+(correct?'var(--grn)':answered?'var(--red)':'var(--txt3)')+';">'
-              +(correct?'✓ Correct':answered?'✗ Wrong':'— Skipped')+'</span>'
-          +'</div>'
-          +'<div style="font-size:11px;color:var(--txt2);padding-left:30px;line-height:1.4">'
-            +a.question
-          +'</div>'
-          +'<div style="font-size:11px;padding-left:30px;margin-top:.2rem">'
-            +'<span style="color:var(--txt2)">Chose: </span>'
-            +'<span style="color:'+(correct?'var(--grn)':answered?'var(--red)':'var(--txt3)')+';font-weight:600">'
-              +a.chosen+'</span>'
-            +(!correct && answered
-              ?'<span style="color:var(--txt3)"> · Correct: </span>'
-                +'<span style="color:var(--grn);font-weight:600">'+a.correct+'</span>'
-              :'')
-          +'</div>'
-        +'</div>';
-      }).join('');
-    } else if(s.answers && Object.keys(s.answers).length){
-      ansRows = '<div style="font-size:11px;color:var(--txt2);padding:.5rem 0">'
-        +'Student answered '+Object.keys(s.answers).length+' of '+QB.length+' questions (detailed log unavailable for older submissions)</div>';
-    }
-
-    let flagRows = '<div style="font-size:11px;color:var(--grn);padding:.35rem 0">✓ No violations detected</div>';
-    if(s.flags && s.flags.length){
-      flagRows = s.flags.map(function(f){
-        return '<div style="display:flex;gap:.5rem;padding:.35rem 0;border-bottom:1px solid rgba(239,35,60,.15)">'
-          +'<span style="color:var(--amb);flex-shrink:0">⚠️</span>'
-          +'<div>'
-            +'<div style="font-size:11px;color:var(--txt)">'+f.msg+'</div>'
-            +'<div style="font-size:10px;color:var(--txt3);font-family:var(--fm)">'+f.time+'</div>'
-          +'</div>'
-        +'</div>';
-      }).join('');
-    }
-
-    h += '<div class="stu-card" style="margin-bottom:.875rem">'
-      +'<div class="stu-top">'
-        +'<div class="stu-ava">'+((s.studentName||'?')[0].toUpperCase())+'</div>'
-        +'<div class="stu-info">'
-          +'<div class="stu-name">'+(s.studentName||'Unknown')+'</div>'
-          +'<div class="stu-meta">'+(s.studentId||'')+'</div>'
-        +'</div>'
-        +statusChip
-      +'</div>'
-
-      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.35rem;margin:.65rem 0">'
-        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
-          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:'+gradeColor+'">'+grade+'</div>'
-          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Grade</div>'
-        +'</div>'
-        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
-          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:'+gradeColor+'">'+(s.score??'—')+'%</div>'
-          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Score</div>'
-        +'</div>'
-        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
-          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:var(--acc)">'+(s.correct??'—')+'/'+(s.total||QB.length)+'</div>'
-          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Correct</div>'
-        +'</div>'
-        +'<div style="background:var(--surf2);border:1px solid var(--brd);border-radius:8px;padding:.55rem;text-align:center">'
-          +'<div style="font-family:var(--fm);font-size:20px;font-weight:800;color:var(--amb)">'+(s.flagCount||0)+'</div>'
-          +'<div style="font-size:9px;color:var(--txt2);margin-top:2px">Flags</div>'
-        +'</div>'
-      +'</div>'
-
-      +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;font-size:11px;color:var(--txt2)">'
-        +'<span>⏱ '+( s.timeTaken||'—')+'</span>'
-        +'<span>·</span>'
-        +'<span>'+(s.passed?'<span style="color:var(--grn);font-weight:700">PASS</span>':'<span style="color:var(--red);font-weight:700">FAIL</span>')+'</span>'
-        +'<span>·</span>'
-        +'<span>'+(s.cameraUsed?'📷 Camera ON':'📷 No camera')+'</span>'
-        +(s.autoSubmit?'<span>·</span><span style="color:var(--amb)">Auto-submitted</span>':'')
-      +'</div>'
-
-      +'<button data-sec="ans-'+sid+'" onclick="toggleSec(this)" '
-        +'style="width:100%;padding:.5rem .875rem;background:var(--accG);border:1px solid rgba(67,97,238,.25);'
-        +'border-radius:7px;font-size:11px;font-weight:700;color:var(--acc);cursor:pointer;'
-        +'font-family:var(--f);text-align:left;margin-bottom:.35rem">'
-        +'📝 View Answers ('+(s.answerLog?s.answerLog.filter(function(a){return a.answered;}).length:Object.keys(s.answers||{}).length)+' answered) ▾'
-      +'</button>'
-      +'<div id="ans-'+sid+'" style="display:none;max-height:300px;overflow-y:auto;'
-        +'background:var(--surf2);border-radius:7px;padding:.75rem;margin-bottom:.35rem">'+ansRows+'</div>'
-
-      +'<button data-sec="flg-'+sid+'" onclick="toggleSec(this)" '
-        +'style="width:100%;padding:.5rem .875rem;background:'+(s.flagCount>0?'var(--ambD)':'var(--surf2)')+';'
-        +'border:1px solid '+(s.flagCount>0?'rgba(255,214,10,.2)':'var(--brd)')+';'
-        +'border-radius:7px;font-size:11px;font-weight:700;color:'+(s.flagCount>0?'var(--amb)':'var(--txt2)')+';'
-        +'cursor:pointer;font-family:var(--f);text-align:left;margin-bottom:.35rem">'
-        +'⚠️ Violations ('+(s.flagCount||0)+') ▾'
-      +'</button>'
-      +'<div id="flg-'+sid+'" style="display:none;background:var(--surf2);border-radius:7px;padding:.75rem;margin-bottom:.35rem">'+flagRows+'</div>'
-
-      +(s.cameraUsed
-        ?'<button data-sid="'+sid+'" data-sec="cam-'+sid+'" onclick="loadSnaps(this)" '
-          +'style="width:100%;padding:.5rem .875rem;background:var(--surf2);border:1px solid var(--brd);'
-          +'border-radius:7px;font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;'
-          +'font-family:var(--f);text-align:left">'
-          +'📷 View Camera Snapshots ▾'
-        +'</button>'
-        +'<div id="cam-'+sid+'" style="display:none;background:var(--surf2);border-radius:7px;padding:.75rem;margin-top:.35rem">'
-          +'<div style="font-size:11px;color:var(--txt2)">Loading snapshots…</div>'
-        +'</div>'
-        :'<div style="font-size:11px;color:var(--txt3);padding:.25rem 0">📷 Student did not enable camera</div>')
-
-    +'</div>';
-  });
-
-  body.innerHTML=h;
-}
-
-function toggleSec(btn){
-  var id=btn.getAttribute('data-sec');
-  var el=document.getElementById(id);
-  if(el) el.style.display=el.style.display==='none'?'block':'none';
-}
-
-function loadSnaps(btn){
-  var sessionId = btn.getAttribute('data-sid');
-  var container = document.getElementById('cam-'+sessionId);
-  if(!container) return;
-  if(container.style.display==='block'){
-    container.style.display='none';
-    btn.textContent=btn.textContent.replace(' ▲',' ▾');
-    return;
-  }
-  container.style.display='block';
-  btn.disabled=true;
-  btn.textContent='📷 Loading snapshots…';
-  container.innerHTML='<div style="font-size:11px;color:var(--txt2);padding:.5rem">Loading camera snapshots from database…</div>';
-
-  window._getDocs(window._col(window._doc(window._db,'exam_sessions',sessionId),'snapshots'))
-    .then(function(snap){
-      btn.disabled=false;
-      if(snap.empty){
-        container.innerHTML=
-          '<div style="font-size:12px;color:var(--txt2);padding:.5rem;line-height:1.6">'
-          +'No snapshots found.<br>'
-          +'<span style="font-size:11px;color:var(--txt3)">This means the student had camera on but snapshots failed to save, '
-          +'or the student enabled camera after the exam started and Firestore rules may need updating.</span>'
-          +'</div>';
-        btn.textContent='📷 Camera Snapshots (0) ▾';
-        return;
-      }
-
-      var docs=[];
-      snap.forEach(function(d){ docs.push(d.data()); });
-      docs.sort(function(a,b){ return (a.timeLabel||'').localeCompare(b.timeLabel||''); });
-
-      var imgs='<div style="display:flex;flex-wrap:wrap;gap:6px;padding:.25rem 0">';
-      docs.forEach(function(dat){
-        imgs+='<div style="text-align:center">'
-          +'<img src="'+dat.img+'" style="width:100px;height:75px;object-fit:cover;'
-          +'border-radius:6px;border:1px solid var(--brd);display:block">'
-          +'<div style="font-size:9px;color:var(--txt3);font-family:var(--fm);margin-top:2px">'
-          +(dat.timeLabel||'')+'</div>'
-          +'</div>';
-      });
-      imgs+='</div>';
-      imgs+='<div style="font-size:10px;color:var(--txt2);margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--brd)">'
-        +'📷 '+docs.length+' snapshot(s) captured · taken every 30 seconds during exam'
-        +'</div>';
-
-      container.innerHTML=imgs;
-      btn.textContent='📷 Camera Snapshots ('+docs.length+') ▲';
-    })
-    .catch(function(e){
-      btn.disabled=false;
-      container.innerHTML='<div style="font-size:11px;color:var(--red);padding:.5rem">'
-        +'Could not load snapshots.<br>'
-        +'<span style="font-size:10px">Error: '+e.message+'<br>'
-        +'Check Firestore rules allow reading the snapshots subcollection.</span>'
-        +'</div>';
-      btn.textContent='📷 Camera Snapshots ▾';
-    });
-}
-
-function tabFlags(body){
-  document.getElementById('flag-badge').style.display='none';
-  const flagged=allSess.filter(s=>s.flagCount>0);
-  if(!flagged.length){body.innerHTML='<div class="empty-st">✓ No flags raised yet.</div>';return;}
-  let h='';
-  flagged.forEach(s=>{
-    (s.flags||[]).forEach(f=>{
-      h+=`<div class="al-card">
-        <div class="al-ic" style="background:var(--redD)">🚨</div>
-        <div style="flex:1">
-          <div class="al-name">${s.studentName||s.studentId}</div>
-          <div class="al-msg">${f.msg}</div>
-          <div class="al-t">${f.time}</div>
-        </div>
-      </div>`;
-    });
-  });
-  body.innerHTML=h;
-}
-
-function tabAnalytics(body){
-  const comp=allSess.filter(s=>s.score!==null&&s.score!==undefined);
-  if(!comp.length){body.innerHTML='<div class="empty-st">Not enough data yet.</div>';return;}
-  const scores=comp.map(s=>s.score);
-  const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
-  const mx=Math.max(...scores), mn=Math.min(...scores);
-  const totalF=allSess.reduce((a,s)=>a+(s.flagCount||0),0);
-  const passed=comp.filter(s=>s.passed).length;
-  const disqCount=allSess.filter(s=>s.status==='disqualified').length;
-  const ranges=[
-    {l:'90–100%',c:scores.filter(s=>s>=90).length,col:'var(--grn)'},
-    {l:'70–89%', c:scores.filter(s=>s>=70&&s<90).length,col:'var(--acc)'},
-    {l:'50–69%', c:scores.filter(s=>s>=50&&s<70).length,col:'var(--amb)'},
-    {l:'0–49%',  c:scores.filter(s=>s<50).length,col:'var(--red)'}
-  ];
-  const mx2=Math.max(...ranges.map(r=>r.c),1);
-  body.innerHTML=`
-    <div class="sg">
-      <div class="sc"><div class="sc-v" style="color:var(--acc)">${avg}%</div><div class="sc-k">Average</div></div>
-      <div class="sc"><div class="sc-v" style="color:var(--grn)">${mx}%</div><div class="sc-k">Highest</div></div>
-      <div class="sc"><div class="sc-v" style="color:var(--red)">${mn}%</div><div class="sc-k">Lowest</div></div>
-      <div class="sc"><div class="sc-v" style="color:var(--amb)">${totalF}</div><div class="sc-k">Total Flags</div></div>
-    </div>
-    <div class="chart-wrap">
-      <div style="font-size:11px;font-weight:700;margin-bottom:.75rem">Score Distribution</div>
-      ${ranges.map(r=>`<div class="ch-row">
-        <div class="ch-lbl">${r.l}</div>
-        <div class="ch-bg"><div class="ch-fill" style="width:${Math.round((r.c/mx2)*100)}%;background:${r.col}"></div></div>
-        <div class="ch-val" style="color:${r.col}">${r.c}</div>
-      </div>`).join('')}
-    </div>
-    <div class="card">
-      <div style="font-size:11px;font-weight:700;margin-bottom:.5rem">Summary</div>
-      <div style="font-size:12px;color:var(--txt2);line-height:1.9">
-        ${comp.length} student${comp.length!==1?'s':''} completed the exam.<br>
-        Pass rate: <strong style="color:${passed/comp.length>=.5?'var(--grn)':'var(--red)'}">${Math.round((passed/comp.length)*100)}%</strong> (${passed} of ${comp.length})<br>
-        ${disqCount} student${disqCount!==1?'s':''} disqualified for violations.<br>
-        Total suspicious activity flags: <strong>${totalF}</strong>
-      </div>
-    </div>`;
-}
-
-function updFlagBadge(){
-  const t=allSess.reduce((a,s)=>a+(s.flagCount||0),0);
-  const b=document.getElementById('flag-badge');
-  if(t>0){b.textContent=t;b.style.display='inline';}
-}
-
-async function forceSubmit(docId){
-  if(!window._dbOK) return;
-  if(!confirm('Force-submit this student\'s exam now?')) return;
-  try{
-    await window._setDoc(window._doc(window._db,'exam_sessions',docId),
-      {status:'completed',submittedAt:window._sTS(),forceSubmitted:true},{merge:true});
-  }catch(e){alert('Failed: '+e.message);}
-}
-
-// Init role UI
-setRole('student');
-
-// Update DB status indicator when Firebase connects
-window.addEventListener('dbOK', function(){
-  var dot=document.getElementById('db-dot');
-  var txt=document.getElementById('db-txt');
-  if(dot){dot.style.background='var(--grn)';dot.style.animation='none';}
-  if(txt) txt.textContent='Database connected ✓';
-  setTimeout(function(){
-    var s=document.getElementById('db-status');
-    if(s) s.style.opacity='0.5';
-  }, 3000);
-});
-
-// If no connection after 8s, show error
-setTimeout(function(){
-  if(!window._dbOK){
-    var dot=document.getElementById('db-dot');
-    var txt=document.getElementById('db-txt');
-    if(dot){dot.style.background='var(--red)';dot.style.animation='none';}
-    if(txt) txt.textContent='Database not connected — results will not save';
-  }
-}, 8000);
-
-// Pre-fill student login from localStorage
-(function(){
-  var savedId   = localStorage.getItem('eg_last_id');
-  var savedName = localStorage.getItem('eg_last_name');
-  if(savedId){
-    document.getElementById('lid').value = savedId;
-    var savedPw = localStorage.getItem('eg_pw_'+savedId);
-    if(savedPw) document.getElementById('lpw').value = savedPw;
-  }
-  if(savedName) document.getElementById('lname').value = savedName;
-})();
-
-</script>
-</body>
-</html>
+  if(!sessionId ||
