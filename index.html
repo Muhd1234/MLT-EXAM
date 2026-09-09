@@ -633,6 +633,16 @@ const LECTURER_PASS  = '64818991';
 const AUTOSAVE_MS    = 7000;
 const CACHE_KEY      = 'eg_answers_cache';
 
+// ── LINK WINDOW ──
+// EXAM_OPENS_AT = the moment you share the exam link with students.
+// Update this line each time before sharing, in the format YYYY-MM-DDTHH:MM:SS
+// (24-hour clock, your local time). Students can only START the exam within
+// LOGIN_WINDOW_MS of this time — after that the link stops accepting new
+// logins. Once a student has started, their own 30-minute timer still runs
+// independently and is not affected by this cutoff.
+const EXAM_OPENS_AT   = new Date('2026-09-09T09:00:00').getTime();
+const LOGIN_WINDOW_MS = 60 * 60 * 1000; // 1 hour to start after the link opens
+
 /* ══════════════════════════════════════════
    STATE
 ══════════════════════════════════════════ */
@@ -742,6 +752,18 @@ function doLogin(){
   if(!name){ loginErr('Please enter your full name.');     return; }
   if(!pw)  { loginErr('Please enter your password.');      return; }
 
+  // Link window check — students can only START within LOGIN_WINDOW_MS of
+  // EXAM_OPENS_AT. Already-submitted / already-active students are still
+  // blocked separately below regardless of this window.
+  if(Date.now() < EXAM_OPENS_AT){
+    loginErr('This exam has not opened yet. Please wait for your lecturer to confirm the start time.');
+    return;
+  }
+  if(Date.now() > EXAM_OPENS_AT + LOGIN_WINDOW_MS){
+    loginErr('This exam link is no longer accepting new logins. Contact your lecturer.');
+    return;
+  }
+
   // Save to localStorage so browser remembers next time
   localStorage.setItem('eg_last_id',   id);
   localStorage.setItem('eg_last_name', name);
@@ -783,6 +805,13 @@ function doLogin(){
    SETUP & PERMISSIONS
 ══════════════════════════════════════════ */
 function grantAndStart(){
+  // Re-check the link window here too — a student could log in just before
+  // the cutoff, then sit on this screen and hit Start after it's closed.
+  if(Date.now() > EXAM_OPENS_AT + LOGIN_WINDOW_MS){
+    loginErr('This exam link is no longer accepting new logins. Contact your lecturer.');
+    goto('s-login');
+    return;
+  }
   const btn=document.getElementById('start-btn');
   btn.disabled=true;
   btn.textContent='Starting…';
