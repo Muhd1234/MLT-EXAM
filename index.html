@@ -755,7 +755,7 @@ function doLogin(){
   // Link window check — students can only START within LOGIN_WINDOW_MS of
   // EXAM_OPENS_AT. Already-submitted / already-active students are still
   // blocked separately below regardless of this window.
-  if(Date.now() < EXAM_OPENS_AT){
+  if(Date.now() < EXAM_OPENS_AT){'2026-09-15T14:30:00'
     loginErr('This exam has not opened yet. Please wait for your lecturer to confirm the start time.');
     return;
   }
