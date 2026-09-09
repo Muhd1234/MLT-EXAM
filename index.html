@@ -7,9 +7,6 @@
 <title>ExamGuard Pro</title>
 <style>/* System fonts only for performance */</style>
 <style>
-/* ══════════════════════════════════════════
-   DESIGN TOKENS
-══════════════════════════════════════════ */
 :root{
   --bg:#07090f;--bg2:#0c0f1a;--bg3:#111525;
   --surf:#161c2e;--surf2:#1c2338;--surf3:#232b42;
@@ -37,20 +34,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--txt);font-size:15px;l
 ::selection{background:var(--accG);color:var(--acc)}
 input,button,select{font-family:var(--f)}
 img{user-select:none;-webkit-user-drag:none}
-
-/* ══════════════════════════════════════════
-   LAYOUT SYSTEM
-══════════════════════════════════════════ */
 .screen{display:none;height:100dvh;flex-direction:column;overflow:hidden;position:relative}
 .screen.on{display:flex}
 .scroller{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .scroller::-webkit-scrollbar{width:2px}
 .scroller::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:99px}
 .pad{padding:1.25rem;max-width:580px;margin:0 auto}
-
-/* ══════════════════════════════════════════
-   ATOMS
-══════════════════════════════════════════ */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.8rem 1.4rem;border-radius:var(--rs);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--f);transition:all .16s;white-space:nowrap;width:100%;letter-spacing:.01em;position:relative;overflow:hidden}
 .btn::after{content:'';position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .12s}
 .btn:active::after{opacity:.08}
@@ -62,26 +51,19 @@ img{user-select:none;-webkit-user-drag:none}
 .btn-g{background:var(--grn);color:#000;box-shadow:0 0 20px rgba(6,214,160,.25)}
 .btn-r{background:var(--red);color:#fff}
 .btn-sm{padding:.45rem .9rem;font-size:12px;width:auto;border-radius:var(--rs)}
-
 .field{margin-bottom:.875rem}
 .field label{display:block;font-size:10px;font-weight:700;color:var(--txt2);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.1em}
 .field input{width:100%;background:var(--surf2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:.78rem 1rem;color:var(--txt);font-size:15px;outline:none;transition:border-color .18s,box-shadow .18s;-webkit-appearance:none}
 .field input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG)}
 .field input::placeholder{color:var(--txt3)}
-
 .chip{display:inline-flex;align-items:center;gap:.3rem;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.07em;border:1px solid transparent}
 .chip-g{background:var(--grnD);color:var(--grn);border-color:rgba(6,214,160,.2)}
 .chip-r{background:var(--redD);color:var(--red);border-color:rgba(239,35,60,.2)}
 .chip-a{background:var(--ambD);color:var(--amb);border-color:rgba(255,214,10,.2)}
 .chip-b{background:var(--accG);color:var(--acc);border-color:rgba(67,97,238,.2)}
 .chip-p{background:rgba(114,9,183,.12);color:var(--purL);border-color:rgba(181,23,158,.2)}
-
 .card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:1.2rem}
 .hr{height:1px;background:var(--brd);margin:.875rem 0}
-
-/* ══════════════════════════════════════════
-   LOGIN
-══════════════════════════════════════════ */
 #s-login{background:var(--bg);align-items:center;justify-content:center;padding:1.5rem}
 #s-login::before{content:'';position:fixed;top:-120px;left:50%;transform:translateX(-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(67,97,238,.15) 0%,transparent 70%);pointer-events:none}
 .login-wrap{width:100%;max-width:400px;position:relative}
@@ -98,10 +80,6 @@ img{user-select:none;-webkit-user-drag:none}
 .login-note{text-align:center;font-size:11px;color:var(--txt3);margin-top:.875rem;line-height:1.5}
 .theme-btn{position:fixed;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:var(--surf);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;z-index:9000;transition:all .2s;box-shadow:var(--sh)}
 .theme-btn:hover{background:var(--surf2)}
-
-/* ══════════════════════════════════════════
-   SETUP SCREEN
-══════════════════════════════════════════ */
 #s-setup{background:var(--bg)}
 .topbar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.8rem 1.1rem;display:flex;align-items:center;gap:.7rem;flex-shrink:0}
 .ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
@@ -122,10 +100,6 @@ img{user-select:none;-webkit-user-drag:none}
 .perm-desc{font-size:10px;color:var(--txt2)}
 .integ-box{background:var(--ambD);border:1px solid rgba(255,214,10,.2);border-radius:var(--rs);padding:.875rem 1rem;font-size:12px;color:var(--amb);line-height:1.6;margin-top:1rem}
 .sticky-btn{position:sticky;bottom:0;padding:1rem 1.25rem;background:linear-gradient(to top,var(--bg) 70%,transparent);flex-shrink:0}
-
-/* ══════════════════════════════════════════
-   EXAM SCREEN
-══════════════════════════════════════════ */
 #s-exam{background:var(--bg);position:relative}
 .exam-bar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.6rem .9rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0;position:relative;z-index:50}
 .exam-bar-left{flex:1;min-width:0}
@@ -141,19 +115,13 @@ img{user-select:none;-webkit-user-drag:none}
 .timer-box.fire{border-color:var(--red);background:var(--redD);animation:fire-blink 1s infinite}
 .timer-box.fire .timer-n{color:var(--red)}
 @keyframes fire-blink{0%,100%{opacity:1}50%{opacity:.55}}
-
-/* Warn strip */
 .warn-strip{background:var(--redD);border-bottom:2px solid rgba(239,35,60,.5);padding:.7rem 1rem;flex-shrink:0;display:none;animation:strip-in .25s ease}
 @keyframes strip-in{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .ws-inner{display:flex;align-items:center;gap:.75rem}
 .ws-num{background:var(--red);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;flex-shrink:0;font-family:var(--fm)}
 .ws-msg{font-size:12px;color:var(--red);line-height:1.4}
-
-/* Progress */
 .prog-rail{height:2px;background:var(--brd);flex-shrink:0;position:relative}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--grn));transition:width .4s ease;position:absolute;top:0;left:0}
-
-/* Q body */
 .q-wrap{padding:1.1rem;max-width:620px;margin:0 auto}
 .q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem}
 .q-pos{font-family:var(--fm);font-size:11px;color:var(--txt2);font-weight:500}
@@ -182,21 +150,15 @@ img{user-select:none;-webkit-user-drag:none}
 .navbtn.fwd{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 2px 14px rgba(67,97,238,.3)}
 .navbtn.done{background:var(--grn);border-color:var(--grn);color:#000;box-shadow:0 2px 14px rgba(6,214,160,.3)}
 .navbtn:active{transform:scale(.97)}
-
-/* Grid bar */
 .grid-bar{display:flex;flex-wrap:wrap;gap:.28rem;padding:.75rem .9rem;border-top:1px solid var(--brd);flex-shrink:0}
 .gb-dot{width:26px;height:26px;border-radius:6px;background:var(--surf);border:1px solid var(--brd);font-size:9px;font-weight:700;color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--fm);transition:all .18s}
 .gb-dot.ans{background:var(--acc);border-color:var(--acc);color:#fff}
 .gb-dot.cur{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 2px var(--accG)}
-
-/* Camera pip */
 .cam-pip{position:absolute;bottom:68px;right:10px;width:78px;height:106px;border-radius:10px;overflow:hidden;border:2px solid var(--acc);background:#000;z-index:40;display:none;box-shadow:0 4px 20px rgba(0,0,0,.6)}
 .cam-pip video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 .cam-rec{position:absolute;top:4px;left:4px;display:flex;align-items:center;gap:3px}
 .cam-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:fire-blink 2s infinite}
 .cam-lbl{font-size:7px;font-weight:700;color:#fff;font-family:var(--fm);background:rgba(0,0,0,.55);padding:1px 4px;border-radius:3px}
-
-/* Submit modal */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:800;display:none;align-items:flex-end;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .modal-bg.on{display:flex}
 .modal-sheet{background:var(--surf);border-radius:22px 22px 0 0;border-top:1px solid var(--brd);padding:1.75rem 1.4rem;width:100%;animation:sheet-up .2s ease}
@@ -205,10 +167,6 @@ img{user-select:none;-webkit-user-drag:none}
 .modal-t{font-family:var(--fh);font-size:18px;font-weight:800;text-align:center;margin-bottom:.35rem}
 .modal-b{font-size:13px;color:var(--txt2);text-align:center;margin-bottom:1.5rem;line-height:1.6}
 .modal-acts{display:flex;flex-direction:column;gap:.45rem}
-
-/* ══════════════════════════════════════════
-   OVERLAYS
-══════════════════════════════════════════ */
 .overlay{position:fixed;inset:0;z-index:9500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
 .overlay.on{display:flex}
 #ov-disq{background:rgba(7,9,15,.97)}
@@ -221,10 +179,6 @@ img{user-select:none;-webkit-user-drag:none}
 .ov-countdown-lbl{font-size:10px;color:var(--txt3);margin-top:.3rem;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.1em}
 #ov-disq .ov-title{color:var(--red)}
 #ov-lock .ov-title{color:var(--red)}
-
-/* ══════════════════════════════════════════
-   RESULTS
-══════════════════════════════════════════ */
 #s-results{background:var(--bg)}
 .res-hero{background:linear-gradient(135deg,var(--bg2),var(--surf));border:1px solid var(--brd);border-radius:var(--rl);padding:1.75rem;text-align:center;margin-bottom:.875rem;position:relative;overflow:hidden}
 .res-hero::after{content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:250px;height:80px;background:radial-gradient(ellipse,var(--accG),transparent 70%)}
@@ -247,24 +201,16 @@ img{user-select:none;-webkit-user-drag:none}
 .save-row.ok{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
 .save-row.saving{background:var(--ambD);border-color:rgba(255,214,10,.2);color:var(--amb)}
 .save-row.fail{background:var(--redD);border-color:rgba(239,35,60,.25);color:var(--red)}
-
-/* ══════════════════════════════════════════
-   ADMIN SCREEN
-══════════════════════════════════════════ */
 #s-admin{background:var(--bg)}
 .admin-tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--brd);overflow-x:auto;flex-shrink:0}
 .admin-tabs::-webkit-scrollbar{display:none}
 .atab{flex-shrink:0;padding:.7rem .95rem;font-size:12px;font-weight:700;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;font-family:var(--fh)}
 .atab.on{color:var(--acc);border-bottom-color:var(--acc)}
 .a-pad{padding:.875rem;max-width:680px;margin:0 auto}
-
-/* Admin stat grid */
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.875rem}
 .sc{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem}
 .sc-v{font-family:var(--fm);font-size:24px;font-weight:700;margin-bottom:.15rem}
 .sc-k{font-size:10px;color:var(--txt2);font-weight:500}
-
-/* Student cards */
 .stu-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.5rem}
 .stu-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
 .stu-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
@@ -274,27 +220,20 @@ img{user-select:none;-webkit-user-drag:none}
 .stu-prog{height:3px;background:var(--brd);border-radius:99px;overflow:hidden;margin:.4rem 0}
 .stu-fill{height:100%;border-radius:99px;transition:width .5s}
 .stu-btm{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
-
-/* Alert cards */
 .al-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.85rem;margin-bottom:.45rem;display:flex;gap:.7rem}
 .al-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .al-name{font-size:13px;font-weight:700;margin-bottom:.15rem}
 .al-msg{font-size:11px;color:var(--txt2);line-height:1.4}
 .al-t{font-size:9px;color:var(--txt3);font-family:var(--fm);margin-top:.2rem}
-
-/* Chart */
 .chart-wrap{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.55rem}
 .ch-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem}
 .ch-lbl{font-size:11px;width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ch-bg{flex:1;height:16px;background:var(--surf2);border-radius:99px;overflow:hidden}
 .ch-fill{height:100%;border-radius:99px;transition:width .8s ease}
 .ch-val{font-size:10px;font-family:var(--fm);font-weight:600;width:28px;text-align:right;flex-shrink:0}
-
 .empty-st{text-align:center;padding:3rem 1rem;color:var(--txt2);font-size:13px;line-height:1.6}
 .spin{display:inline-block;width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin-a .7s linear infinite;margin-bottom:.65rem}
 @keyframes spin-a{to{transform:rotate(360deg)}}
-
-/* Network banner */
 .net-banner{background:var(--redD);border-bottom:1px solid rgba(239,35,60,.3);padding:.5rem 1rem;font-size:11px;color:var(--red);text-align:center;display:none;flex-shrink:0}
 .net-banner.on{display:block}
 .net-banner.back{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
@@ -304,9 +243,6 @@ img{user-select:none;-webkit-user-drag:none}
 
 <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
 
-<!-- ══════════════════════════════════════
-     LOGIN
-══════════════════════════════════════ -->
 <div id="s-login" class="screen on">
   <div class="login-wrap">
     <div class="login-logo-row">
@@ -348,9 +284,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SETUP
-══════════════════════════════════════ -->
 <div id="s-setup" class="screen">
   <div class="topbar">
     <div class="ava" id="setup-ava">A</div>
@@ -405,13 +338,8 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     EXAM
-══════════════════════════════════════ -->
 <div id="s-exam" class="screen">
-  <!-- Network banner -->
   <div class="net-banner" id="net-banner">📡 Network lost — answers cached locally. Reconnecting…</div>
-  <!-- Top bar -->
   <div class="exam-bar">
     <div class="exam-bar-left">
       <div class="eb-title" id="eb-title">First aid And Primary Health Care</div>
@@ -423,27 +351,21 @@ img{user-select:none;-webkit-user-drag:none}
       <span class="timer-n" id="timer-n">30:00</span>
     </div>
   </div>
-  <!-- Warning strip -->
   <div class="warn-strip" id="warn-strip">
     <div class="ws-inner">
       <div class="ws-num" id="ws-num">1/3</div>
       <div class="ws-msg" id="ws-msg">Suspicious activity detected.</div>
     </div>
   </div>
-  <!-- Progress -->
   <div class="prog-rail"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-  <!-- Body -->
   <div class="scroller" id="exam-scroll">
     <div class="q-wrap" id="q-wrap"></div>
   </div>
-  <!-- Grid -->
   <div class="grid-bar" id="grid-bar"></div>
-  <!-- Camera PiP -->
   <div class="cam-pip" id="cam-pip">
     <video id="cam-vid" autoplay muted playsinline></video>
     <div class="cam-rec"><div class="cam-dot"></div><div class="cam-lbl">LIVE</div></div>
   </div>
-  <!-- Submit modal -->
   <div class="modal-bg" id="submit-modal">
     <div class="modal-sheet">
       <div class="modal-ic">📋</div>
@@ -457,9 +379,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     RESULTS
-══════════════════════════════════════ -->
 <div id="s-results" class="screen">
   <div class="topbar">
     <div class="ava" id="res-ava">A</div>
@@ -496,9 +415,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN
-══════════════════════════════════════ -->
 <div id="s-admin" class="screen">
   <div class="topbar">
     <div class="ava" style="background:linear-gradient(135deg,var(--pur),var(--purL))">L</div>
@@ -510,6 +426,7 @@ img{user-select:none;-webkit-user-drag:none}
     <div class="atab" onclick="aTab('results',this)">📊 Results</div>
     <div class="atab" onclick="aTab('flags',this)">🚨 Flags <span id="flag-badge" style="background:var(--red);color:#fff;border-radius:99px;padding:1px 6px;font-size:9px;margin-left:2px;display:none"></span></div>
     <div class="atab" onclick="aTab('analytics',this)">📈 Analytics</div>
+    <div class="atab" onclick="aTab('settings',this)">⚙️ Settings</div>
   </div>
   <div class="scroller">
     <div class="a-pad" id="admin-body">
@@ -518,9 +435,6 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     OVERLAYS
-══════════════════════════════════════ -->
 <div class="overlay" id="ov-disq">
   <div class="ov-icon">🚫</div>
   <div class="ov-title">Examination Terminated</div>
@@ -545,16 +459,12 @@ img{user-select:none;-webkit-user-drag:none}
   <button class="btn btn-p" style="width:auto;padding:.75rem 2rem" onclick="reqFS()">Enable Fullscreen</button>
 </div>
 
-<!-- ══════════════════════════════════════
-     FIREBASE SDK
-══════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs,
          onSnapshot, serverTimestamp, query, orderBy, where, updateDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── YOUR FIREBASE CONFIG ──
 const FC = {
   apiKey:            "AIzaSyAWEI0SdLmximjy_TCfx2XdIwyEYPzPlEo",
   authDomain:        "mlt112-exam.firebaseapp.com",
@@ -576,7 +486,6 @@ try {
 } catch(e){
   window._dbOK=false;
   console.warn('Firebase init error:',e);
-  // Show error on login page
   setTimeout(function(){
     var dot=document.getElementById('db-dot');
     var txt=document.getElementById('db-txt');
@@ -586,9 +495,6 @@ try {
 }
 </script>
 
-<!-- ══════════════════════════════════════
-     QUESTION BANK
-══════════════════════════════════════ -->
 <script>
 const QB = [
   {q:"What is Medical Laboratory Science mainly concerned with?",sc:false,opts:["Examination and analysis of clinical specimens","Construction of hospitals","Selling medicines","Training drivers"],ans:0},
@@ -623,9 +529,6 @@ const QB = [
   {q:"Which of the following is a role of Medical Laboratory Science in infection prevention and control?",sc:false,opts:["Building roads","Selling food","Designing houses","Safe specimen handling and laboratory biosafety"],ans:3}
 ];
 
-/* ══════════════════════════════════════════
-   CONSTANTS
-══════════════════════════════════════════ */
 const EXAM_DURATION  = 30 * 60;
 const MAX_WARN       = 3;
 const LECTURER_USER  = 'Amuhd';
@@ -633,28 +536,23 @@ const LECTURER_PASS  = '64818991';
 const AUTOSAVE_MS    = 7000;
 const CACHE_KEY      = 'eg_answers_cache';
 
-/* ══════════════════════════════════════════
-   STATE
-══════════════════════════════════════════ */
+const EXAM_OPENS_AT_DEFAULT   = new Date('2026-09-09T09:00:00').getTime();
+const LOGIN_WINDOW_MS_DEFAULT = 60 * 60 * 1000;
+
 let role='student', sId='', sName='', sessionId=null;
 let qs=[], ans={}, curQ=0, warns=[], wCount=0;
 let timerInt=null, saveInt=null, timeLeft=EXAM_DURATION;
 let t0=null, stream=null, active=false, done=false;
 let adminUnsub=null, allSess=[], curTab='live';
 let online=true;
+let examOpensAt=EXAM_OPENS_AT_DEFAULT, examWindowMs=LOGIN_WINDOW_MS_DEFAULT, windowLoaded=false;
 
-/* ══════════════════════════════════════════
-   THEME
-══════════════════════════════════════════ */
 function toggleTheme(){
   const t = document.documentElement.dataset.theme==='dark'?'light':'dark';
   document.documentElement.dataset.theme=t;
   document.getElementById('themeBtn').textContent=t==='dark'?'🌙':'☀️';
 }
 
-/* ══════════════════════════════════════════
-   NETWORK MONITORING
-══════════════════════════════════════════ */
 window.addEventListener('online', ()=>{
   online=true;
   const b=document.getElementById('net-banner');
@@ -681,9 +579,35 @@ async function flushCache(){
   }catch(e){}
 }
 
-/* ══════════════════════════════════════════
-   ROUTING
-══════════════════════════════════════════ */
+async function loadExamWindow(){
+  if(!window._dbOK) return;
+  try{
+    const snap=await window._getDoc(window._doc(window._db,'exam_config','window'));
+    if(snap.exists()){
+      const d=snap.data();
+      if(d.opensAt)   examOpensAt = d.opensAt;
+      if(d.windowMs)  examWindowMs = d.windowMs;
+    }
+  }catch(e){
+    console.warn('Could not load exam window, using defaults:', e);
+  }
+  windowLoaded=true;
+}
+
+async function saveExamWindow(opensAtMs, windowMinutes){
+  const windowMs = windowMinutes*60*1000;
+  if(!window._dbOK) return false;
+  try{
+    await window._setDoc(window._doc(window._db,'exam_config','window'),
+      {opensAt:opensAtMs, windowMs:windowMs, updatedAt:window._sTS()});
+    examOpensAt=opensAtMs; examWindowMs=windowMs;
+    return true;
+  }catch(e){
+    console.warn('Could not save exam window:', e);
+    return false;
+  }
+}
+
 function goto(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
@@ -691,9 +615,6 @@ function goto(id){
   if(id==='s-login') cleanup();
 }
 
-/* ══════════════════════════════════════════
-   LOGIN
-══════════════════════════════════════════ */
 function setRole(r){
   role=r;
   document.getElementById('rtab-s').classList.toggle('on',r==='student');
@@ -717,13 +638,12 @@ function loginErr(m){
   setTimeout(()=>el.classList.remove('on'),5000);
 }
 
-function doLogin(){
+async function doLogin(){
   const id   = document.getElementById('lid').value.trim();
   const name = document.getElementById('lname').value.trim();
   const pw   = document.getElementById('lpw').value.trim();
   const btn  = document.getElementById('login-btn');
 
-  // ── LECTURER LOGIN ──
   if(role==='admin'){
     if(!id){ loginErr('Please enter your username.'); return; }
     if(!pw){ loginErr('Please enter your password.'); return; }
@@ -737,15 +657,23 @@ function doLogin(){
     return;
   }
 
-  // ── STUDENT LOGIN ──
   if(!id)  { loginErr('Please enter your Matric Number.'); return; }
   if(!name){ loginErr('Please enter your full name.');     return; }
   if(!pw)  { loginErr('Please enter your password.');      return; }
 
-  // Save to localStorage so browser remembers next time
+  if(!windowLoaded) await loadExamWindow();
+
+  if(Date.now() < examOpensAt){
+    loginErr('This exam has not opened yet. Please wait for your lecturer to confirm the start time.');
+    return;
+  }
+  if(Date.now() > examOpensAt + examWindowMs){
+    loginErr('This exam link is no longer accepting new logins. Contact your lecturer.');
+    return;
+  }
+
   localStorage.setItem('eg_last_id',   id);
   localStorage.setItem('eg_last_name', name);
-  // Save password for this student ID so they must use same pw next time
   var existingPw = localStorage.getItem('eg_pw_'+id);
   if(!existingPw){
     localStorage.setItem('eg_pw_'+id, pw);
@@ -756,19 +684,16 @@ function doLogin(){
 
   sId=id; sName=name;
 
-  // Block if student was disqualified
   if(localStorage.getItem('eg_disq_'+id)==='1'){
     loginErr('Your exam was terminated due to violations. Contact your lecturer.');
     return;
   }
 
-  // Block if student already submitted
   if(localStorage.getItem('eg_submitted_'+id)==='1'){
     loginErr('You have already submitted your exam. Contact your lecturer if this is an error.');
     return;
   }
 
-  // Restore warning count and history for this student
   var savedWarns = parseInt(localStorage.getItem('eg_warns_'+id)||'0');
   wCount = savedWarns;
 
@@ -779,10 +704,12 @@ function doLogin(){
   goto('s-setup');
 }
 
-/* ══════════════════════════════════════════
-   SETUP & PERMISSIONS
-══════════════════════════════════════════ */
 function grantAndStart(){
+  if(Date.now() > examOpensAt + examWindowMs){
+    loginErr('This exam link is no longer accepting new logins. Contact your lecturer.');
+    goto('s-login');
+    return;
+  }
   const btn=document.getElementById('start-btn');
   btn.disabled=true;
   btn.textContent='Starting…';
@@ -795,9 +722,6 @@ function reqFS(){
   return (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen||function(){}).call(el);
 }
 
-/* ══════════════════════════════════════════
-   EXAM START
-══════════════════════════════════════════ */
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 
 function startExam(){
@@ -827,23 +751,21 @@ function startExam(){
   goto('s-exam');
 
   if(window._dbOK){
-    window._addDoc(window._col(window._db,'exam_sessions'),{
+    const sRef = window._doc(window._col(window._db,'exam_sessions'));
+    sessionId = sRef.id;
+    window._setDoc(sRef,{
       studentId:sId, studentName:sName, course:'First aid And Primary Health Care',
       status:'active', startedAt:window._sTS(),
       score:null, correct:null, total:QB.length,
       timeTaken:null, timeLeft:EXAM_DURATION,
       flagCount:0, flags:[], answers:{},
       submitted:false, autoSubmit:false, forceSubmitted:false
-    }).then(ref=>{ sessionId=ref.id; })
-      .catch(e=>{ console.warn('Session create failed:',e); });
+    }).catch(e=>{ console.warn('Session create failed:',e); });
   }
 
   showCameraBtn();
 }
 
-/* ══════════════════════════════════════════
-   CAMERA
-══════════════════════════════════════════ */
 function setupCamera(){
   if(!stream) return;
   var vid = document.getElementById('cam-vid');
@@ -942,9 +864,6 @@ function showCameraBtn(){
   pill.parentElement.insertBefore(btn, pill);
 }
 
-/* ══════════════════════════════════════════
-   ANTI-CHEAT
-══════════════════════════════════════════ */
 function setupAntiCheat(){
   document.addEventListener('visibilitychange', onVis);
   window.addEventListener('blur', onBlur);
@@ -999,9 +918,6 @@ function rmListeners(){
   clearInterval(window._devTimer);
 }
 
-/* ══════════════════════════════════════════
-   WARNING SYSTEM
-══════════════════════════════════════════ */
 function flag(msg){
   if(!active || done || wCount>=MAX_WARN) return;
   wCount++;
@@ -1054,9 +970,6 @@ function disqualify(){
   },1000);
 }
 
-/* ══════════════════════════════════════════
-   TIMER
-══════════════════════════════════════════ */
 function runTimer(){
   clearInterval(timerInt);
   timerInt=setInterval(async()=>{
@@ -1086,9 +999,6 @@ function timeUp(){
   document.getElementById('ov-lock').classList.add('on');
 }
 
-/* ══════════════════════════════════════════
-   AUTO-SAVE (offline-aware)
-══════════════════════════════════════════ */
 function runAutoSave(){
   clearInterval(saveInt);
   saveInt=setInterval(async()=>{
@@ -1102,9 +1012,6 @@ function runAutoSave(){
   }, AUTOSAVE_MS);
 }
 
-/* ══════════════════════════════════════════
-   RENDER QUESTION
-══════════════════════════════════════════ */
 function renderQ(idx){
   curQ=idx;
   const q=qs[idx], total=qs.length;
@@ -1155,9 +1062,6 @@ function renderGrid(){
     `<div class="gb-dot ${ans[i]!==undefined?'ans':''} ${i===curQ?'cur':''}" onclick="renderQ(${i})">${i+1}</div>`).join('');
 }
 
-/* ══════════════════════════════════════════
-   SUBMIT
-══════════════════════════════════════════ */
 function openSubmit(){
   const total=qs.length, done2=Object.keys(ans).length, left=total-done2;
   document.getElementById('modal-b').innerHTML=
@@ -1274,9 +1178,6 @@ function persistNow(auto, status){
   });
 }
 
-/* ══════════════════════════════════════════
-   RESULTS — computes score directly, shows instantly
-══════════════════════════════════════════ */
 function showResults(auto, status){
   var correct=0;
   qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
@@ -1331,9 +1232,6 @@ function forceOut(){
   cleanup(); goto('s-login');
 }
 
-/* ══════════════════════════════════════════
-   CLEANUP
-══════════════════════════════════════════ */
 function cleanup(){
   clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer); clearInterval(window._snapTimer);
   rmListeners();
@@ -1348,9 +1246,6 @@ function cleanup(){
   if(adminUnsub){adminUnsub(); adminUnsub=null;}
 }
 
-/* ══════════════════════════════════════════
-   ADMIN
-══════════════════════════════════════════ */
 function initAdmin(){
   if(!window._dbOK){
     document.getElementById('admin-body').innerHTML=
@@ -1382,6 +1277,7 @@ function renderTab(tab){
   if(tab==='live') tabLive(body);
   else if(tab==='results') tabResults(body);
   else if(tab==='flags') tabFlags(body);
+  else if(tab==='settings') tabSettings(body);
   else tabAnalytics(body);
 }
 
@@ -1705,6 +1601,74 @@ function tabAnalytics(body){
     </div>`;
 }
 
+function toLocalInputValue(ms){
+  var d=new Date(ms);
+  var pad=function(n){return String(n).padStart(2,'0');};
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())
+    +'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+
+function tabSettings(body){
+  var opensAtVal = toLocalInputValue(examOpensAt);
+  var mins = Math.round(examWindowMs/60000);
+  var closesAt = new Date(examOpensAt+examWindowMs);
+  var now = Date.now();
+  var stateChip = now < examOpensAt
+    ? '<span class="chip chip-a">⏳ Not open yet</span>'
+    : now <= examOpensAt+examWindowMs
+      ? '<span class="chip chip-g">🟢 Accepting logins</span>'
+      : '<span class="chip chip-r">🚫 Closed</span>';
+
+  body.innerHTML = `
+    <div class="card" style="margin-bottom:.875rem">
+      <div style="font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">
+        Exam Link Window
+      </div>
+      <div style="margin-bottom:.75rem">Current status: ${stateChip}</div>
+      <div class="field">
+        <label>Exam opens at (your local time)</label>
+        <input id="set-opens" type="datetime-local" value="${opensAtVal}">
+      </div>
+      <div class="field">
+        <label>Login window (minutes)</label>
+        <input id="set-mins" type="number" min="5" step="5" value="${mins}">
+      </div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:1rem;line-height:1.6">
+        Students can log in and start any time between the opening time and
+        <strong>${closesAt.toLocaleString()}</strong>. Once a student starts,
+        their own exam timer runs independently and is not affected by this window.
+      </div>
+      <button class="btn btn-p" id="set-save-btn" onclick="doSaveSettings()">💾 Save</button>
+      <div id="set-status" style="font-size:12px;text-align:center;margin-top:.65rem;min-height:16px"></div>
+    </div>`;
+}
+
+async function doSaveSettings(){
+  var btn=document.getElementById('set-save-btn');
+  var status=document.getElementById('set-status');
+  var opensVal=document.getElementById('set-opens').value;
+  var minsVal=parseInt(document.getElementById('set-mins').value,10);
+
+  if(!opensVal){ status.style.color='var(--red)'; status.textContent='Please pick an opening date/time.'; return; }
+  if(!minsVal || minsVal<1){ status.style.color='var(--red)'; status.textContent='Please enter a valid number of minutes.'; return; }
+
+  var opensMs = new Date(opensVal).getTime();
+  if(isNaN(opensMs)){ status.style.color='var(--red)'; status.textContent='Invalid date/time.'; return; }
+
+  btn.disabled=true; btn.textContent='Saving…';
+  var ok = await saveExamWindow(opensMs, minsVal);
+  btn.disabled=false; btn.textContent='💾 Save';
+
+  if(ok){
+    status.style.color='var(--grn)';
+    status.textContent='✓ Saved — students will see this the next time they open the link.';
+    renderTab('settings');
+  } else {
+    status.style.color='var(--red)';
+    status.textContent='⚠️ Could not save — check your connection and try again.';
+  }
+}
+
 function updFlagBadge(){
   const t=allSess.reduce((a,s)=>a+(s.flagCount||0),0);
   const b=document.getElementById('flag-badge');
@@ -1720,10 +1684,8 @@ async function forceSubmit(docId){
   }catch(e){alert('Failed: '+e.message);}
 }
 
-// Init role UI
 setRole('student');
 
-// Update DB status indicator when Firebase connects
 window.addEventListener('dbOK', function(){
   var dot=document.getElementById('db-dot');
   var txt=document.getElementById('db-txt');
@@ -1733,9 +1695,9 @@ window.addEventListener('dbOK', function(){
     var s=document.getElementById('db-status');
     if(s) s.style.opacity='0.5';
   }, 3000);
+  loadExamWindow();
 });
 
-// If no connection after 8s, show error
 setTimeout(function(){
   if(!window._dbOK){
     var dot=document.getElementById('db-dot');
@@ -1745,7 +1707,6 @@ setTimeout(function(){
   }
 }, 8000);
 
-// Pre-fill student login from localStorage
 (function(){
   var savedId   = localStorage.getItem('eg_last_id');
   var savedName = localStorage.getItem('eg_last_name');
