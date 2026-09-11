@@ -7,6 +7,9 @@
 <title>ExamGuard Pro</title>
 <style>/* System fonts only for performance */</style>
 <style>
+/* ══════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════ */
 :root{
   --bg:#07090f;--bg2:#0c0f1a;--bg3:#111525;
   --surf:#161c2e;--surf2:#1c2338;--surf3:#232b42;
@@ -34,12 +37,20 @@ body{font-family:var(--f);background:var(--bg);color:var(--txt);font-size:15px;l
 ::selection{background:var(--accG);color:var(--acc)}
 input,button,select{font-family:var(--f)}
 img{user-select:none;-webkit-user-drag:none}
+
+/* ══════════════════════════════════════════
+   LAYOUT SYSTEM
+══════════════════════════════════════════ */
 .screen{display:none;height:100dvh;flex-direction:column;overflow:hidden;position:relative}
 .screen.on{display:flex}
 .scroller{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .scroller::-webkit-scrollbar{width:2px}
 .scroller::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:99px}
 .pad{padding:1.25rem;max-width:580px;margin:0 auto}
+
+/* ══════════════════════════════════════════
+   ATOMS
+══════════════════════════════════════════ */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.8rem 1.4rem;border-radius:var(--rs);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--f);transition:all .16s;white-space:nowrap;width:100%;letter-spacing:.01em;position:relative;overflow:hidden}
 .btn::after{content:'';position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .12s}
 .btn:active::after{opacity:.08}
@@ -51,19 +62,26 @@ img{user-select:none;-webkit-user-drag:none}
 .btn-g{background:var(--grn);color:#000;box-shadow:0 0 20px rgba(6,214,160,.25)}
 .btn-r{background:var(--red);color:#fff}
 .btn-sm{padding:.45rem .9rem;font-size:12px;width:auto;border-radius:var(--rs)}
+
 .field{margin-bottom:.875rem}
 .field label{display:block;font-size:10px;font-weight:700;color:var(--txt2);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.1em}
 .field input{width:100%;background:var(--surf2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:.78rem 1rem;color:var(--txt);font-size:15px;outline:none;transition:border-color .18s,box-shadow .18s;-webkit-appearance:none}
 .field input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG)}
 .field input::placeholder{color:var(--txt3)}
+
 .chip{display:inline-flex;align-items:center;gap:.3rem;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.07em;border:1px solid transparent}
 .chip-g{background:var(--grnD);color:var(--grn);border-color:rgba(6,214,160,.2)}
 .chip-r{background:var(--redD);color:var(--red);border-color:rgba(239,35,60,.2)}
 .chip-a{background:var(--ambD);color:var(--amb);border-color:rgba(255,214,10,.2)}
 .chip-b{background:var(--accG);color:var(--acc);border-color:rgba(67,97,238,.2)}
 .chip-p{background:rgba(114,9,183,.12);color:var(--purL);border-color:rgba(181,23,158,.2)}
+
 .card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:1.2rem}
 .hr{height:1px;background:var(--brd);margin:.875rem 0}
+
+/* ══════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════ */
 #s-login{background:var(--bg);align-items:center;justify-content:center;padding:1.5rem}
 #s-login::before{content:'';position:fixed;top:-120px;left:50%;transform:translateX(-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(67,97,238,.15) 0%,transparent 70%);pointer-events:none}
 .login-wrap{width:100%;max-width:400px;position:relative}
@@ -80,6 +98,10 @@ img{user-select:none;-webkit-user-drag:none}
 .login-note{text-align:center;font-size:11px;color:var(--txt3);margin-top:.875rem;line-height:1.5}
 .theme-btn{position:fixed;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:var(--surf);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;z-index:9000;transition:all .2s;box-shadow:var(--sh)}
 .theme-btn:hover{background:var(--surf2)}
+
+/* ══════════════════════════════════════════
+   SETUP SCREEN
+══════════════════════════════════════════ */
 #s-setup{background:var(--bg)}
 .topbar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.8rem 1.1rem;display:flex;align-items:center;gap:.7rem;flex-shrink:0}
 .ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
@@ -100,6 +122,10 @@ img{user-select:none;-webkit-user-drag:none}
 .perm-desc{font-size:10px;color:var(--txt2)}
 .integ-box{background:var(--ambD);border:1px solid rgba(255,214,10,.2);border-radius:var(--rs);padding:.875rem 1rem;font-size:12px;color:var(--amb);line-height:1.6;margin-top:1rem}
 .sticky-btn{position:sticky;bottom:0;padding:1rem 1.25rem;background:linear-gradient(to top,var(--bg) 70%,transparent);flex-shrink:0}
+
+/* ══════════════════════════════════════════
+   EXAM SCREEN
+══════════════════════════════════════════ */
 #s-exam{background:var(--bg);position:relative}
 .exam-bar{background:var(--surf);border-bottom:1px solid var(--brd);padding:.6rem .9rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0;position:relative;z-index:50}
 .exam-bar-left{flex:1;min-width:0}
@@ -115,13 +141,19 @@ img{user-select:none;-webkit-user-drag:none}
 .timer-box.fire{border-color:var(--red);background:var(--redD);animation:fire-blink 1s infinite}
 .timer-box.fire .timer-n{color:var(--red)}
 @keyframes fire-blink{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* Warn strip */
 .warn-strip{background:var(--redD);border-bottom:2px solid rgba(239,35,60,.5);padding:.7rem 1rem;flex-shrink:0;display:none;animation:strip-in .25s ease}
 @keyframes strip-in{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .ws-inner{display:flex;align-items:center;gap:.75rem}
 .ws-num{background:var(--red);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;flex-shrink:0;font-family:var(--fm)}
 .ws-msg{font-size:12px;color:var(--red);line-height:1.4}
+
+/* Progress */
 .prog-rail{height:2px;background:var(--brd);flex-shrink:0;position:relative}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--grn));transition:width .4s ease;position:absolute;top:0;left:0}
+
+/* Q body */
 .q-wrap{padding:1.1rem;max-width:620px;margin:0 auto}
 .q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem}
 .q-pos{font-family:var(--fm);font-size:11px;color:var(--txt2);font-weight:500}
@@ -150,15 +182,21 @@ img{user-select:none;-webkit-user-drag:none}
 .navbtn.fwd{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 2px 14px rgba(67,97,238,.3)}
 .navbtn.done{background:var(--grn);border-color:var(--grn);color:#000;box-shadow:0 2px 14px rgba(6,214,160,.3)}
 .navbtn:active{transform:scale(.97)}
+
+/* Grid bar */
 .grid-bar{display:flex;flex-wrap:wrap;gap:.28rem;padding:.75rem .9rem;border-top:1px solid var(--brd);flex-shrink:0}
 .gb-dot{width:26px;height:26px;border-radius:6px;background:var(--surf);border:1px solid var(--brd);font-size:9px;font-weight:700;color:var(--txt3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--fm);transition:all .18s}
 .gb-dot.ans{background:var(--acc);border-color:var(--acc);color:#fff}
 .gb-dot.cur{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 2px var(--accG)}
+
+/* Camera pip */
 .cam-pip{position:absolute;bottom:68px;right:10px;width:78px;height:106px;border-radius:10px;overflow:hidden;border:2px solid var(--acc);background:#000;z-index:40;display:none;box-shadow:0 4px 20px rgba(0,0,0,.6)}
 .cam-pip video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 .cam-rec{position:absolute;top:4px;left:4px;display:flex;align-items:center;gap:3px}
 .cam-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:fire-blink 2s infinite}
 .cam-lbl{font-size:7px;font-weight:700;color:#fff;font-family:var(--fm);background:rgba(0,0,0,.55);padding:1px 4px;border-radius:3px}
+
+/* Submit modal */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:800;display:none;align-items:flex-end;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .modal-bg.on{display:flex}
 .modal-sheet{background:var(--surf);border-radius:22px 22px 0 0;border-top:1px solid var(--brd);padding:1.75rem 1.4rem;width:100%;animation:sheet-up .2s ease}
@@ -167,6 +205,10 @@ img{user-select:none;-webkit-user-drag:none}
 .modal-t{font-family:var(--fh);font-size:18px;font-weight:800;text-align:center;margin-bottom:.35rem}
 .modal-b{font-size:13px;color:var(--txt2);text-align:center;margin-bottom:1.5rem;line-height:1.6}
 .modal-acts{display:flex;flex-direction:column;gap:.45rem}
+
+/* ══════════════════════════════════════════
+   OVERLAYS
+══════════════════════════════════════════ */
 .overlay{position:fixed;inset:0;z-index:9500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
 .overlay.on{display:flex}
 #ov-disq{background:rgba(7,9,15,.97)}
@@ -179,6 +221,10 @@ img{user-select:none;-webkit-user-drag:none}
 .ov-countdown-lbl{font-size:10px;color:var(--txt3);margin-top:.3rem;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:.1em}
 #ov-disq .ov-title{color:var(--red)}
 #ov-lock .ov-title{color:var(--red)}
+
+/* ══════════════════════════════════════════
+   RESULTS
+══════════════════════════════════════════ */
 #s-results{background:var(--bg)}
 .res-hero{background:linear-gradient(135deg,var(--bg2),var(--surf));border:1px solid var(--brd);border-radius:var(--rl);padding:1.75rem;text-align:center;margin-bottom:.875rem;position:relative;overflow:hidden}
 .res-hero::after{content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:250px;height:80px;background:radial-gradient(ellipse,var(--accG),transparent 70%)}
@@ -201,16 +247,24 @@ img{user-select:none;-webkit-user-drag:none}
 .save-row.ok{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
 .save-row.saving{background:var(--ambD);border-color:rgba(255,214,10,.2);color:var(--amb)}
 .save-row.fail{background:var(--redD);border-color:rgba(239,35,60,.25);color:var(--red)}
+
+/* ══════════════════════════════════════════
+   ADMIN SCREEN
+══════════════════════════════════════════ */
 #s-admin{background:var(--bg)}
 .admin-tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--brd);overflow-x:auto;flex-shrink:0}
 .admin-tabs::-webkit-scrollbar{display:none}
 .atab{flex-shrink:0;padding:.7rem .95rem;font-size:12px;font-weight:700;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;font-family:var(--fh)}
 .atab.on{color:var(--acc);border-bottom-color:var(--acc)}
 .a-pad{padding:.875rem;max-width:680px;margin:0 auto}
+
+/* Admin stat grid */
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.875rem}
 .sc{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem}
 .sc-v{font-family:var(--fm);font-size:24px;font-weight:700;margin-bottom:.15rem}
 .sc-k{font-size:10px;color:var(--txt2);font-weight:500}
+
+/* Student cards */
 .stu-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.5rem}
 .stu-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
 .stu-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--purL));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--fh)}
@@ -220,20 +274,27 @@ img{user-select:none;-webkit-user-drag:none}
 .stu-prog{height:3px;background:var(--brd);border-radius:99px;overflow:hidden;margin:.4rem 0}
 .stu-fill{height:100%;border-radius:99px;transition:width .5s}
 .stu-btm{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+
+/* Alert cards */
 .al-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.85rem;margin-bottom:.45rem;display:flex;gap:.7rem}
 .al-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .al-name{font-size:13px;font-weight:700;margin-bottom:.15rem}
 .al-msg{font-size:11px;color:var(--txt2);line-height:1.4}
 .al-t{font-size:9px;color:var(--txt3);font-family:var(--fm);margin-top:.2rem}
+
+/* Chart */
 .chart-wrap{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:.95rem;margin-bottom:.55rem}
 .ch-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem}
 .ch-lbl{font-size:11px;width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ch-bg{flex:1;height:16px;background:var(--surf2);border-radius:99px;overflow:hidden}
 .ch-fill{height:100%;border-radius:99px;transition:width .8s ease}
 .ch-val{font-size:10px;font-family:var(--fm);font-weight:600;width:28px;text-align:right;flex-shrink:0}
+
 .empty-st{text-align:center;padding:3rem 1rem;color:var(--txt2);font-size:13px;line-height:1.6}
 .spin{display:inline-block;width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin-a .7s linear infinite;margin-bottom:.65rem}
 @keyframes spin-a{to{transform:rotate(360deg)}}
+
+/* Network banner */
 .net-banner{background:var(--redD);border-bottom:1px solid rgba(239,35,60,.3);padding:.5rem 1rem;font-size:11px;color:var(--red);text-align:center;display:none;flex-shrink:0}
 .net-banner.on{display:block}
 .net-banner.back{background:var(--grnD);border-color:rgba(6,214,160,.25);color:var(--grn)}
@@ -243,6 +304,9 @@ img{user-select:none;-webkit-user-drag:none}
 
 <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
 
+<!-- ══════════════════════════════════════
+     LOGIN
+══════════════════════════════════════ -->
 <div id="s-login" class="screen on">
   <div class="login-wrap">
     <div class="login-logo-row">
@@ -260,11 +324,11 @@ img{user-select:none;-webkit-user-drag:none}
       <div class="err-box" id="lerr"></div>
       <div class="field">
         <label id="lid-lbl">Matric Number / ID</label>
-        <input id="lid" type="text" placeholder="e.g. MLT/2025/001" autocomplete="username" spellcheck="false">
+        <input id="lid" type="text" placeholder="e.g. MLT/2025/000" autocomplete="username" spellcheck="false">
       </div>
       <div class="field" id="lname-f">
         <label>Full Name</label>
-        <input id="lname" type="text" placeholder="e.g. Farida Ibrahim makera" autocomplete="name">
+        <input id="lname" type="text" placeholder="e.g. Hauwa'u Hassan" autocomplete="name">
       </div>
       <div class="field">
         <label id="lpw-lbl">Password</label>
@@ -284,6 +348,9 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     SETUP
+══════════════════════════════════════ -->
 <div id="s-setup" class="screen">
   <div class="topbar">
     <div class="ava" id="setup-ava">A</div>
@@ -298,10 +365,10 @@ img{user-select:none;-webkit-user-drag:none}
       <div class="exam-hero">
         <div class="exam-hero-badge">🔒 Proctored Examination</div>
         <div class="exam-hero-title">First aid And Primary Health Care</div>
-        <div class="exam-hero-sub">MLT 122 · Final Examination · Secure Proctored Session</div>
+        <div class="exam-hero-sub">MLT 122 · C.A. Makeup Test · Secure Proctored Session</div>
         <div class="hero-pills">
           <span class="h-pill">⏱ 30 minutes</span>
-          <span class="h-pill">📝 30 questions</span>
+          <span class="h-pill">📝 20 questions</span>
           <span class="h-pill">📷 Camera required</span>
           <span class="h-pill">⚠️ Max 3 warnings</span>
           <span class="h-pill">🔒 Auto-terminates</span>
@@ -338,8 +405,13 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     EXAM
+══════════════════════════════════════ -->
 <div id="s-exam" class="screen">
+  <!-- Network banner -->
   <div class="net-banner" id="net-banner">📡 Network lost — answers cached locally. Reconnecting…</div>
+  <!-- Top bar -->
   <div class="exam-bar">
     <div class="exam-bar-left">
       <div class="eb-title" id="eb-title">First aid And Primary Health Care</div>
@@ -351,21 +423,27 @@ img{user-select:none;-webkit-user-drag:none}
       <span class="timer-n" id="timer-n">30:00</span>
     </div>
   </div>
+  <!-- Warning strip -->
   <div class="warn-strip" id="warn-strip">
     <div class="ws-inner">
       <div class="ws-num" id="ws-num">1/3</div>
       <div class="ws-msg" id="ws-msg">Suspicious activity detected.</div>
     </div>
   </div>
+  <!-- Progress -->
   <div class="prog-rail"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <!-- Body -->
   <div class="scroller" id="exam-scroll">
     <div class="q-wrap" id="q-wrap"></div>
   </div>
+  <!-- Grid -->
   <div class="grid-bar" id="grid-bar"></div>
+  <!-- Camera PiP -->
   <div class="cam-pip" id="cam-pip">
     <video id="cam-vid" autoplay muted playsinline></video>
     <div class="cam-rec"><div class="cam-dot"></div><div class="cam-lbl">LIVE</div></div>
   </div>
+  <!-- Submit modal -->
   <div class="modal-bg" id="submit-modal">
     <div class="modal-sheet">
       <div class="modal-ic">📋</div>
@@ -379,6 +457,9 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     RESULTS
+══════════════════════════════════════ -->
 <div id="s-results" class="screen">
   <div class="topbar">
     <div class="ava" id="res-ava">A</div>
@@ -388,7 +469,8 @@ img{user-select:none;-webkit-user-drag:none}
   <div class="scroller">
     <div class="pad">
       <div class="res-hero">
-        <div style="font-size:11px;color:var(--txt2);margin-bottom:.875rem">MLT 122 · First aid And Primary Health Care</div>
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:.4rem">MLT 122 · First aid And Primary Health Care</div>
+        <div id="res-marks-line" style="font-size:15px;font-weight:800;color:var(--acc);margin-bottom:.875rem">—</div>
         <div class="score-ring">
           <svg width="118" height="118" viewBox="0 0 118 118">
             <circle cx="59" cy="59" r="50" fill="none" stroke="var(--brd)" stroke-width="9"/>
@@ -415,6 +497,9 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     ADMIN
+══════════════════════════════════════ -->
 <div id="s-admin" class="screen">
   <div class="topbar">
     <div class="ava" style="background:linear-gradient(135deg,var(--pur),var(--purL))">L</div>
@@ -435,6 +520,9 @@ img{user-select:none;-webkit-user-drag:none}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     OVERLAYS
+══════════════════════════════════════ -->
 <div class="overlay" id="ov-disq">
   <div class="ov-icon">🚫</div>
   <div class="ov-title">Examination Terminated</div>
@@ -459,12 +547,16 @@ img{user-select:none;-webkit-user-drag:none}
   <button class="btn btn-p" style="width:auto;padding:.75rem 2rem" onclick="reqFS()">Enable Fullscreen</button>
 </div>
 
+<!-- ══════════════════════════════════════
+     FIREBASE SDK
+══════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs,
          onSnapshot, serverTimestamp, query, orderBy, where, updateDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// ── YOUR FIREBASE CONFIG ──
 const FC = {
   apiKey:            "AIzaSyAWEI0SdLmximjy_TCfx2XdIwyEYPzPlEo",
   authDomain:        "mlt112-exam.firebaseapp.com",
@@ -486,6 +578,7 @@ try {
 } catch(e){
   window._dbOK=false;
   console.warn('Firebase init error:',e);
+  // Show error on login page
   setTimeout(function(){
     var dot=document.getElementById('db-dot');
     var txt=document.getElementById('db-txt');
@@ -495,40 +588,36 @@ try {
 }
 </script>
 
+<!-- ══════════════════════════════════════
+     QUESTION BANK
+══════════════════════════════════════ -->
 <script>
 const QB = [
-  {q:"What is Medical Laboratory Science mainly concerned with?",sc:false,opts:["Examination and analysis of clinical specimens","Construction of hospitals","Selling medicines","Training drivers"],ans:0},
-  {q:"Which of the following is a clinical specimen?",sc:false,opts:["Chair","Blood","Stethoscope","Thermometer"],ans:1},
-  {q:"Which branch of Medical Laboratory Science deals mainly with blood and blood-forming tissues?",sc:false,opts:["Virology","Parasitology","Haematology","Histopathology"],ans:2},
-  {q:"What is the main focus of Primary Health Care?",sc:false,opts:["Only surgical treatment","Only laboratory diagnosis","Only hospital admission","Health promotion and disease prevention"],ans:3},
-  {q:"Which laboratory role involves testing people who may not have obvious symptoms?",sc:false,opts:["Screening","Treatment","Rehabilitation","Surgery"],ans:0},
-  {q:"Laboratory results can help monitor the occurrence and distribution of diseases in a population. This is called:",sc:false,opts:["Treatment monitoring","Disease surveillance","Immunisation","Rehabilitation"],ans:1},
-  {q:"Which of the following is an important role of laboratory services during an outbreak?",sc:false,opts:["Building new hospitals","Selling drugs","Testing specimens to identify the possible cause","Employing teachers"],ans:2},
-  {q:"Which organisation supports the development and strengthening of Primary Health Care services in Nigeria?",sc:false,opts:["UNICEF","WHO","NGO","NPHCDA"],ans:3},
-  {q:"What is one major function of the Federal Ministry of Health and Social Welfare?",sc:false,opts:["Developing national health policies and strategies","Producing laboratory microscopes","Running private pharmacies","Collecting school fees"],ans:0},
-  {q:"Which organisation provides international technical guidance and health standards?",sc:false,opts:["UNICEF","WHO","NPHCDA","Local Government"],ans:1},
-  {q:"UNICEF supports programmes involving:",sc:false,opts:["Road construction only","Banking services","Children, mothers, immunisation and nutrition","Electricity generation"],ans:2},
-  {q:"Community participation in Primary Health Care may include:",sc:false,opts:["Avoiding health education","Refusing immunisation programmes","Preventing disease reporting","Participation in health education and disease prevention"],ans:3},
-  {q:"Infection is best described as:",sc:false,opts:["Entry, establishment and multiplication of an infectious agent in a host","Any injury to the body","A broken bone","Loss of blood"],ans:0},
-  {q:"Which statement correctly distinguishes infection from disease?",sc:false,opts:["Infection always produces symptoms","Infection may occur without obvious symptoms","Disease never produces symptoms","Infection and disease mean exactly the same thing"],ans:1},
-  {q:"An infection restricted mainly to one area of the body is called:",sc:false,opts:["Systemic infection","Chronic infection","Local infection","Latent infection"],ans:2},
-  {q:"An infection that persists for a prolonged period is called:",sc:false,opts:["Acute infection","Primary infection","Local infection","Chronic infection"],ans:3},
-  {q:"Which of the following is the first link in the chain of infection?",sc:false,opts:["Infectious agent","Portal of entry","Susceptible host","Mode of transmission"],ans:0},
-  {q:"The place where an infectious agent normally lives, grows or multiplies is called the:",sc:false,opts:["Portal of exit","Reservoir","Portal of entry","Susceptible host"],ans:1},
-  {q:"Which of the following is an example of a portal of exit?",sc:false,opts:["Respiratory secretion","Healthy skin","Blood pressure","Immunity"],ans:0},
-  {q:"The way an infectious agent moves from one person to another is called:",sc:false,opts:["Reservoir","Portal of entry","Mode of transmission","Susceptible host"],ans:2},
-  {q:"Which of the following is an example of a portal of entry?",sc:false,opts:["Respiratory tract","Reservoir","Infectious agent","Mode of transmission"],ans:0},
-  {q:"A person who is capable of becoming infected is known as a:",sc:false,opts:["Reservoir","Susceptible host","Infectious agent","Portal of exit"],ans:1},
-  {q:"Which practice helps interrupt the chain of infection by reducing transmission through contaminated hands?",sc:false,opts:["Hand hygiene","Unsafe injection","Reusing needles","Poor waste disposal"],ans:0},
-  {q:"Personal protective equipment includes:",sc:false,opts:["Tables and chairs","Gloves, masks and eye protection","Laboratory records only","Patient files"],ans:1},
-  {q:"Standard precautions should be applied:",sc:false,opts:["Only to patients with known infections","Only during surgery","To all patients","Only to laboratory workers"],ans:2},
-  {q:"Which process mainly removes dirt, organic matter and many microorganisms from a surface?",sc:false,opts:["Sterilisation","Vaccination","Isolation","Cleaning"],ans:3},
-  {q:"Which process destroys or removes all forms of viable microorganisms, including bacterial spores?",sc:false,opts:["Sterilisation","Cleaning","Hand washing","Screening"],ans:0},
-  {q:"Which process eliminates many or most pathogenic microorganisms on inanimate objects but may not reliably destroy bacterial spores?",sc:false,opts:["Vaccination","Disinfection","Screening","Isolation"],ans:1},
-  {q:"Which laboratory activity helps determine whether microorganisms are susceptible or resistant to antimicrobial agents?",sc:false,opts:["Health education","Blood grouping","Antimicrobial susceptibility testing","Community mobilisation"],ans:2},
-  {q:"Which of the following is a role of Medical Laboratory Science in infection prevention and control?",sc:false,opts:["Building roads","Selling food","Designing houses","Safe specimen handling and laboratory biosafety"],ans:3}
+  {q:"A patient has an infectious agent established in the body but does not show any obvious symptoms. Which conclusion is most appropriate?",sc:true,opts:["The person definitely has a clinically apparent disease","The infectious agent has not established itself","The person may have an infection without obvious disease","The person cannot have an infection without disease"],ans:2},
+  {q:"During an outbreak investigation, laboratory testing is used to identify the organism responsible and confirm suspected cases. Which role of Medical Laboratory Science is being demonstrated?",sc:true,opts:["Outbreak investigation","Rehabilitation","Health promotion","Treatment monitoring"],ans:0},
+  {q:"A healthcare worker covers an infected patient's wound properly to prevent microorganisms from leaving the wound and reaching others. Which link of the chain of infection is being targeted?",sc:true,opts:["Reservoir","Portal of exit","Susceptible host","Portal of entry"],ans:1},
+  {q:"A laboratory worker cleans a contaminated surface before applying a disinfectant. Why is the cleaning step important?",sc:true,opts:["Cleaning makes the surface permanently sterile","Cleaning replaces the need for disinfection in every situation","Cleaning guarantees destruction of all bacterial spores","Cleaning removes dirt and organic material and reduces contamination"],ans:3},
+  {q:"A student says, \"If I wear gloves throughout laboratory work, I don't need to clean my hands.\" Based on the lecture note, which response is most accurate?",sc:true,opts:["Incorrect, because contaminated gloves can transfer microorganisms","Correct, because gloves cannot become contaminated","Incorrect, because gloves increase the number of microorganisms on the hands","Correct, because gloves sterilise the hands"],ans:0},
+  {q:"A person acquires an infection from an organism that originated outside the person's body. How should this infection be classified according to its source?",sc:true,opts:["Opportunistic","Secondary","Exogenous","Endogenous"],ans:2},
+  {q:"A laboratory performs repeated tests on a patient to determine whether the patient's condition is improving, worsening, or remaining uncontrolled. Which MLS role is most directly involved?",sc:true,opts:["Community mobilisation","Health promotion","Immunisation","Treatment monitoring"],ans:3},
+  {q:"An infectious agent is living and multiplying in a particular environment before being transmitted to another person. Which chain link does this environment represent?",sc:true,opts:["Portal of entry","Reservoir","Mode of transmission","Portal of exit"],ans:1},
+  {q:"A healthcare facility wants to reduce transmission through contaminated hands. Which action directly targets this route?",sc:true,opts:["Hand hygiene","Histopathological examination","Antimicrobial susceptibility testing","Blood grouping"],ans:0},
+  {q:"A patient needs a medical item that must be free from all forms of microbial life, including bacterial spores. Which process is most appropriate?",sc:true,opts:["Environmental cleaning only","Cleaning","Sterilisation","Disinfection"],ans:2},
+  {q:"A person receives healthcare and subsequently develops an infection that meets the appropriate criteria for association with healthcare. Which classification applies?",sc:true,opts:["Endogenous infection","Healthcare-associated infection","Local infection","Community-acquired infection"],ans:1},
+  {q:"A patient with fever is immediately assumed to have malaria without appropriate assessment or testing. According to the lecture note, what is the problem with this conclusion?",sc:true,opts:["Laboratory testing cannot assist with fever","Fever is never caused by infection","Every fever is caused by bacteria","Fever can have many possible causes"],ans:3},
+  {q:"An infectious agent leaves an infected person through respiratory secretions, travels by droplets, and reaches another person's respiratory tract. Which sequence best represents the chain?",sc:true,opts:["Transmission → infectious agent → reservoir → susceptible host","Portal of entry → reservoir → transmission → portal of exit","Reservoir → portal of exit → transmission → portal of entry","Susceptible host → transmission → reservoir → portal of exit"],ans:2},
+  {q:"A laboratory identifies a microorganism and then performs testing to determine its susceptibility or resistance to antimicrobial agents. What is the main purpose of the second testing process?",sc:true,opts:["To replace specimen collection","To support appropriate antimicrobial decisions","To determine the patient's blood pressure","To identify the patient's blood group"],ans:1},
+  {q:"A community health programme needs national health policy, standards and coordination. Which organisation's function most directly matches this responsibility?",sc:true,opts:["Local government health structures","NGOs","UNICEF","Federal Ministry of Health and Social Welfare"],ans:3},
+  {q:"A patient has an infection that spreads beyond one body area and affects multiple body sites. Which classification is most appropriate?",sc:true,opts:["Systemic infection","Endogenous infection","Acute infection","Local infection"],ans:0},
+  {q:"A healthcare worker uses appropriate PPE and an aseptic technique when handling a specimen. Which chain-of-infection link can these measures help control most directly?",sc:true,opts:["Reservoir only","Infectious agent only","Portal of entry","Disease surveillance"],ans:2},
+  {q:"A laboratory reports confirmed cases during an outbreak, and the health authorities use these results to understand disease occurrence and trends. Which two MLS functions are being demonstrated?",sc:true,opts:["Cleaning and sterilisation","Health promotion and financing","Diagnosis and surveillance","Rehabilitation and immunisation"],ans:2},
+  {q:"Two patients have similar symptoms, but laboratory testing provides objective information that helps the clinician distinguish possible causes and guide management. What does this best demonstrate about MLS in PHC?",sc:true,opts:["Laboratory testing is only useful during outbreaks","Laboratory information can support diagnosis and clinical decisions","Laboratory services are mainly responsible for rehabilitation","Laboratory services are separate from healthcare decisions"],ans:1},
+  {q:"A healthcare facility wants to reduce transmission of an infectious agent. Instead of relying on only one intervention, it introduces hand hygiene, PPE, environmental cleaning and appropriate precautions. Why is this approach appropriate?",sc:true,opts:["Each infectious agent has only one possible transmission route","IPC works only when sterilisation is used","Only the susceptible host can be protected","Several measures can be combined to break different links in the chain"],ans:3}
 ];
 
+/* ══════════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════════ */
 const EXAM_DURATION  = 30 * 60;
 const MAX_WARN       = 3;
 const LECTURER_USER  = 'Amuhd';
@@ -536,9 +625,31 @@ const LECTURER_PASS  = '64818991';
 const AUTOSAVE_MS    = 7000;
 const CACHE_KEY      = 'eg_answers_cache';
 
-const EXAM_OPENS_AT_DEFAULT   = new Date('2026-09-09T09:00:00').getTime();
-const LOGIN_WINDOW_MS_DEFAULT = 60 * 60 * 1000;
+// ── MICROPHONE MONITORING ──
+// No raw audio is ever recorded or stored — only a rolling loudness level
+// is checked locally, and only a violation FLAG is saved (same as the
+// tab-switch / fullscreen checks) if it stays loud for too long.
+const MIC_CHECK_MS       = 1000; // how often to sample the mic level
+const MIC_LOUD_THRESHOLD = 40;   // 0–255 scale from the audio analyser
+const MIC_LOUD_STREAK    = 4;    // consecutive loud samples before flagging (~4s)
 
+// ── LINK WINDOW ──
+// These are just the FALLBACK values used if the lecturer hasn't set a
+// window from the dashboard yet (Lecturer login → ⚙️ Settings tab). Once
+// set there, the live values are stored in Firestore and load
+// automatically — no code editing needed.
+const EXAM_OPENS_AT_DEFAULT   = new Date('2026-09-09T09:00:00').getTime();
+const LOGIN_WINDOW_MS_DEFAULT = 60 * 60 * 1000; // 1 hour to start after the link opens
+
+// ── MARKS ──
+// How many marks this exam is worth for your gradebook, shown alongside
+// the percentage score (e.g. "8/10"). Change this whenever the mark
+// weighting for an exam changes.
+const EXAM_MARKS_TOTAL = 10;
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
 let role='student', sId='', sName='', sessionId=null;
 let qs=[], ans={}, curQ=0, warns=[], wCount=0;
 let timerInt=null, saveInt=null, timeLeft=EXAM_DURATION;
@@ -546,13 +657,20 @@ let t0=null, stream=null, active=false, done=false;
 let adminUnsub=null, allSess=[], curTab='live';
 let online=true;
 let examOpensAt=EXAM_OPENS_AT_DEFAULT, examWindowMs=LOGIN_WINDOW_MS_DEFAULT, windowLoaded=false;
+let retakeOnly=false;
 
+/* ══════════════════════════════════════════
+   THEME
+══════════════════════════════════════════ */
 function toggleTheme(){
   const t = document.documentElement.dataset.theme==='dark'?'light':'dark';
   document.documentElement.dataset.theme=t;
   document.getElementById('themeBtn').textContent=t==='dark'?'🌙':'☀️';
 }
 
+/* ══════════════════════════════════════════
+   NETWORK MONITORING
+══════════════════════════════════════════ */
 window.addEventListener('online', ()=>{
   online=true;
   const b=document.getElementById('net-banner');
@@ -579,6 +697,10 @@ async function flushCache(){
   }catch(e){}
 }
 
+/* ══════════════════════════════════════════
+   LINK WINDOW (loaded from Firestore, editable
+   from the Lecturer dashboard's Settings tab)
+══════════════════════════════════════════ */
 async function loadExamWindow(){
   if(!window._dbOK) return;
   try{
@@ -587,6 +709,7 @@ async function loadExamWindow(){
       const d=snap.data();
       if(d.opensAt)   examOpensAt = d.opensAt;
       if(d.windowMs)  examWindowMs = d.windowMs;
+      retakeOnly = !!d.retakeOnly;
     }
   }catch(e){
     console.warn('Could not load exam window, using defaults:', e);
@@ -594,20 +717,23 @@ async function loadExamWindow(){
   windowLoaded=true;
 }
 
-async function saveExamWindow(opensAtMs, windowMinutes){
+async function saveExamWindow(opensAtMs, windowMinutes, retakeOnlyFlag){
   const windowMs = windowMinutes*60*1000;
-  if(!window._dbOK) return false;
+  if(!window._dbOK) return {ok:false, code:'offline'};
   try{
     await window._setDoc(window._doc(window._db,'exam_config','window'),
-      {opensAt:opensAtMs, windowMs:windowMs, updatedAt:window._sTS()});
-    examOpensAt=opensAtMs; examWindowMs=windowMs;
-    return true;
+      {opensAt:opensAtMs, windowMs:windowMs, retakeOnly:!!retakeOnlyFlag, updatedAt:window._sTS()});
+    examOpensAt=opensAtMs; examWindowMs=windowMs; retakeOnly=!!retakeOnlyFlag;
+    return {ok:true};
   }catch(e){
     console.warn('Could not save exam window:', e);
-    return false;
+    return {ok:false, code:e.code||'', message:e.message||String(e)};
   }
 }
 
+/* ══════════════════════════════════════════
+   ROUTING
+══════════════════════════════════════════ */
 function goto(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
@@ -615,6 +741,9 @@ function goto(id){
   if(id==='s-login') cleanup();
 }
 
+/* ══════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════ */
 function setRole(r){
   role=r;
   document.getElementById('rtab-s').classList.toggle('on',r==='student');
@@ -644,6 +773,7 @@ async function doLogin(){
   const pw   = document.getElementById('lpw').value.trim();
   const btn  = document.getElementById('login-btn');
 
+  // ── LECTURER LOGIN ──
   if(role==='admin'){
     if(!id){ loginErr('Please enter your username.'); return; }
     if(!pw){ loginErr('Please enter your password.'); return; }
@@ -657,12 +787,20 @@ async function doLogin(){
     return;
   }
 
+  // ── STUDENT LOGIN ──
   if(!id)  { loginErr('Please enter your Matric Number.'); return; }
   if(!name){ loginErr('Please enter your full name.');     return; }
   if(!pw)  { loginErr('Please enter your password.');      return; }
 
+  // Make sure we have the latest saved window before checking it — the
+  // background fetch on page load usually finishes well before a student
+  // gets this far, but this covers the rare case where it hasn't.
   if(!windowLoaded) await loadExamWindow();
 
+  // Link window check — students can only START within examWindowMs of
+  // examOpensAt (set from the Lecturer dashboard's Settings tab).
+  // Already-submitted / already-active students are still blocked
+  // separately below regardless of this window.
   if(Date.now() < examOpensAt){
     loginErr('This exam has not opened yet. Please wait for your lecturer to confirm the start time.');
     return;
@@ -672,8 +810,47 @@ async function doLogin(){
     return;
   }
 
+  // Retake Mode check — when enabled from the dashboard, only students
+  // whose most recent attempt on this link was "Disqualified" may log in.
+  // This looks up Firestore directly rather than relying on this device's
+  // localStorage, so it works correctly even if a student uses a
+  // different device for the retake.
+  if(retakeOnly){
+    if(!window._dbOK){
+      loginErr('Cannot verify retake eligibility right now — no database connection. Try again shortly.');
+      return;
+    }
+    try{
+      const priorQ = window._q(window._col(window._db,'exam_sessions'), window._wh('studentId','==',id));
+      const priorSnap = await window._getDocs(priorQ);
+      let latest=null;
+      priorSnap.forEach(function(d){
+        const data=d.data();
+        const t = data.startedAt && data.startedAt.toMillis ? data.startedAt.toMillis() : 0;
+        const latestT = latest && latest.startedAt && latest.startedAt.toMillis ? latest.startedAt.toMillis() : -1;
+        if(!latest || t >= latestT) latest = data;
+      });
+      if(!latest || latest.status !== 'disqualified'){
+        loginErr('This is a retake for students who were disqualified in the original exam only. Contact your lecturer if you believe this is an error.');
+        return;
+      }
+      // Eligible — clear this device's old local blocks in case they're
+      // retaking on the same laptop they used the first time.
+      localStorage.removeItem('eg_disq_'+id);
+      localStorage.removeItem('eg_submitted_'+id);
+      localStorage.removeItem('eg_warns_'+id);
+      localStorage.removeItem('eg_warns_arr_'+id);
+    }catch(e){
+      console.warn('Retake eligibility check failed:', e);
+      loginErr('Could not verify retake eligibility. Check your connection and try again.');
+      return;
+    }
+  }
+
+  // Save to localStorage so browser remembers next time
   localStorage.setItem('eg_last_id',   id);
   localStorage.setItem('eg_last_name', name);
+  // Save password for this student ID so they must use same pw next time
   var existingPw = localStorage.getItem('eg_pw_'+id);
   if(!existingPw){
     localStorage.setItem('eg_pw_'+id, pw);
@@ -684,16 +861,19 @@ async function doLogin(){
 
   sId=id; sName=name;
 
+  // Block if student was disqualified
   if(localStorage.getItem('eg_disq_'+id)==='1'){
     loginErr('Your exam was terminated due to violations. Contact your lecturer.');
     return;
   }
 
+  // Block if student already submitted
   if(localStorage.getItem('eg_submitted_'+id)==='1'){
     loginErr('You have already submitted your exam. Contact your lecturer if this is an error.');
     return;
   }
 
+  // Restore warning count and history for this student
   var savedWarns = parseInt(localStorage.getItem('eg_warns_'+id)||'0');
   wCount = savedWarns;
 
@@ -704,7 +884,12 @@ async function doLogin(){
   goto('s-setup');
 }
 
+/* ══════════════════════════════════════════
+   SETUP & PERMISSIONS
+══════════════════════════════════════════ */
 function grantAndStart(){
+  // Re-check the link window here too — a student could log in just before
+  // the cutoff, then sit on this screen and hit Start after it's closed.
   if(Date.now() > examOpensAt + examWindowMs){
     loginErr('This exam link is no longer accepting new logins. Contact your lecturer.');
     goto('s-login');
@@ -722,6 +907,9 @@ function reqFS(){
   return (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen||function(){}).call(el);
 }
 
+/* ══════════════════════════════════════════
+   EXAM START
+══════════════════════════════════════════ */
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 
 function startExam(){
@@ -751,6 +939,11 @@ function startExam(){
   goto('s-exam');
 
   if(window._dbOK){
+    // Generate the doc ID locally (no network round-trip) so sessionId is
+    // available IMMEDIATELY. Waiting on addDoc()'s promise created a race:
+    // a fast submit could fire before sessionId was set, causing a second
+    // "completed" doc to be created while the original "active" doc was
+    // never updated — leaving the student stuck in the Live tab forever.
     const sRef = window._doc(window._col(window._db,'exam_sessions'));
     sessionId = sRef.id;
     window._setDoc(sRef,{
@@ -766,10 +959,21 @@ function startExam(){
   showCameraBtn();
 }
 
+/* ══════════════════════════════════════════
+   CAMERA
+══════════════════════════════════════════ */
 function setupCamera(){
   if(!stream) return;
   var vid = document.getElementById('cam-vid');
   vid.srcObject=stream;
+  // Explicitly call play() — some browsers won't autostart a stream
+  // assigned via srcObject even with the autoplay attribute present,
+  // which silently leaves the video at readyState 0 forever and blocks
+  // every snapshot attempt below without any visible error.
+  var playPromise = vid.play();
+  if(playPromise && playPromise.catch){
+    playPromise.catch(function(e){ console.warn('Camera video play() failed:', e); });
+  }
   document.getElementById('cam-pip').style.display='block';
 
   window._snapTimer = setInterval(function(){
@@ -782,7 +986,11 @@ function setupCamera(){
 
 function takeSnapshot(vid){
   if(!sessionId || !window._dbOK) return;
-  if(!vid || vid.readyState < 2 || vid.videoWidth === 0) return;
+  if(!vid || vid.readyState < 2 || vid.videoWidth === 0){
+    console.warn('Snapshot skipped — video not ready yet',
+      {readyState: vid && vid.readyState, videoWidth: vid && vid.videoWidth});
+    return;
+  }
   try{
     var canvas = document.createElement('canvas');
     canvas.width  = 200;
@@ -818,35 +1026,37 @@ function showCameraBtn(){
   if(existing) return;
   var btn = document.createElement('button');
   btn.id = 'cam-start-btn';
-  btn.title = 'Enable camera monitoring';
+  btn.title = 'Enable camera and microphone monitoring';
   btn.style.cssText = 'background:var(--accG);border:1px solid rgba(67,97,238,.4);'
     +'color:var(--acc);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;'
     +'cursor:pointer;font-family:var(--f);white-space:nowrap;';
-  btn.textContent = '📷 Enable';
+  btn.textContent = '📷🎙️ Enable';
   btn.onclick = function(){
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      flag('Camera not supported on this device');
+      flag('Camera/microphone not supported on this device');
       btn.remove();
       return;
     }
-    btn.textContent = '📷…';
+    btn.textContent = '📷🎙️…';
     btn.disabled = true;
-    navigator.mediaDevices.getUserMedia({video:true, audio:false})
+    navigator.mediaDevices.getUserMedia({video:true, audio:true})
       .then(function(s){
         stream = s;
         setupCamera();
+        setupMic(s);
         btn.remove();
         if(window._dbOK && sessionId){
           window._setDoc(
             window._doc(window._db,'exam_sessions',sessionId),
-            {cameraUsed:true, cameraEnabledAt:window._sTS()},
+            {cameraUsed:true, cameraEnabledAt:window._sTS(),
+             micUsed:s.getAudioTracks().length>0, micEnabledAt:window._sTS()},
             {merge:true}
           ).catch(function(){});
         }
       })
       .catch(function(){
-        flag('Camera access blocked or denied by student');
-        btn.textContent = '📷 Blocked';
+        flag('Camera/microphone access blocked or denied by student');
+        btn.textContent = '📷🎙️ Blocked';
         btn.style.background = 'var(--redD)';
         btn.style.color = 'var(--red)';
         btn.style.borderColor = 'rgba(239,35,60,.3)';
@@ -854,7 +1064,7 @@ function showCameraBtn(){
         if(window._dbOK && sessionId){
           window._setDoc(
             window._doc(window._db,'exam_sessions',sessionId),
-            {cameraUsed:false, cameraDenied:true},
+            {cameraUsed:false, cameraDenied:true, micUsed:false, micDenied:true},
             {merge:true}
           ).catch(function(){});
         }
@@ -864,6 +1074,52 @@ function showCameraBtn(){
   pill.parentElement.insertBefore(btn, pill);
 }
 
+/* ══════════════════════════════════════════
+   MICROPHONE MONITORING
+   No audio is recorded or uploaded anywhere — this only samples the
+   local input level to detect sustained loud talking / background
+   noise, and raises the same kind of violation flag used elsewhere
+   (tab switch, fullscreen exit, etc.) if it stays loud too long.
+══════════════════════════════════════════ */
+function setupMic(mediaStream){
+  try{
+    var audioTracks = mediaStream.getAudioTracks();
+    if(!audioTracks.length){ return; } // mic wasn't actually granted
+    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx){ console.warn('Web Audio API not supported — mic monitoring skipped'); return; }
+    var audioCtx = new AudioCtx();
+    var source = audioCtx.createMediaStreamSource(mediaStream);
+    var analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+    source.connect(analyser);
+    var data = new Uint8Array(analyser.frequencyBinCount);
+    window._audioCtx = audioCtx;
+    var loudStreak = 0;
+
+    window._micTimer = setInterval(function(){
+      if(!active || done) return;
+      analyser.getByteFrequencyData(data);
+      var sum=0;
+      for(var i=0;i<data.length;i++) sum+=data[i];
+      var avg = sum/data.length;
+      if(avg > MIC_LOUD_THRESHOLD){
+        loudStreak++;
+        if(loudStreak >= MIC_LOUD_STREAK){
+          flag('Loud background noise or talking detected');
+          loudStreak = 0; // reset so it doesn't fire every single second while it stays loud
+        }
+      } else {
+        loudStreak = 0;
+      }
+    }, MIC_CHECK_MS);
+  }catch(e){
+    console.warn('Mic monitoring setup failed:', e);
+  }
+}
+
+/* ══════════════════════════════════════════
+   ANTI-CHEAT
+══════════════════════════════════════════ */
 function setupAntiCheat(){
   document.addEventListener('visibilitychange', onVis);
   window.addEventListener('blur', onBlur);
@@ -918,6 +1174,9 @@ function rmListeners(){
   clearInterval(window._devTimer);
 }
 
+/* ══════════════════════════════════════════
+   WARNING SYSTEM
+══════════════════════════════════════════ */
 function flag(msg){
   if(!active || done || wCount>=MAX_WARN) return;
   wCount++;
@@ -970,6 +1229,9 @@ function disqualify(){
   },1000);
 }
 
+/* ══════════════════════════════════════════
+   TIMER
+══════════════════════════════════════════ */
 function runTimer(){
   clearInterval(timerInt);
   timerInt=setInterval(async()=>{
@@ -999,6 +1261,9 @@ function timeUp(){
   document.getElementById('ov-lock').classList.add('on');
 }
 
+/* ══════════════════════════════════════════
+   AUTO-SAVE (offline-aware)
+══════════════════════════════════════════ */
 function runAutoSave(){
   clearInterval(saveInt);
   saveInt=setInterval(async()=>{
@@ -1012,6 +1277,9 @@ function runAutoSave(){
   }, AUTOSAVE_MS);
 }
 
+/* ══════════════════════════════════════════
+   RENDER QUESTION
+══════════════════════════════════════════ */
 function renderQ(idx){
   curQ=idx;
   const q=qs[idx], total=qs.length;
@@ -1062,6 +1330,9 @@ function renderGrid(){
     `<div class="gb-dot ${ans[i]!==undefined?'ans':''} ${i===curQ?'cur':''}" onclick="renderQ(${i})">${i+1}</div>`).join('');
 }
 
+/* ══════════════════════════════════════════
+   SUBMIT
+══════════════════════════════════════════ */
 function openSubmit(){
   const total=qs.length, done2=Object.keys(ans).length, left=total-done2;
   document.getElementById('modal-b').innerHTML=
@@ -1125,6 +1396,7 @@ function persistNow(auto, status){
   var correct=0;
   qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
   var total=qs.length, pct=Math.round((correct/total)*100);
+  var marks=Math.round((correct/total)*EXAM_MARKS_TOTAL*10)/10; // e.g. 8/10, one decimal
   var taken=Math.floor((Date.now()-t0)/1000);
   var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
   var grade = pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':pct>=50?'E':'F';
@@ -1148,6 +1420,7 @@ function persistNow(auto, status){
 
   var data={
     status:status, score:pct, grade:grade, correct:correct, total:total,
+    marks:marks, marksTotal:EXAM_MARKS_TOTAL,
     timeTaken:tm, takenSeconds:taken, passed:pct>=50,
     flagCount:wCount, flags:warns,
     answers:ans,
@@ -1178,11 +1451,15 @@ function persistNow(auto, status){
   });
 }
 
+/* ══════════════════════════════════════════
+   RESULTS — computes score directly, shows instantly
+══════════════════════════════════════════ */
 function showResults(auto, status){
   var correct=0;
   qs.forEach(function(q,i){ if(ans[i]!==undefined && q.opts[ans[i]] && q.opts[ans[i]].correct) correct++; });
   var total=qs.length;
   var pct=Math.round((correct/total)*100);
+  var marks=Math.round((correct/total)*EXAM_MARKS_TOTAL*10)/10;
   var taken=Math.floor((Date.now()-t0)/1000);
   var tm=String(Math.floor(taken/60)).padStart(2,'0')+':'+String(taken%60).padStart(2,'0');
   var passed=pct>=50;
@@ -1191,6 +1468,7 @@ function showResults(auto, status){
   document.getElementById('res-ava').textContent=ini;
   document.getElementById('res-name').textContent=sName;
   document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-marks-line').textContent='Marks: '+marks+'/'+EXAM_MARKS_TOTAL;
   document.getElementById('res-correct').textContent=correct+'/'+total;
   document.getElementById('res-time').textContent=tm;
   document.getElementById('res-flags').textContent=wCount;
@@ -1232,8 +1510,13 @@ function forceOut(){
   cleanup(); goto('s-login');
 }
 
+/* ══════════════════════════════════════════
+   CLEANUP
+══════════════════════════════════════════ */
 function cleanup(){
-  clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer); clearInterval(window._snapTimer);
+  clearInterval(timerInt); clearInterval(saveInt); clearInterval(window._devTimer);
+  clearInterval(window._snapTimer); clearInterval(window._micTimer);
+  if(window._audioCtx){ try{ window._audioCtx.close(); }catch(e){} window._audioCtx=null; }
   rmListeners();
   if(stream){stream.getTracks().forEach(function(t){t.stop();}); stream=null;}
   active=false; done=false; sessionId=null;
@@ -1246,6 +1529,9 @@ function cleanup(){
   if(adminUnsub){adminUnsub(); adminUnsub=null;}
 }
 
+/* ══════════════════════════════════════════
+   ADMIN
+══════════════════════════════════════════ */
 function initAdmin(){
   if(!window._dbOK){
     document.getElementById('admin-body').innerHTML=
@@ -1431,9 +1717,13 @@ function tabResults(body){
       +'<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;font-size:11px;color:var(--txt2)">'
         +'<span>⏱ '+( s.timeTaken||'—')+'</span>'
         +'<span>·</span>'
+        +'<span>🎯 Marks: '+(s.marks!=null?s.marks:'—')+'/'+(s.marksTotal||EXAM_MARKS_TOTAL)+'</span>'
+        +'<span>·</span>'
         +'<span>'+(s.passed?'<span style="color:var(--grn);font-weight:700">PASS</span>':'<span style="color:var(--red);font-weight:700">FAIL</span>')+'</span>'
         +'<span>·</span>'
         +'<span>'+(s.cameraUsed?'📷 Camera ON':'📷 No camera')+'</span>'
+        +'<span>·</span>'
+        +'<span>'+(s.micUsed?'🎙️ Mic ON':'🎙️ No mic')+'</span>'
         +(s.autoSubmit?'<span>·</span><span style="color:var(--amb)">Auto-submitted</span>':'')
       +'</div>'
 
@@ -1638,6 +1928,17 @@ function tabSettings(body){
         <strong>${closesAt.toLocaleString()}</strong>. Once a student starts,
         their own exam timer runs independently and is not affected by this window.
       </div>
+      <div class="hr"></div>
+      <label style="display:flex;align-items:flex-start;gap:.6rem;cursor:pointer;margin-bottom:.5rem">
+        <input type="checkbox" id="set-retake" ${retakeOnly?'checked':''} style="margin-top:3px;width:16px;height:16px;flex-shrink:0">
+        <span style="font-size:13px;font-weight:600">Retake Mode — disqualified students only</span>
+      </label>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:1rem;line-height:1.6">
+        When ON, only students whose <strong>last attempt on this link was "Disqualified"</strong>
+        (3 warnings) are allowed to log in — everyone else, including students who already
+        passed, timed out, or never attempted, is turned away. Use this for a one-time
+        retake round; turn it back OFF afterwards to reopen the link normally.
+      </div>
       <button class="btn btn-p" id="set-save-btn" onclick="doSaveSettings()">💾 Save</button>
       <div id="set-status" style="font-size:12px;text-align:center;margin-top:.65rem;min-height:16px"></div>
     </div>`;
@@ -1648,6 +1949,7 @@ async function doSaveSettings(){
   var status=document.getElementById('set-status');
   var opensVal=document.getElementById('set-opens').value;
   var minsVal=parseInt(document.getElementById('set-mins').value,10);
+  var retakeVal=document.getElementById('set-retake').checked;
 
   if(!opensVal){ status.style.color='var(--red)'; status.textContent='Please pick an opening date/time.'; return; }
   if(!minsVal || minsVal<1){ status.style.color='var(--red)'; status.textContent='Please enter a valid number of minutes.'; return; }
@@ -1656,13 +1958,13 @@ async function doSaveSettings(){
   if(isNaN(opensMs)){ status.style.color='var(--red)'; status.textContent='Invalid date/time.'; return; }
 
   btn.disabled=true; btn.textContent='Saving…';
-  var ok = await saveExamWindow(opensMs, minsVal);
+  var result = await saveExamWindow(opensMs, minsVal, retakeVal);
   btn.disabled=false; btn.textContent='💾 Save';
 
-  if(ok){
+  if(result.ok){
     status.style.color='var(--grn)';
     status.textContent='✓ Saved — students will see this the next time they open the link.';
-    renderTab('settings');
+    renderTab('settings'); // refresh status chip / preview
   } else {
     status.style.color='var(--red)';
     status.textContent='⚠️ Could not save — check your connection and try again.';
@@ -1684,8 +1986,10 @@ async function forceSubmit(docId){
   }catch(e){alert('Failed: '+e.message);}
 }
 
+// Init role UI
 setRole('student');
 
+// Update DB status indicator when Firebase connects
 window.addEventListener('dbOK', function(){
   var dot=document.getElementById('db-dot');
   var txt=document.getElementById('db-txt');
@@ -1698,6 +2002,7 @@ window.addEventListener('dbOK', function(){
   loadExamWindow();
 });
 
+// If no connection after 8s, show error
 setTimeout(function(){
   if(!window._dbOK){
     var dot=document.getElementById('db-dot');
@@ -1707,6 +2012,7 @@ setTimeout(function(){
   }
 }, 8000);
 
+// Pre-fill student login from localStorage
 (function(){
   var savedId   = localStorage.getItem('eg_last_id');
   var savedName = localStorage.getItem('eg_last_name');
